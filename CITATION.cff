@@ -4,9 +4,9 @@ authors:
   - family-names: "Barker"
     given-names: "Richard"
     orcid: "https://orcid.org/0000-0003-2423-7649"
-    affiliation: "Purdue University, Department of Botany and Plant Pathology"
+    affiliation: "Purdue University, Department of Agricultural and Biological Engineering"
 title: "Arabidopsis Redox Transcriptional Autoencoder and Spaceflight ROS Validation"
-version: 1.0.0
+version: 1.1.0
 doi: 10.5281/zenodo.1234567
 date-released: 2026-08-21
 url: "https://github.com/dr-richard-barker/Redox_decoder"
@@ -17,4 +17,4 @@ keywords:
   - "Conditional Variational Autoencoder (CVAE)"
   - "NASA OSDR"
   - "Spaceflight Transcriptomics"
-  - "Salk ADA Single-Cell Atlas"
+  - "ggPlantMap Spatial Localization"

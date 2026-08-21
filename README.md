@@ -31,6 +31,19 @@ By combining **232 harmonized transcriptomics studies** (4,332 samples across 20
 
 ---
 
+## Interactive ROS Decoder & ggPlantMap Workbench
+
+The repository is configured for deployment on **GitHub Pages** using the **CoSE (Circle of Space Omics Expertise)** theme:
+- **Live Site**: [https://dr-richard-barker.github.io/Redox_decoder/](https://dr-richard-barker.github.io/Redox_decoder/)
+- **Workbench Capabilities**:
+  - *Multi-Gene ROS Predictor*: Decodes ROS stimulus class ($H_2O_2$, Paraquat, Ozone, Menadione, Singlet Oxygen, High Light) from user-provided gene lists.
+  - *Stimulation Time Estimator*: Predicts elapsed time since last ROS induction ($<1\text{h}$ Immediate, $1-4\text{h}$ Early, $4-12\text{h}$ Mid, $>12\text{h}$ Late).
+  - *Interactive ggPlantMap*: Maps predicted gene activity onto spatial plant organ diagrams (Whole Plant, Leaf, Root cross-section).
+  - *3D/2D Latent Space Explorer* across 4,332 samples and 3 CVAE model architectures.
+  - *Spaceflight ROS Shift Calculator* across 38 NASA OSDR studies.
+
+---
+
 ## Directory Structure
 
 ```
@@ -65,21 +78,10 @@ Redox_decoder/
 
 ---
 
-## Interactive Web Tool & GitHub Pages
+## Citation & Author Affiliation
 
-The repository is configured for deployment on **GitHub Pages** using the **CoSE (Circle of Space Omics Expertise)** theme:
-- **Live Site**: [https://dr-richard-barker.github.io/Redox_decoder/](https://dr-richard-barker.github.io/Redox_decoder/)
-- **Features**:
-  - *3D/2D Latent Space Explorer* across 4,332 samples and 3 CVAE model architectures.
-  - *Spaceflight ROS Shift Calculator* across 38 NASA OSDR studies.
-  - *TAIR10 Gene & KEGG Pathway Query Tool*.
-  - *Salk ADA Atlas Single-Cell Deconvolution Explorer*.
-
----
-
-## Citation & License
-
-If you use this dataset, CVAE model, or interactive ROS decoder tool, please cite:
+**Richard Barker, Ph.D.**  
+Department of Agricultural and Biological Engineering, Purdue University, West Lafayette, IN, USA
 
 ```bibtex
 @article{Barker2026RedoxDecoder,

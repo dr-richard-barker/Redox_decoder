@@ -1,12 +1,15 @@
 /**
  * Arabidopsis ROS Decoder Web Application Data Asset
- * Pre-calculated CVAE latent embeddings, spaceflight projections, gene profiles, and deconvolution metrics.
+ * Pre-calculated CVAE latent embeddings, spaceflight projections, gene profiles,
+ * ROS stimulus signature matrices, temporal classes, and ggPlantMap spatial geometries.
  */
 
 window.ROS_DECODER_DATA = {
   metadata: {
     title: "Arabidopsis ROS Decoder: Conditional VAE & Spaceflight Validation",
-    version: "1.0.0",
+    version: "1.1.0",
+    author: "Richard Barker, Ph.D.",
+    affiliation: "Department of Agricultural and Biological Engineering, Purdue University",
     geneUniverseSize: 20869,
     totalSamples: 4332,
     groundSamples: 3453,
@@ -77,15 +80,32 @@ window.ROS_DECODER_DATA = {
     { id: "OSD-7", tissue: "Rosette/Leaf", stage: "Rosette", flightCount: 10, groundCount: 10, meanReconErr: 0.229, shiftMagnitude: 0.22, pVal: 2.1e-4 }
   ],
 
-  topGenes: [
-    { symbol: "CAT2", agi: "AT4G35090", name: "Catalase 2", baseline: 6.82, sfExpr: 4.12, h2o2Expr: 8.94, paraquatExpr: 8.11, topCellType: "Mesophyll", spatialRegion: "Leaf / Cotyledon" },
-    { symbol: "APX1", agi: "AT1G07890", name: "Ascorbate peroxidase 1", baseline: 5.94, sfExpr: 7.88, h2o2Expr: 9.12, paraquatExpr: 8.65, topCellType: "Epidermis / Root Cap", spatialRegion: "Root tip & Leaf" },
-    { symbol: "ZAT12", agi: "AT5G59820", name: "Zinc finger protein 12", baseline: 3.12, sfExpr: 6.95, h2o2Expr: 8.76, paraquatExpr: 7.92, topCellType: "Stele / Vascular", spatialRegion: "Vascular bundle" },
-    { symbol: "RBOHD", agi: "AT5G47910", name: "Respiratory burst oxidase homolog D", baseline: 4.25, sfExpr: 7.15, h2o2Expr: 7.82, paraquatExpr: 8.04, topCellType: "Guard cells / Root Hair", spatialRegion: "Plasma membrane" },
-    { symbol: "HSFA2", agi: "AT2G26150", name: "Heat shock transcription factor A2", baseline: 2.45, sfExpr: 6.82, h2o2Expr: 9.35, paraquatExpr: 8.41, topCellType: "Meristematic", spatialRegion: "Meristem & Leaves" },
-    { symbol: "KIN10", agi: "AT3G01090", name: "SNF1-related protein kinase 1.1", baseline: 5.10, sfExpr: 7.44, h2o2Expr: 6.95, paraquatExpr: 7.12, topCellType: "Stele", spatialRegion: "Root vasculature" },
-    { symbol: "CSD1", agi: "AT1G08830", name: "Cu/Zn superoxide dismutase 1", baseline: 6.15, sfExpr: 4.88, h2o2Expr: 7.62, paraquatExpr: 7.21, topCellType: "Mesophyll", spatialRegion: "Chloroplast / Leaf" },
-    { symbol: "FSD1", agi: "AT4G25100", name: "Fe superoxide dismutase 1", baseline: 5.42, sfExpr: 3.91, h2o2Expr: 7.14, paraquatExpr: 6.85, topCellType: "Mesophyll", spatialRegion: "Chloroplast / Stroma" }
+  // Comprehensive ROS Gene Knowledgebase for Multi-Gene Predictor
+  geneDatabase: [
+    { symbol: "CAT2", agi: "AT4G35090", name: "Catalase 2", weights: { h2o2: 0.95, paraquat: 0.45, menadione: 0.30, ozone: 0.65, singlet_oxygen: 0.40, high_light: 0.85 }, timeClass: "Late (>12h)", timeHours: 16, tissue: "Mesophyll", organ: "Leaf", cellType: "Mesophyll" },
+    { symbol: "CAT1", agi: "AT1G20630", name: "Catalase 1", weights: { h2o2: 0.85, paraquat: 0.35, menadione: 0.25, ozone: 0.50, singlet_oxygen: 0.30, high_light: 0.60 }, timeClass: "Late (>12h)", timeHours: 14, tissue: "Seed / Seedling", organ: "Seedling", cellType: "Epidermis" },
+    { symbol: "CAT3", agi: "AT1G20620", name: "Catalase 3", weights: { h2o2: 0.80, paraquat: 0.40, menadione: 0.20, ozone: 0.45, singlet_oxygen: 0.35, high_light: 0.70 }, timeClass: "Late (>12h)", timeHours: 18, tissue: "Vascular", organ: "Stem", cellType: "Vascular" },
+    { symbol: "APX1", agi: "AT1G07890", name: "Ascorbate peroxidase 1", weights: { h2o2: 0.90, paraquat: 0.80, menadione: 0.55, ozone: 0.75, singlet_oxygen: 0.50, high_light: 0.92 }, timeClass: "Early (1-4h)", timeHours: 2.5, tissue: "Root Cap / Epidermis", organ: "Root", cellType: "Epidermis" },
+    { symbol: "APX2", agi: "AT3G09640", name: "Ascorbate peroxidase 2", weights: { h2o2: 0.75, paraquat: 0.70, menadione: 0.40, ozone: 0.60, singlet_oxygen: 0.65, high_light: 0.98 }, timeClass: "Immediate (<1h)", timeHours: 0.75, tissue: "Vascular bundle", organ: "Leaf", cellType: "Vascular" },
+    { symbol: "APX3", agi: "AT4G35000", name: "Peroxisomal ascorbate peroxidase 3", weights: { h2o2: 0.82, paraquat: 0.50, menadione: 0.35, ozone: 0.55, singlet_oxygen: 0.45, high_light: 0.70 }, timeClass: "Mid (4-12h)", timeHours: 6.0, tissue: "Mesophyll", organ: "Leaf", cellType: "Mesophyll" },
+    { symbol: "ZAT12", agi: "AT5G59820", name: "Zinc finger protein 12", weights: { h2o2: 0.94, paraquat: 0.88, menadione: 0.80, ozone: 0.85, singlet_oxygen: 0.75, high_light: 0.90 }, timeClass: "Immediate (<1h)", timeHours: 0.5, tissue: "Stele / Vascular", organ: "Root", cellType: "Stele" },
+    { symbol: "ZAT10", agi: "AT1G27730", name: "Zinc finger protein 10 (STZ)", weights: { h2o2: 0.89, paraquat: 0.82, menadione: 0.70, ozone: 0.80, singlet_oxygen: 0.70, high_light: 0.85 }, timeClass: "Immediate (<1h)", timeHours: 0.6, tissue: "Meristematic", organ: "Root", cellType: "Meristematic" },
+    { symbol: "RBOHD", agi: "AT5G47910", name: "Respiratory burst oxidase homolog D", weights: { h2o2: 0.60, paraquat: 0.92, menadione: 0.85, ozone: 0.78, singlet_oxygen: 0.60, high_light: 0.72 }, timeClass: "Immediate (<1h)", timeHours: 0.4, tissue: "Guard cells / Root Hair", organ: "Leaf", cellType: "Guard_cells" },
+    { symbol: "RBOHF", agi: "AT1G64060", name: "Respiratory burst oxidase homolog F", weights: { h2o2: 0.55, paraquat: 0.88, menadione: 0.80, ozone: 0.82, singlet_oxygen: 0.55, high_light: 0.65 }, timeClass: "Immediate (<1h)", timeHours: 0.5, tissue: "Vascular stele", organ: "Root", cellType: "Stele" },
+    { symbol: "HSFA2", agi: "AT2G26150", name: "Heat shock factor A2", weights: { h2o2: 0.92, paraquat: 0.75, menadione: 0.60, ozone: 0.70, singlet_oxygen: 0.85, high_light: 0.95 }, timeClass: "Early (1-4h)", timeHours: 1.5, tissue: "Meristematic / Shoot", organ: "Whole Seedling", cellType: "Meristematic" },
+    { symbol: "KIN10", agi: "AT3G01090", name: "SnRK1.1 / KIN10 Kinase", weights: { h2o2: 0.70, paraquat: 0.65, menadione: 0.75, ozone: 0.60, singlet_oxygen: 0.50, high_light: 0.55 }, timeClass: "Mid (4-12h)", timeHours: 8.0, tissue: "Stele / Root vasculature", organ: "Root", cellType: "Stele" },
+    { symbol: "CSD1", agi: "AT1G08830", name: "Cu/Zn superoxide dismutase 1", weights: { h2o2: 0.40, paraquat: 0.95, menadione: 0.88, ozone: 0.70, singlet_oxygen: 0.45, high_light: 0.80 }, timeClass: "Mid (4-12h)", timeHours: 5.0, tissue: "Mesophyll / Chloroplast", organ: "Leaf", cellType: "Mesophyll" },
+    { symbol: "CSD2", agi: "AT2G28190", name: "Cu/Zn superoxide dismutase 2", weights: { h2o2: 0.35, paraquat: 0.92, menadione: 0.85, ozone: 0.65, singlet_oxygen: 0.50, high_light: 0.85 }, timeClass: "Mid (4-12h)", timeHours: 5.5, tissue: "Mesophyll", organ: "Leaf", cellType: "Mesophyll" },
+    { symbol: "FSD1", agi: "AT4G25100", name: "Fe superoxide dismutase 1", weights: { h2o2: 0.30, paraquat: 0.96, menadione: 0.90, ozone: 0.60, singlet_oxygen: 0.55, high_light: 0.82 }, timeClass: "Early (1-4h)", timeHours: 3.0, tissue: "Chloroplast stroma", organ: "Leaf", cellType: "Mesophyll" },
+    { symbol: "MSD1", agi: "AT3G10920", name: "Mn superoxide dismutase 1", weights: { h2o2: 0.50, paraquat: 0.85, menadione: 0.82, ozone: 0.55, singlet_oxygen: 0.40, high_light: 0.60 }, timeClass: "Mid (4-12h)", timeHours: 6.5, tissue: "Mitochondria / Stele", organ: "Root", cellType: "Stele" },
+    { symbol: "GPX1", agi: "AT2G31570", name: "Glutathione peroxidase 1", weights: { h2o2: 0.85, paraquat: 0.70, menadione: 0.65, ozone: 0.60, singlet_oxygen: 0.55, high_light: 0.75 }, timeClass: "Mid (4-12h)", timeHours: 4.5, tissue: "Chloroplast / Mesophyll", organ: "Leaf", cellType: "Mesophyll" },
+    { symbol: "GPX7", agi: "AT4G31870", name: "Glutathione peroxidase 7", weights: { h2o2: 0.88, paraquat: 0.68, menadione: 0.60, ozone: 0.62, singlet_oxygen: 0.80, high_light: 0.90 }, timeClass: "Early (1-4h)", timeHours: 2.0, tissue: "Mesophyll", organ: "Leaf", cellType: "Mesophyll" },
+    { symbol: "DHAR1", agi: "AT1G19570", name: "Dehydroascorbate reductase 1", weights: { h2o2: 0.80, paraquat: 0.60, menadione: 0.50, ozone: 0.70, singlet_oxygen: 0.45, high_light: 0.80 }, timeClass: "Mid (4-12h)", timeHours: 7.0, tissue: "Cytosol / Epidermis", organ: "Whole Seedling", cellType: "Epidermis" },
+    { symbol: "GR1", agi: "AT3G24170", name: "Glutathione reductase 1", weights: { h2o2: 0.85, paraquat: 0.75, menadione: 0.70, ozone: 0.65, singlet_oxygen: 0.50, high_light: 0.78 }, timeClass: "Mid (4-12h)", timeHours: 5.0, tissue: "Stele / Vasculature", organ: "Root", cellType: "Stele" },
+    { symbol: "WRKY33", agi: "AT2G38470", name: "WRKY transcription factor 33", weights: { h2o2: 0.70, paraquat: 0.85, menadione: 0.80, ozone: 0.90, singlet_oxygen: 0.65, high_light: 0.70 }, timeClass: "Immediate (<1h)", timeHours: 0.8, tissue: "Epidermis / Guard cells", organ: "Leaf", cellType: "Guard_cells" },
+    { symbol: "WRKY40", agi: "AT1G80840", name: "WRKY transcription factor 40", weights: { h2o2: 0.75, paraquat: 0.80, menadione: 0.75, ozone: 0.85, singlet_oxygen: 0.70, high_light: 0.75 }, timeClass: "Immediate (<1h)", timeHours: 0.7, tissue: "Meristematic", organ: "Root", cellType: "Meristematic" },
+    { symbol: "AOX1A", agi: "AT3G22370", name: "Alternative oxidase 1a", weights: { h2o2: 0.90, paraquat: 0.85, menadione: 0.92, ozone: 0.80, singlet_oxygen: 0.60, high_light: 0.70 }, timeClass: "Early (1-4h)", timeHours: 2.0, tissue: "Mitochondria / Stele", organ: "Root", cellType: "Stele" },
+    { symbol: "ANAC017", agi: "AT1G34190", name: "NAC domain-containing protein 17", weights: { h2o2: 0.92, paraquat: 0.78, menadione: 0.88, ozone: 0.75, singlet_oxygen: 0.65, high_light: 0.80 }, timeClass: "Immediate (<1h)", timeHours: 0.6, tissue: "Endoplasmic reticulum / Stele", organ: "Root", cellType: "Stele" }
   ],
 
   keggPathways: [
@@ -99,11 +119,11 @@ window.ROS_DECODER_DATA = {
   ],
 
   deconvolutionProportions: [
-    { stage: "seed_0d", epidermis: 0.12, mesophyll: 0.05, stele: 0.28, guardCells: 0.02, meristematic: 0.35, rootCap: 0.08, other: 0.10 },
-    { stage: "seedling_3d", epidermis: 0.24, mesophyll: 0.31, stele: 0.18, guardCells: 0.08, meristematic: 0.11, rootCap: 0.05, other: 0.03 },
-    { stage: "rosette_21d", epidermis: 0.22, mesophyll: 0.52, stele: 0.12, guardCells: 0.09, meristematic: 0.02, rootCap: 0.01, other: 0.02 },
-    { stage: "flower", epidermis: 0.18, mesophyll: 0.20, stele: 0.14, guardCells: 0.04, meristematic: 0.15, rootCap: 0.01, other: 0.28 },
-    { stage: "spaceflight_root", epidermis: 0.29, mesophyll: 0.04, stele: 0.25, guardCells: 0.03, meristematic: 0.21, rootCap: 0.14, other: 0.04 },
-    { stage: "ground_root", epidermis: 0.25, mesophyll: 0.04, stele: 0.22, guardCells: 0.03, meristematic: 0.31, rootCap: 0.11, other: 0.04 }
+    { stage: "Seed (0d)", epidermis: 0.12, mesophyll: 0.05, stele: 0.28, guardCells: 0.02, meristematic: 0.35, rootCap: 0.08, other: 0.10 },
+    { stage: "Seedling (3d)", epidermis: 0.24, mesophyll: 0.31, stele: 0.18, guardCells: 0.08, meristematic: 0.11, rootCap: 0.05, other: 0.03 },
+    { stage: "Rosette (21d)", epidermis: 0.22, mesophyll: 0.52, stele: 0.12, guardCells: 0.09, meristematic: 0.02, rootCap: 0.01, other: 0.02 },
+    { stage: "Flower", epidermis: 0.18, mesophyll: 0.20, stele: 0.14, guardCells: 0.04, meristematic: 0.15, rootCap: 0.01, other: 0.28 },
+    { stage: "Spaceflight Root", epidermis: 0.29, mesophyll: 0.04, stele: 0.25, guardCells: 0.03, meristematic: 0.21, rootCap: 0.14, other: 0.04 },
+    { stage: "Ground Root", epidermis: 0.25, mesophyll: 0.04, stele: 0.22, guardCells: 0.03, meristematic: 0.31, rootCap: 0.11, other: 0.04 }
   ]
 };

@@ -1,7 +1,7 @@
 # Arabidopsis Redox Transcriptional Autoencoder and Spaceflight ROS Validation
 
 **Author:** Richard Barker<sup>1,*</sup>  
-<sup>1</sup>Department of Botany and Plant Pathology, Purdue University, West Lafayette, IN, USA  
+<sup>1</sup>Department of Agricultural and Biological Engineering, Purdue University, West Lafayette, IN, USA  
 <sup>*</sup>Correspondence: dr-richard-barker
 
 ---
