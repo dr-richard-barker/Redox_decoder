@@ -1,0 +1,29 @@
+"pathway","n","total","pvalue","fold","pathway_name","padj"
+"ath01100",25,2460,0.999999966495997,1.04756753212693,"Metabolic pathways - Arabidopsis thaliana (thale cress)",1
+"ath00073",2,65,1,3.17171215880893,"Cutin, suberine and wax biosynthesis - Arabidopsis thaliana (thale cress)",1
+"ath00190",3,169,1,1.82983393777438,"Oxidative phosphorylation - Arabidopsis thaliana (thale cress)",1
+"ath00270",2,125,1,1.64929032258065,"Cysteine and methionine metabolism - Arabidopsis thaliana (thale cress)",1
+"ath00350",2,41,1,5.02832415420928,"Tyrosine metabolism - Arabidopsis thaliana (thale cress)",1
+"ath00360",2,33,1,6.24731182795699,"Phenylalanine metabolism - Arabidopsis thaliana (thale cress)",1
+"ath00400",2,56,1,3.68145161290323,"Phenylalanine, tyrosine and tryptophan biosynthesis - Arabidopsis thaliana (thale cress)",1
+"ath00460",3,71,1,4.35552021808269,"Cyanoamino acid metabolism - Arabidopsis thaliana (thale cress)",1
+"ath00480",5,102,1,5.05297280202404,"Glutathione metabolism - Arabidopsis thaliana (thale cress)",1
+"ath00500",3,181,1,1.70851898057387,"Starch and sucrose metabolism - Arabidopsis thaliana (thale cress)",1
+"ath00630",2,81,1,2.54520111509359,"Glyoxylate and dicarboxylate metabolism - Arabidopsis thaliana (thale cress)",1
+"ath00940",3,132,1,2.34274193548387,"Phenylpropanoid biosynthesis - Arabidopsis thaliana (thale cress)",1
+"ath00960",3,40,1,7.73104838709677,"Tropane, piperidine and pyridine alkaloid biosynthesis - Arabidopsis thaliana (thale cress)",1
+"ath00999",2,70,1,2.94516129032258,"Biosynthesis of various plant secondary metabolites - Arabidopsis thaliana (thale cress)",1
+"ath01110",17,1377,1,1.27260055754679,"Biosynthesis of secondary metabolites - Arabidopsis thaliana (thale cress)",1
+"ath01200",2,279,1,0.738929355994913,"Carbon metabolism - Arabidopsis thaliana (thale cress)",1
+"ath01230",3,242,1,1.27785923753666,"Biosynthesis of amino acids - Arabidopsis thaliana (thale cress)",1
+"ath02010",3,68,1,4.54767552182163,"ABC transporters - Arabidopsis thaliana (thale cress)",1
+"ath03020",2,52,1,3.96464019851117,"RNA polymerase - Arabidopsis thaliana (thale cress)",1
+"ath03040",4,243,1,1.69680074339573,"Spliceosome - Arabidopsis thaliana (thale cress)",1
+"ath03420",3,85,1,3.63814041745731,"Nucleotide excision repair - Arabidopsis thaliana (thale cress)",1
+"ath04075",3,434,1,0.712539021852237,"Plant hormone signal transduction - Arabidopsis thaliana (thale cress)",1
+"ath04120",4,163,1,2.52958638432614,"Ubiquitin mediated proteolysis - Arabidopsis thaliana (thale cress)",1
+"ath04130",4,55,1,7.49677419354839,"SNARE interactions in vesicular transport - Arabidopsis thaliana (thale cress)",1
+"ath04141",3,223,1,1.38673513669897,"Protein processing in endoplasmic reticulum - Arabidopsis thaliana (thale cress)",1
+"ath04142",4,193,1,2.13638642821327,"Lysosome biogenesis - Arabidopsis thaliana (thale cress)",1
+"ath04145",3,144,1,2.14751344086022,"Phagocytosis - Arabidopsis thaliana (thale cress)",1
+"ath04626",3,220,1,1.40564516129032,"Plant-pathogen interaction - Arabidopsis thaliana (thale cress)",1

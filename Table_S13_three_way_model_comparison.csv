@@ -1,0 +1,4 @@
+Metric,Cond dim,Best val loss,Best epoch,Train time (min),Active dims,SF silhouette,Stimulus silhouette
+Original (33-dim),33,3860.9,95,28.4,14,0.0638,-0.3377
+Time-aware (37-dim),37,4095.4,98,20.2,14,0.107,-0.4165
+DevStage (41-dim),41,4206.9,89,19.4,11,0.0882,-0.3709

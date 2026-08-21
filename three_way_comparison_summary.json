@@ -1,0 +1,29 @@
+{
+  "Original": {
+    "cond_dim": 33,
+    "best_val_loss": 3860.8628946940103,
+    "best_epoch": 95,
+    "train_time_min": 28.4,
+    "n_active_dims": 14,
+    "sf_silhouette": 0.06383702903985977,
+    "stimulus_silhouette": -0.3377316892147064
+  },
+  "Time-aware": {
+    "cond_dim": 37,
+    "best_val_loss": 4095.369384765625,
+    "best_epoch": 98,
+    "train_time_min": 20.2,
+    "n_active_dims": 14,
+    "sf_silhouette": 0.10704267024993896,
+    "stimulus_silhouette": -0.4165414869785309
+  },
+  "DevStage": {
+    "cond_dim": 41,
+    "best_val_loss": 4206.87841796875,
+    "best_epoch": 89,
+    "train_time_min": 19.4,
+    "n_active_dims": 11,
+    "sf_silhouette": 0.0881696417927742,
+    "stimulus_silhouette": -0.3709206283092499
+  }
+}

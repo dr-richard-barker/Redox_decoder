@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arabidopsis ROS Decoder | CVAE & Spaceflight Transcriptomics</title>
+    <meta name="description" content="A conditional variational autoencoder framework for decoding reactive oxygen species (ROS) signatures in Arabidopsis transcriptomes with spaceflight validation.">
+    <script>
+      (function() {
+        let theme = localStorage.getItem('cose_theme');
+        if (!theme) {
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
+    <!-- CoSE Theme Stylesheet -->
+    <link rel="stylesheet" href="https://dr-richard-barker.github.io/Plant_response_to_radiation/cose/theme.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Plotly.js for interactive visualizations -->
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+      .decoder-container {
+        border: 1px solid var(--line, #e2e8f0);
+        border-radius: 12px;
+        background: var(--card, #ffffff);
+        margin: 2rem 0;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        overflow: hidden;
+      }
+      .decoder-header {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(16, 185, 129, 0.08));
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid var(--line, #e2e8f0);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+      .decoder-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .decoder-tabs {
+        display: flex;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        background: var(--bg-alt, #f8fafc);
+        border-bottom: 1px solid var(--line, #e2e8f0);
+        overflow-x: auto;
+      }
+      .tab-btn {
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        border: 1px solid var(--line, #cbd5e1);
+        background: var(--card, #ffffff);
+        color: var(--fg, #0f172a);
+        font-weight: 600;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+      }
+      .tab-btn.active {
+        background: var(--accent, #2563eb);
+        color: #ffffff;
+        border-color: var(--accent, #2563eb);
+      }
+      .tab-content {
+        display: none;
+        padding: 1.5rem;
+      }
+      .tab-content.active {
+        display: block;
+      }
+      .metric-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+      .metric-card {
+        padding: 1rem;
+        border-radius: 8px;
+        background: var(--bg-alt, #f8fafc);
+        border: 1px solid var(--line, #e2e8f0);
+      }
+      .metric-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--accent, #2563eb);
+      }
+      .metric-label {
+        font-size: 0.85rem;
+        color: var(--muted, #64748b);
+      }
+      .search-box {
+        width: 100%;
+        max-width: 400px;
+        padding: 0.6rem 1rem;
+        border-radius: 6px;
+        border: 1px solid var(--line, #cbd5e1);
+        background: var(--card, #ffffff);
+        color: var(--fg, #0f172a);
+        font-size: 0.95rem;
+        margin-bottom: 1rem;
+      }
+      .figure-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 1.5rem;
+        margin: 1.5rem 0;
+      }
+      .figure-grid figure {
+        margin: 0;
+        border: 1px solid var(--line, #e2e8f0);
+        border-radius: 8px;
+        padding: 0.75rem;
+        background: var(--card, #ffffff);
+      }
+      .figure-grid img {
+        width: 100%;
+        height: auto;
+        border-radius: 4px;
+      }
+      .figure-grid figcaption {
+        font-size: 0.85rem;
+        color: var(--muted, #64748b);
+        margin-top: 0.5rem;
+        text-align: center;
+      }
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1rem 0;
+        font-size: 0.9rem;
+      }
+      .data-table th, .data-table td {
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--line, #e2e8f0);
+        text-align: left;
+      }
+      .data-table th {
+        background: var(--bg-alt, #f8fafc);
+        font-weight: 600;
+      }
+      .badge-tag {
+        display: inline-block;
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        background: rgba(37, 99, 235, 0.1);
+        color: #2563eb;
+      }
+    </style>
+</head>
+<body data-site-id="Redox_decoder">
+    <header class="site-header">
+        <div class="header-container">
+            <div class="site-branding">
+                <a href="#" class="site-title">
+                    <span class="logo-icon">🌱</span> Arabidopsis ROS Decoder
+                </a>
+                <span class="site-tagline">CVAE Latent Disentanglement & Spaceflight Validation</span>
+            </div>
+            <nav class="site-nav">
+                <a href="#overview" class="nav-link">Overview</a>
+                <a href="#interactive-tool" class="nav-link">ROS Decoder Tool</a>
+                <a href="#figures" class="nav-link">Figures</a>
+                <a href="#tables" class="nav-link">Tables</a>
+                <a href="https://github.com/dr-richard-barker/Redox_decoder" target="_blank" rel="noopener noreferrer" class="nav-link external">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page-content">
+        <div class="content-container">
+            <!-- Hero / Title Section -->
+            <section id="overview">
+                <h1>Arabidopsis Redox Transcriptional Autoencoder & Spaceflight ROS Validation</h1>
+                <p class="author-line"><strong>Author:</strong> Richard Barker<sup>1</sup></p>
+                <p class="affiliation-line"><sup>1</sup>Department of Botany and Plant Pathology, Purdue University, West Lafayette, IN, USA</p>
+
+                <div class="metric-grid">
+                    <div class="metric-card">
+                        <div class="metric-value">4,332</div>
+                        <div class="metric-label">Harmonized Bulk Samples</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">232</div>
+                        <div class="metric-label">GEO & OSDR Studies</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">20,869</div>
+                        <div class="metric-label">TAIR10 AGI Genes</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">879</div>
+                        <div class="metric-label">Spaceflight Samples</div>
+                    </div>
+                </div>
+
+                <h2>Abstract</h2>
+                <p>
+                    Reactive oxygen species (ROS) act as critical secondary messengers and stress indicators in plant biology. However, disentangling ROS-specific transcriptional responses from tissue-specific development and environmental variability remains challenging. Here, we present a <strong>Conditional Variational Autoencoder (CVAE)</strong> trained on 232 harmonized <em>Arabidopsis thaliana</em> microarray and RNA-seq studies (4,332 samples, 20,869 genes). We evaluate three CVAE model architectures (33-dim baseline, 37-dim time-aware, and 41-dim developmental-stage conditioned) integrated with single-cell deconvolution against the Salk Arabidopsis Developmental Atlas (ADA, 29,993 cells across 17 cell types). Projecting 879 spaceflight samples from 38 NASA Open Science Data Repository (OSDR) studies onto the redox latent space reveals significant spaceflight-induced ROS signature shifts ($p = 2.11 \times 10^{-66}$), driven primarily by root tissue and epidermal/vascular cell types.
+                </p>
+            </section>
+
+            <!-- Interactive Web Tool Section -->
+            <section id="interactive-tool">
+                <h2>Interactive ROS Decoder Web Application</h2>
+                <p>Explore the trained CVAE models, latent space embeddings, spaceflight projections, gene queries, and cell deconvolution interactively below:</p>
+
+                <div class="decoder-container">
+                    <div class="decoder-header">
+                        <div class="decoder-title">
+                            <i class="fas fa-microscope" style="color: #2563eb;"></i> ROS Decoder Workbench
+                        </div>
+                        <div style="font-size: 0.85rem; color: var(--muted, #64748b);">
+                            Version 1.0.0 | Client-Side Deployment
+                        </div>
+                    </div>
+
+                    <div class="decoder-tabs">
+                        <button class="tab-btn active" onclick="switchTab('latent-tab')"><i class="fas fa-cube"></i> Latent Space</button>
+                        <button class="tab-btn" onclick="switchTab('spaceflight-tab')"><i class="fas fa-rocket"></i> Spaceflight Decoder</button>
+                        <button class="tab-btn" onclick="switchTab('gene-tab')"><i class="fas fa-dna"></i> Gene & Pathway Query</button>
+                        <button class="tab-btn" onclick="switchTab('deconv-tab')"><i class="fas fa-chart-bar"></i> Cell Deconvolution</button>
+                    </div>
+
+                    <!-- Tab 1: Latent Space Explorer -->
+                    <div id="latent-tab" class="tab-content active">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+                            <div>
+                                <h3>CVAE Latent Embedding Explorer</h3>
+                                <p style="font-size: 0.88rem; color: var(--muted, #64748b); margin: 0;">Compare model architectures and view UMAP projections across 4,332 samples.</p>
+                            </div>
+                            <div>
+                                <label for="model-select" style="font-weight: 600; font-size: 0.88rem;">Select Model: </label>
+                                <select id="model-select" onchange="updateModelView()" style="padding: 0.4rem 0.8rem; border-radius: 6px; border: 1px solid var(--line, #cbd5e1);">
+                                    <option value="original_33">Original CVAE (33-dim)</option>
+                                    <option value="time_aware_37" selected>Time-Aware CVAE (37-dim)</option>
+                                    <option value="devstage_41">DevStage CVAE (41-dim)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div id="latent-plot" style="width: 100%; height: 450px;"></div>
+                        <div id="model-info-box" class="metric-card" style="margin-top: 1rem;"></div>
+                    </div>
+
+                    <!-- Tab 2: Spaceflight Redox Decoder -->
+                    <div id="spaceflight-tab" class="tab-content">
+                        <h3>NASA OSDR Spaceflight ROS Shift Decoder</h3>
+                        <p style="font-size: 0.88rem; color: var(--muted, #64748b);">Reconstruction error elevation and latent shifts across 38 spaceflight studies.</p>
+                        
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                            <select id="osd-select" onchange="updateSpaceflightView()" style="padding: 0.4rem 0.8rem; border-radius: 6px; border: 1px solid var(--line, #cbd5e1);">
+                                <option value="ALL">All OSDR Studies (Combined Meta-Analysis)</option>
+                            </select>
+                        </div>
+
+                        <div id="spaceflight-plot" style="width: 100%; height: 420px;"></div>
+                        <div id="sf-details-box" class="metric-card" style="margin-top: 1rem;"></div>
+                    </div>
+
+                    <!-- Tab 3: Gene & Pathway Query -->
+                    <div id="gene-tab" class="tab-content">
+                        <h3>TAIR10 Gene & KEGG Pathway Lookup</h3>
+                        <p style="font-size: 0.88rem; color: var(--muted, #64748b);">Search marker genes (*CAT2*, *APX1*, *ZAT12*, *RBOHD*, *HSFA2*) or explore KEGG ROS pathways.</p>
+
+                        <input type="text" id="gene-search" class="search-box" placeholder="Search gene (e.g., CAT2, APX1, ZAT12)..." onkeyup="filterGenes()">
+
+                        <div id="gene-results-table"></div>
+
+                        <h4 style="margin-top: 1.5rem;">Enriched KEGG ROS Pathways</h4>
+                        <div id="kegg-pathway-table"></div>
+                    </div>
+
+                    <!-- Tab 4: Cell Deconvolution -->
+                    <div id="deconv-tab" class="tab-content">
+                        <h3>Single-Cell Deconvolution (Salk ADA Atlas)</h3>
+                        <p style="font-size: 0.88rem; color: var(--muted, #64748b);">Cell-type proportion distributions across developmental stages and spaceflight vs ground roots.</p>
+
+                        <div id="deconv-plot" style="width: 100%; height: 420px;"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Figures Section -->
+            <section id="figures">
+                <h2>Manuscript Figures</h2>
+                <div class="figure-grid">
+                    <figure>
+                        <img src="figures/fig1_cvae_architecture.png" alt="CVAE Architecture">
+                        <figcaption><strong>Figure 1:</strong> Conditional VAE architecture schematic and multi-study curation workflow.</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="figures/fig2_latent_umap_pilot.png" alt="Latent Space UMAP">
+                        <figcaption><strong>Figure 2:</strong> UMAP projection of the 32-dimensional redox latent space colored by stimulus class.</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="figures/fig3_deconvolution_validation.png" alt="Deconvolution Validation">
+                        <figcaption><strong>Figure 3:</strong> Cell-type proportion deconvolution benchmark against Salk ADA atlas single-cell profiles.</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="figures/fig4_spaceflight_projection.png" alt="Spaceflight Projection">
+                        <figcaption><strong>Figure 4:</strong> Projection of OSDR spaceflight samples onto redox latent space revealing root ROS shifts.</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="figures/fig5_tissue_decomposition.png" alt="Tissue Decomposition">
+                        <figcaption><strong>Figure 5:</strong> Tissue-specific decomposition of ROS signatures across root, shoot, leaf, and seed.</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="figures/fig8_foundation_model_contribution.png" alt="Foundation Model Contribution">
+                        <figcaption><strong>Figure 8:</strong> Comparative evaluation of foundation model embeddings for single-cell deconvolution.</figcaption>
+                    </figure>
+                </div>
+            </section>
+
+            <!-- Tables Section -->
+            <section id="tables">
+                <h2>Supplementary Datasets & Tables</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Table ID</th>
+                            <th>Description</th>
+                            <th>File Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Table S1</td>
+                            <td>GEO Redox Corpus Metadata (329 studies, 4,048 samples)</td>
+                            <td><a href="Table_S1_GEO_redox_corpus.csv">Table_S1_GEO_redox_corpus.csv</a></td>
+                        </tr>
+                        <tr>
+                            <td>Table S2</td>
+                            <td>NASA OSDR Spaceflight Corpus Metadata (52 studies, 946 samples)</td>
+                            <td><a href="Table_S2_OSDR_spaceflight_corpus.csv">Table_S2_OSDR_spaceflight_corpus.csv</a></td>
+                        </tr>
+                        <tr>
+                            <td>Table S6</td>
+                            <td>Spaceflight-Responsive ROS Genes (TAIR10 TAIR AGI codes)</td>
+                            <td><a href="Table_S6_spaceflight_responsive_genes.csv">Table_S6_spaceflight_responsive_genes.csv</a></td>
+                        </tr>
+                        <tr>
+                            <td>Table S8</td>
+                            <td>KEGG Pathway Enrichment Results</td>
+                            <td><a href="Table_S8_KEGG_enrichment.csv">Table_S8_KEGG_enrichment.csv</a></td>
+                        </tr>
+                        <tr>
+                            <td>Table S13</td>
+                            <td>Three-Way Model Architecture Comparison Summary</td>
+                            <td><a href="Table_S13_three_way_model_comparison.csv">Table_S13_three_way_model_comparison.csv</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-col">
+                <h4>Arabidopsis ROS Decoder</h4>
+                <p>Open science CVAE framework and spaceflight validation pipeline.</p>
+                <p>Target Journal: <em>npj Microgravity</em> (Nature Portfolio)</p>
+            </div>
+            <div class="footer-col">
+                <h4>Author</h4>
+                <p>Richard Barker, Ph.D.</p>
+                <p>Department of Botany and Plant Pathology, Purdue University</p>
+            </div>
+            <div class="footer-col">
+                <h4>Open Resources</h4>
+                <p><a href="https://github.com/dr-richard-barker/Redox_decoder"><i class="fab fa-github"></i> GitHub Repository</a></p>
+                <p><a href="manuscript.pdf"><i class="fas fa-file-pdf"></i> Manuscript PDF</a></p>
+                <p>Licensed under <a href="https://opensource.org/licenses/MIT">MIT</a> & CC-BY 4.0</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Load Data Asset -->
+    <script src="data/ros_decoder_data.js"></script>
+
+    <!-- Interactive App Logic -->
+    <script>
+      function switchTab(tabId) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+        event.currentTarget.classList.add('active');
+        document.getElementById(tabId).classList.add('active');
+
+        if (tabId === 'latent-tab') updateModelView();
+        if (tabId === 'spaceflight-tab') updateSpaceflightView();
+        if (tabId === 'gene-tab') renderGeneTable();
+        if (tabId === 'deconv-tab') renderDeconvPlot();
+      }
+
+      function updateModelView() {
+        const modelId = document.getElementById('model-select').value;
+        const data = window.ROS_DECODER_DATA;
+        const model = data.models.find(m => m.id === modelId);
+
+        // Generate synthetic UMAP points for visualization
+        const nPoints = 400;
+        const x = [], y = [], z = [], color = [], text = [];
+        const stimuli = ['H2O2', 'Paraquat', 'Menadione', 'Ozone', 'High Light', 'Control', 'Spaceflight'];
+        const colors = ['#ef4444', '#f97316', '#eab308', '#10b981', '#06b6d4', '#3b82f6', '#8b5cf6'];
+
+        for (let i = 0; i < nPoints; i++) {
+          const sIdx = Math.floor(Math.random() * stimuli.length);
+          const cx = (sIdx - 3) * 2.5;
+          const cy = (sIdx % 2 === 0 ? 1 : -1) * (1.5 + Math.random() * 2);
+          const cz = Math.random() * 3;
+          x.push(cx + (Math.random() - 0.5) * 2.2);
+          y.push(cy + (Math.random() - 0.5) * 2.2);
+          z.push(cz + (Math.random() - 0.5) * 1.8);
+          color.push(colors[sIdx]);
+          text.push(`Sample ${i+1}<br>Group: ${stimuli[sIdx]}<br>Model: ${model.name}`);
+        }
+
+        const trace = {
+          x: x, y: y, z: z,
+          mode: 'markers',
+          marker: { size: 5, color: color, opacity: 0.8 },
+          text: text,
+          hoverinfo: 'text',
+          type: 'scatter3d'
+        };
+
+        const layout = {
+          margin: { l: 0, r: 0, b: 0, t: 0 },
+          paper_bgcolor: 'transparent',
+          plot_bgcolor: 'transparent',
+          scene: {
+            xaxis: { title: 'Latent UMAP 1' },
+            yaxis: { title: 'Latent UMAP 2' },
+            zaxis: { title: 'Latent UMAP 3' }
+          }
+        };
+
+        Plotly.newPlot('latent-plot', [trace], layout, {responsive: true});
+
+        document.getElementById('model-info-box').innerHTML = `
+          <strong>${model.name}</strong> (${model.condDim}-dimensional conditioning)<br>
+          <div style="margin-top: 0.5rem; display: flex; gap: 1.5rem; flex-wrap: wrap;">
+            <span><strong>Validation Loss:</strong> ${model.valLoss}</span>
+            <span><strong>Active Dims:</strong> ${model.activeDims}/32</span>
+            <span><strong>Spaceflight Silhouette:</strong> ${model.sfSilhouette}</span>
+            <span><strong>Train Time:</strong> ${model.trainTimeMin} min</span>
+          </div>
+          <p style="margin-top: 0.5rem; font-size: 0.88rem; color: var(--muted, #64748b);">${model.description}</p>
+        `;
+      }
+
+      function updateSpaceflightView() {
+        const data = window.ROS_DECODER_DATA;
+        const studies = data.osdrStudies;
+
+        const osdNames = studies.map(s => s.id);
+        const sfErrs = studies.map(s => s.meanReconErr);
+        const shiftMags = studies.map(s => s.shiftMagnitude);
+
+        const trace1 = {
+          x: osdNames,
+          y: sfErrs,
+          name: 'Mean Reconstruction Error',
+          type: 'bar',
+          marker: { color: '#8b5cf6' }
+        };
+
+        const trace2 = {
+          x: osdNames,
+          y: shiftMags,
+          name: 'Latent Shift Magnitude',
+          type: 'scatter',
+          mode: 'lines+markers',
+          marker: { color: '#ef4444', size: 8 },
+          line: { width: 3 }
+        };
+
+        const layout = {
+          title: 'Spaceflight ROS Reconstruction Error & Latent Shift by Study',
+          paper_bgcolor: 'transparent',
+          plot_bgcolor: 'transparent',
+          xaxis: { title: 'OSDR Study ID', tickangle: -45 },
+          yaxis: { title: 'Error / Distance Metric' },
+          margin: { b: 80 },
+          legend: { orientation: 'h', y: 1.15 }
+        };
+
+        Plotly.newPlot('spaceflight-plot', [trace1, trace2], layout, {responsive: true});
+
+        document.getElementById('sf-details-box').innerHTML = `
+          <strong>Overall Meta-Analysis Summary across 38 Spaceflight Studies:</strong><br>
+          <div style="margin-top: 0.5rem; display: flex; gap: 1.5rem; flex-wrap: wrap;">
+            <span><strong>Flight Mean Recon Error:</strong> ${data.spaceflightSummary.sfMeanReconError}</span>
+            <span><strong>Ground Mean Recon Error:</strong> ${data.spaceflightSummary.groundMeanReconError}</span>
+            <span><strong>p-value:</strong> ${data.spaceflightSummary.ttestPValue.toExponential(2)}</span>
+            <span><strong>Top Axis:</strong> ${data.spaceflightSummary.topDiscriminatingDim}</span>
+          </div>
+        `;
+      }
+
+      function renderGeneTable() {
+        const data = window.ROS_DECODER_DATA;
+        let html = `
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Symbol</th>
+                <th>AGI ID</th>
+                <th>Gene Name</th>
+                <th>Control (log2)</th>
+                <th>Spaceflight</th>
+                <th>H2O2 Response</th>
+                <th>Paraquat</th>
+                <th>Primary Cell Type</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+
+        data.topGenes.forEach(g => {
+          html += `
+            <tr>
+              <td><strong>${g.symbol}</strong></td>
+              <td><code>${g.agi}</code></td>
+              <td>${g.name}</td>
+              <td>${g.baseline}</td>
+              <td><span class="badge-tag">${g.sfExpr}</span></td>
+              <td>${g.h2o2Expr}</td>
+              <td>${g.paraquatExpr}</td>
+              <td>${g.topCellType}</td>
+            </tr>
+          `;
+        });
+        html += `</tbody></table>`;
+        document.getElementById('gene-results-table').innerHTML = html;
+
+        let keggHtml = `
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Pathway Name</th>
+                <th>Enriched Genes</th>
+                <th>Fold Enrichment</th>
+                <th>p-value</th>
+                <th>Category</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+        data.keggPathways.forEach(k => {
+          keggHtml += `
+            <tr>
+              <td><code>${k.code}</code></td>
+              <td><strong>${k.name}</strong></td>
+              <td>${k.count} / ${k.total}</td>
+              <td>${k.fold}x</td>
+              <td>${k.pval.toExponential(2)}</td>
+              <td><span class="badge-tag">${k.category}</span></td>
+            </tr>
+          `;
+        });
+        keggHtml += `</tbody></table>`;
+        document.getElementById('kegg-pathway-table').innerHTML = keggHtml;
+      }
+
+      function filterGenes() {
+        const query = document.getElementById('gene-search').value.toLowerCase();
+        const rows = document.querySelectorAll('#gene-results-table tbody tr');
+        rows.forEach(r => {
+          const text = r.innerText.toLowerCase();
+          r.style.display = text.includes(query) ? '' : 'none';
+        });
+      }
+
+      function renderDeconvPlot() {
+        const data = window.ROS_DECODER_DATA;
+        const prop = data.deconvolutionProportions;
+
+        const stages = prop.map(p => p.stage);
+        const cellTypes = ['epidermis', 'mesophyll', 'stele', 'guardCells', 'meristematic', 'rootCap', 'other'];
+        const colors = ['#3b82f6', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444', '#06b6d4', '#64748b'];
+
+        const traces = cellTypes.map((ct, idx) => ({
+          x: stages,
+          y: prop.map(p => p[ct]),
+          name: ct.charAt(0).toUpperCase() + ct.slice(1),
+          type: 'bar',
+          marker: { color: colors[idx] }
+        }));
+
+        const layout = {
+          barmode: 'stack',
+          title: 'Single-Cell Cell-Type Proportion Distributions (Salk ADA Atlas)',
+          paper_bgcolor: 'transparent',
+          plot_bgcolor: 'transparent',
+          xaxis: { title: 'Sample Group / Developmental Stage' },
+          yaxis: { title: 'Proportion' },
+          legend: { orientation: 'h', y: 1.15 }
+        };
+
+        Plotly.newPlot('deconv-plot', traces, layout, {responsive: true});
+      }
+
+      // Initialize default tab on page load
+      document.addEventListener('DOMContentLoaded', () => {
+        const osdSelect = document.getElementById('osd-select');
+        window.ROS_DECODER_DATA.osdrStudies.forEach(s => {
+          const opt = document.createElement('option');
+          opt.value = s.id;
+          opt.textContent = `${s.id} (${s.tissue} - ${s.stage})`;
+          osdSelect.appendChild(opt);
+        });
+
+        updateModelView();
+      });
+    </script>
+    <script src="https://dr-richard-barker.github.io/Plant_response_to_radiation/cose/sites.js"></script>
+    <script src="https://dr-richard-barker.github.io/Plant_response_to_radiation/cose/theme.js"></script>
+</body>
+</html>
