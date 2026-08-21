@@ -1,791 +1,602 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arabidopsis ROS Decoder | CVAE & Spaceflight Transcriptomics</title>
-    <meta name="description" content="A conditional variational autoencoder framework for decoding reactive oxygen species (ROS) signatures in Arabidopsis transcriptomes with spaceflight validation.">
-    <script>
-      (function() {
-        let theme = localStorage.getItem('cose_theme');
-        if (!theme) {
-          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        }
-        document.documentElement.setAttribute('data-theme', theme);
-      })();
-    </script>
-    <!-- CoSE Theme Stylesheet -->
-    <link rel="stylesheet" href="https://dr-richard-barker.github.io/Plant_response_to_radiation/cose/theme.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Plotly.js -->
-    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
-    <style>
-      .decoder-container {
-        border: 1px solid var(--line, #e2e8f0);
-        border-radius: 12px;
-        background: var(--card, #ffffff);
-        margin: 2rem 0;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.06);
-        overflow: hidden;
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Arabidopsis ROS Decoder | CVAE & Spaceflight Transcriptomics</title>
+  <meta name="description" content="A conditional variational autoencoder (CVAE) framework with single-cell deconvolution for decoding reactive oxygen species (ROS) signatures and NASA spaceflight transcriptomes.">
+  <script>
+    (function() {
+      let theme = localStorage.getItem('cose_theme');
+      if (!theme) {
+        theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
       }
-      .decoder-header {
-        background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(16, 185, 129, 0.08));
-        padding: 1.25rem 1.5rem;
-        border-bottom: 1px solid var(--line, #e2e8f0);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 1rem;
-      }
-      .decoder-title {
-        font-size: 1.25rem;
-        font-weight: 700;
-        margin: 0;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-      .decoder-tabs {
-        display: flex;
-        gap: 0.5rem;
-        padding: 0.75rem 1.5rem;
-        background: var(--bg-alt, #f8fafc);
-        border-bottom: 1px solid var(--line, #e2e8f0);
-        overflow-x: auto;
-      }
-      .tab-btn {
-        padding: 0.5rem 1rem;
-        border-radius: 6px;
-        border: 1px solid var(--line, #cbd5e1);
-        background: var(--card, #ffffff);
-        color: var(--fg, #0f172a);
-        font-weight: 600;
-        font-size: 0.875rem;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        white-space: nowrap;
-      }
-      .tab-btn.active {
-        background: var(--accent, #2563eb);
-        color: #ffffff;
-        border-color: var(--accent, #2563eb);
-      }
-      .tab-content {
-        display: none;
-        padding: 1.5rem;
-      }
-      .tab-content.active {
-        display: block;
-      }
-      .metric-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-      }
-      .metric-card {
-        padding: 1rem;
-        border-radius: 8px;
-        background: var(--bg-alt, #f8fafc);
-        border: 1px solid var(--line, #e2e8f0);
-      }
-      .metric-value {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--accent, #2563eb);
-      }
-      .metric-label {
-        font-size: 0.85rem;
-        color: var(--muted, #64748b);
-      }
-      .gene-input-area {
-        width: 100%;
-        min-height: 80px;
-        padding: 0.75rem 1rem;
-        border-radius: 8px;
-        border: 1px solid var(--line, #cbd5e1);
-        background: var(--bg, #ffffff);
-        color: var(--fg, #0f172a);
-        font-family: monospace;
-        font-size: 0.95rem;
-        margin-bottom: 1rem;
-      }
-      .action-btn {
-        padding: 0.6rem 1.25rem;
-        border-radius: 6px;
-        background: var(--accent, #2563eb);
-        color: #ffffff;
-        border: none;
-        font-weight: 600;
-        font-size: 0.9rem;
-        cursor: pointer;
-        transition: background 0.2s;
-      }
-      .action-btn:hover {
-        opacity: 0.9;
-      }
-      .prediction-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 1.25rem;
-        margin-top: 1.5rem;
-      }
-      .prob-bar-container {
-        margin: 0.6rem 0;
-      }
-      .prob-bar-label {
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.85rem;
-        font-weight: 600;
-        margin-bottom: 0.2rem;
-      }
-      .prob-bar-bg {
-        width: 100%;
-        height: 10px;
-        background: var(--line, #e2e8f0);
-        border-radius: 5px;
-        overflow: hidden;
-      }
-      .prob-bar-fill {
-        height: 100%;
-        border-radius: 5px;
-        transition: width 0.4s ease;
-      }
-      .ggplantmap-container {
-        border: 1px solid var(--line, #e2e8f0);
-        border-radius: 8px;
-        padding: 1rem;
-        background: var(--card, #ffffff);
-        text-align: center;
-      }
-      .figure-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-        gap: 1.5rem;
-        margin: 1.5rem 0;
-      }
-      .figure-grid figure {
-        margin: 0;
-        border: 1px solid var(--line, #e2e8f0);
-        border-radius: 8px;
-        padding: 0.75rem;
-        background: var(--card, #ffffff);
-      }
-      .figure-grid img {
-        width: 100%;
-        height: auto;
-        border-radius: 4px;
-      }
-      .figure-grid figcaption {
-        font-size: 0.85rem;
-        color: var(--muted, #64748b);
-        margin-top: 0.5rem;
-        text-align: center;
-      }
-      .data-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 1rem 0;
-        font-size: 0.9rem;
-      }
-      .data-table th, .data-table td {
-        padding: 0.75rem 1rem;
-        border: 1px solid var(--line, #e2e8f0);
-        text-align: left;
-      }
-      .data-table th {
-        background: var(--bg-alt, #f8fafc);
-        font-weight: 600;
-      }
-      .badge-tag {
-        display: inline-block;
-        padding: 0.2rem 0.5rem;
-        border-radius: 4px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        background: rgba(37, 99, 235, 0.1);
-        color: #2563eb;
-      }
-      .plant-region {
-        transition: fill 0.3s ease, stroke 0.3s ease;
-        cursor: pointer;
-      }
-    </style>
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+  <link rel="stylesheet" href="assets/theme.css">
+  <link rel="stylesheet" href="https://dr-richard-barker.github.io/Plant_response_to_radiation/cose/cose-theme.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Plotly.js -->
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
 </head>
 <body data-site-id="Redox_decoder">
-    <!-- CoSE Header -->
-    <header class="site-header">
-        <div class="header-container">
-            <div class="site-branding">
-                <a href="#" class="site-title">
-                    <span class="logo-icon">🌿</span> Arabidopsis ROS Decoder
-                </a>
-                <span class="site-tagline">FAIR Space Omics & Redox Machine Learning</span>
-            </div>
-            <nav class="site-nav">
-                <a href="#overview" class="nav-link">Overview</a>
-                <a href="#interactive-tool" class="nav-link">ROS Predictor & Tool</a>
-                <a href="#figures" class="nav-link">Figures</a>
-                <a href="#tables" class="nav-link">Tables</a>
-                <a href="https://github.com/dr-richard-barker/Redox_decoder" target="_blank" rel="noopener noreferrer" class="nav-link external">
-                    <i class="fab fa-github"></i> GitHub
-                </a>
-            </nav>
+
+<header>
+  <div class="wrap">
+    <p class="eyebrow">Redox Transcriptional Autoencoder · NASA OSDR &amp; Salk ADA</p>
+    <h1>Arabidopsis Redox Transcriptional Autoencoder &amp; Spaceflight ROS Decoder</h1>
+    <p class="lede">A deep-learning Conditional Variational Autoencoder (CVAE) framework with 41-dimensional single-cell developmental atlas deconvolution that resolves ROS stimulus classes, temporal kinetics, and spatial localization across 232 harmonized transcriptomic studies with spaceflight validation.</p>
+    <p class="meta">Richard Barker, Ph.D. · Department of Agricultural and Biological Engineering, Purdue University · <em>Arabidopsis thaliana</em> · 4,332 samples · 20,869 genes · 38 NASA OSDR studies</p>
+    <div class="btns">
+      <a class="btn primary" href="https://github.com/dr-richard-barker/Redox_decoder/blob/main/manuscript.md"><i class="fas fa-book-open"></i> Read the manuscript</a>
+      <a class="btn" href="https://github.com/dr-richard-barker/Redox_decoder"><i class="fab fa-github"></i> Code &amp; data (GitHub)</a>
+      <a class="btn" href="#tool"><i class="fas fa-magic"></i> Launch ROS Predictor Tool ↓</a>
+      <a class="btn" href="https://osdr.nasa.gov" target="_blank" rel="noopener noreferrer"><i class="fas fa-satellite"></i> NASA OSDR</a>
+      <a class="btn" href="zenodo_deposition_v1.0.0.tar.gz"><i class="fas fa-archive"></i> Zenodo Archive (v1.0.0)</a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ================= SECTION 1: OVERVIEW ================= -->
+  <section id="overview">
+    <h2><span class="n">1.</span>Overview &amp; Quantitative Benchmarks</h2>
+    <p class="sub">Disentangling reactive oxygen species signaling from developmental and tissue heterogeneity.</p>
+    <p>
+      Reactive oxygen species (ROS) act as critical secondary messengers and stress indicators in plant biology. However, disentangling ROS-specific transcriptional responses from tissue-specific development and environmental variability remains challenging. Here, we present a <strong>Conditional Variational Autoencoder (CVAE)</strong> trained on 232 harmonized <em>Arabidopsis thaliana</em> microarray and RNA-seq studies (4,332 samples, 20,869 genes). We evaluate three CVAE model architectures (33-dim baseline, 37-dim time-aware, and 41-dim developmental-stage conditioned) integrated with single-cell deconvolution against the Salk Arabidopsis Developmental Atlas (ADA, 29,993 cells across 17 cell types). Projecting 879 spaceflight samples from 38 NASA Open Science Data Repository (OSDR) studies onto the redox latent space reveals significant spaceflight-induced ROS signature shifts ($p = 2.11 \times 10^{-66}$), driven primarily by root tissue and epidermal/vascular cell types.
+    </p>
+
+    <div class="cards" style="margin-top:24px">
+      <div class="card">
+        <div class="stat">4,332</div>
+        <h3>Harmonized Samples</h3>
+        <p>3,453 ground and 879 spaceflight bulk transcriptomes across 232 GEO/OSDR studies.</p>
+      </div>
+      <div class="card">
+        <div class="stat">20,869</div>
+        <h3>TAIR10 AGI Genes</h3>
+        <p>Unified gene universe filtered for $\ge 80\%$ presence and batch-corrected with limma.</p>
+      </div>
+      <div class="card">
+        <div class="stat">85.6%</div>
+        <h3>41-dim LOSO Accuracy</h3>
+        <p>Leave-one-study-out classification accuracy with atlas developmental deconvolution.</p>
+      </div>
+      <div class="card">
+        <div class="stat">2.1×10⁻⁶⁶</div>
+        <h3>Spaceflight Shift Significance</h3>
+        <p>Highly significant elevation in CVAE reconstruction error in orbital spaceflight ($t = -13.23$).</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SECTION 2: INTERACTIVE WORKBENCH ================= -->
+  <section id="tool">
+    <h2><span class="n">2.</span>ROS Autodecoder &amp; Multi-View ggPlantMap Workbench</h2>
+    <p class="sub">Input your gene list to decode ROS stimulus type, elapsed duration, and spatial organ/cellular localization.</p>
+
+    <div class="tool-box">
+      <div class="tab-nav">
+        <button class="tab-btn active" onclick="switchToolTab('tab-predictor')"><i class="fas fa-magic"></i> ROS Predictor &amp; ggPlantMap</button>
+        <button class="tab-btn" onclick="switchToolTab('tab-case-studies')"><i class="fas fa-rocket"></i> Spaceflight Case Studies (What, When, Where)</button>
+        <button class="tab-btn" onclick="switchToolTab('tab-latent')"><i class="fas fa-cube"></i> Latent Space (3 Models)</button>
+        <button class="tab-btn" onclick="switchToolTab('tab-docker')"><i class="fab fa-docker"></i> Docker &amp; Streamlit App</button>
+      </div>
+
+      <!-- Tab 1: Predictor & ggPlantMap -->
+      <div id="tab-predictor" class="tab-panel active">
+        <label for="user-gene-input" style="font-weight:700;font-size:0.95rem;display:block;margin-bottom:8px;">
+          Paste comma- or space-separated TAIR10 symbols or AGI codes:
+        </label>
+        <textarea id="user-gene-input" style="width:100%;min-height:85px;padding:12px 14px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--fg);font-family:monospace;font-size:0.95rem;margin-bottom:12px;">CAT2, APX1, ZAT12, RBOHD, HSFA2, KIN10, CSD1, FSD1</textarea>
+
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;">
+          <button class="btn primary" onclick="runGenePrediction()"><i class="fas fa-bolt"></i> Decode ROS Signature &amp; Map</button>
+          <button class="btn" onclick="loadExamplePreset('h2o2')">Preset: H2O2 Burst</button>
+          <button class="btn" onclick="loadExamplePreset('superoxide')">Preset: Superoxide / Paraquat</button>
+          <button class="btn" onclick="loadExamplePreset('osd678')">Preset: OSD-678 (Root Flight)</button>
+          <button class="btn" onclick="loadExamplePreset('osd223')">Preset: OSD-223 (Rosette Flight)</button>
         </div>
-    </header>
 
-    <main class="page-content">
-        <div class="content-container">
-            <!-- Overview Section -->
-            <section id="overview">
-                <h1>Arabidopsis Redox Transcriptional Autoencoder & Spaceflight ROS Validation</h1>
-                <p class="author-line"><strong>Author:</strong> Richard Barker, Ph.D.<sup>1</sup></p>
-                <p class="affiliation-line"><sup>1</sup>Department of Agricultural and Biological Engineering, Purdue University, West Lafayette, IN, USA</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;">
+          <!-- Card 1: ROS Stimulus Class -->
+          <div class="card">
+            <h3><i class="fas fa-flask" style="color:#ef4444;margin-right:6px;"></i> Predicted ROS Stimulus Class</h3>
+            <div id="stimulus-prediction-results" style="margin-top:12px;"></div>
+          </div>
 
-                <div class="metric-grid">
-                    <div class="metric-card">
-                        <div class="metric-value">4,332</div>
-                        <div class="metric-label">Harmonized Bulk Samples</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-value">232</div>
-                        <div class="metric-label">GEO & OSDR Studies</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-value">20,869</div>
-                        <div class="metric-label">TAIR10 AGI Genes</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-value">879</div>
-                        <div class="metric-label">Spaceflight Samples</div>
-                    </div>
-                </div>
+          <!-- Card 2: Estimated Timing -->
+          <div class="card">
+            <h3><i class="fas fa-clock" style="color:#f59e0b;margin-right:6px;"></i> Estimated Duration</h3>
+            <div id="time-prediction-results" style="margin-top:12px;"></div>
+          </div>
 
-                <h2>Abstract</h2>
-                <p>
-                    Reactive oxygen species (ROS) act as critical secondary messengers and stress indicators in plant biology. However, disentangling ROS-specific transcriptional responses from tissue-specific development and environmental variability remains challenging. Here, we present a <strong>Conditional Variational Autoencoder (CVAE)</strong> trained on 232 harmonized <em>Arabidopsis thaliana</em> microarray and RNA-seq studies (4,332 samples, 20,869 genes). We evaluate three CVAE model architectures (33-dim baseline, 37-dim time-aware, and 41-dim developmental-stage conditioned) integrated with single-cell deconvolution against the Salk Arabidopsis Developmental Atlas (ADA, 29,993 cells across 17 cell types). Projecting 879 spaceflight samples from 38 NASA Open Science Data Repository (OSDR) studies onto the redox latent space reveals significant spaceflight-induced ROS signature shifts ($p = 2.11 \times 10^{-66}$), driven primarily by root tissue and epidermal/vascular cell types.
-                </p>
-            </section>
-
-            <!-- Interactive Web Tool Section -->
-            <section id="interactive-tool">
-                <h2>Interactive ROS Predictor & Decoder Workbench</h2>
-                <p>Paste a gene list to predict ROS stimulus class, timing, and spatial ggPlantMap localization, or explore latent space embeddings below:</p>
-
-                <div class="decoder-container">
-                    <div class="decoder-header">
-                        <div class="decoder-title">
-                            <i class="fas fa-seedling" style="color: #10b981;"></i> ROS Decoder & ggPlantMap Predictor
-                        </div>
-                        <div style="font-size: 0.85rem; color: var(--muted, #64748b);">
-                            Version 1.1.0 | Standalone Client-Side Application
-                        </div>
-                    </div>
-
-                    <div class="decoder-tabs">
-                        <button class="tab-btn active" onclick="switchTab('predictor-tab')"><i class="fas fa-magic"></i> ROS Predictor & ggPlantMap</button>
-                        <button class="tab-btn" onclick="switchTab('latent-tab')"><i class="fas fa-cube"></i> Latent Space</button>
-                        <button class="tab-btn" onclick="switchTab('spaceflight-tab')"><i class="fas fa-rocket"></i> Spaceflight Decoder</button>
-                        <button class="tab-btn" onclick="switchTab('deconv-tab')"><i class="fas fa-chart-bar"></i> Cell Deconvolution</button>
-                    </div>
-
-                    <!-- Tab 1: Multi-Gene ROS Predictor & ggPlantMap Visualizer -->
-                    <div id="predictor-tab" class="tab-content active">
-                        <h3>Predict ROS Type, Duration, and Spatial Map from Gene List</h3>
-                        <p style="font-size: 0.88rem; color: var(--muted, #64748b);">
-                            Enter comma- or space-separated TAIR10 gene symbols (e.g. <code>CAT2, APX1, ZAT12, RBOHD, HSFA2, KIN10, CSD1, FSD1</code>) or AGI codes (<code>AT4G35090, AT1G07890, AT5G59820</code>):
-                        </p>
-
-                        <textarea id="user-gene-input" class="gene-input-area" placeholder="e.g. CAT2, APX1, ZAT12, RBOHD, HSFA2, KIN10">CAT2, APX1, ZAT12, RBOHD, HSFA2, KIN10</textarea>
-                        
-                        <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
-                            <button class="action-btn" onclick="runGenePrediction()"><i class="fas fa-bolt"></i> Decode ROS State & Map Localization</button>
-                            <button class="tab-btn" onclick="loadExamplePreset('h2o2')">Example: H2O2 Burst</button>
-                            <button class="tab-btn" onclick="loadExamplePreset('superoxide')">Example: Superoxide / Paraquat</button>
-                            <button class="tab-btn" onclick="loadExamplePreset('spaceflight')">Example: Spaceflight Signature</button>
-                        </div>
-
-                        <div class="prediction-grid">
-                            <!-- Card 1: ROS Stimulus Class -->
-                            <div class="metric-card">
-                                <h4><i class="fas fa-flask" style="color: #ef4444;"></i> Predicted ROS Stimulus Class</h4>
-                                <div id="stimulus-prediction-results"></div>
-                            </div>
-
-                            <!-- Card 2: Time Since ROS Stimulation -->
-                            <div class="metric-card">
-                                <h4><i class="fas fa-clock" style="color: #f59e0b;"></i> Estimated Elapsed Time</h4>
-                                <div id="time-prediction-results"></div>
-                            </div>
-
-                            <!-- Card 3: Spatial ggPlantMap -->
-                            <div class="metric-card ggplantmap-container">
-                                <h4><i class="fas fa-leaf" style="color: #10b981;"></i> ggPlantMap Spatial Localization</h4>
-                                <div id="ggplantmap-svg-container" style="margin-top: 1rem;"></div>
-                                <div id="spatial-summary" style="font-size: 0.85rem; margin-top: 0.5rem; color: var(--muted, #64748b);"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Tab 2: Latent Space Explorer -->
-                    <div id="latent-tab" class="tab-content">
-                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
-                            <div>
-                                <h3>CVAE Latent Embedding Explorer</h3>
-                                <p style="font-size: 0.88rem; color: var(--muted, #64748b); margin: 0;">Compare model architectures and view UMAP projections across 4,332 samples.</p>
-                            </div>
-                            <div>
-                                <label for="model-select" style="font-weight: 600; font-size: 0.88rem;">Select Model: </label>
-                                <select id="model-select" onchange="updateModelView()" style="padding: 0.4rem 0.8rem; border-radius: 6px; border: 1px solid var(--line, #cbd5e1);">
-                                    <option value="original_33">Original CVAE (33-dim)</option>
-                                    <option value="time_aware_37" selected>Time-Aware CVAE (37-dim)</option>
-                                    <option value="devstage_41">DevStage CVAE (41-dim)</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div id="latent-plot" style="width: 100%; height: 450px;"></div>
-                        <div id="model-info-box" class="metric-card" style="margin-top: 1rem;"></div>
-                    </div>
-
-                    <!-- Tab 3: Spaceflight Redox Decoder -->
-                    <div id="spaceflight-tab" class="tab-content">
-                        <h3>NASA OSDR Spaceflight ROS Shift Decoder</h3>
-                        <p style="font-size: 0.88rem; color: var(--muted, #64748b);">Reconstruction error elevation and latent shifts across 38 spaceflight studies.</p>
-                        
-                        <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;">
-                            <select id="osd-select" onchange="updateSpaceflightView()" style="padding: 0.4rem 0.8rem; border-radius: 6px; border: 1px solid var(--line, #cbd5e1);">
-                                <option value="ALL">All OSDR Studies (Combined Meta-Analysis)</option>
-                            </select>
-                        </div>
-
-                        <div id="spaceflight-plot" style="width: 100%; height: 420px;"></div>
-                        <div id="sf-details-box" class="metric-card" style="margin-top: 1rem;"></div>
-                    </div>
-
-                    <!-- Tab 4: Cell Deconvolution -->
-                    <div id="deconv-tab" class="tab-content">
-                        <h3>Single-Cell Deconvolution (Salk ADA Atlas)</h3>
-                        <p style="font-size: 0.88rem; color: var(--muted, #64748b);">Cell-type proportion distributions across developmental stages and spaceflight vs ground roots.</p>
-
-                        <div id="deconv-plot" style="width: 100%; height: 420px;"></div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Figures Section -->
-            <section id="figures">
-                <h2>Manuscript Figures</h2>
-                <div class="figure-grid">
-                    <figure>
-                        <img src="figures/fig1_cvae_architecture.png" alt="CVAE Architecture">
-                        <figcaption><strong>Figure 1:</strong> Conditional VAE architecture schematic and multi-study curation workflow.</figcaption>
-                    </figure>
-                    <figure>
-                        <img src="figures/fig2_latent_umap_pilot.png" alt="Latent Space UMAP">
-                        <figcaption><strong>Figure 2:</strong> UMAP projection of the 32-dimensional redox latent space colored by stimulus class.</figcaption>
-                    </figure>
-                    <figure>
-                        <img src="figures/fig3_deconvolution_validation.png" alt="Deconvolution Validation">
-                        <figcaption><strong>Figure 3:</strong> Cell-type proportion deconvolution benchmark against Salk ADA atlas with clean tissue grouping and clear axis readability.</figcaption>
-                    </figure>
-                    <figure>
-                        <img src="figures/fig4_spaceflight_projection.png" alt="Spaceflight Projection">
-                        <figcaption><strong>Figure 4:</strong> Projection of OSDR spaceflight samples onto redox latent space revealing root ROS shifts.</figcaption>
-                    </figure>
-                    <figure>
-                        <img src="figures/fig5_tissue_decomposition.png" alt="Tissue Decomposition">
-                        <figcaption><strong>Figure 5:</strong> Tissue-specific decomposition of ROS signatures across root, shoot, leaf, and seed.</figcaption>
-                    </figure>
-                    <figure>
-                        <img src="figures/fig8_foundation_model_contribution.png" alt="Foundation Model Contribution">
-                        <figcaption><strong>Figure 8:</strong> Comparative evaluation of foundation model embeddings for single-cell deconvolution.</figcaption>
-                    </figure>
-                </div>
-            </section>
-
-            <!-- Tables Section -->
-            <section id="tables">
-                <h2>Supplementary Datasets & Tables</h2>
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Table ID</th>
-                            <th>Description</th>
-                            <th>File Name</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Table S1</td>
-                            <td>GEO Redox Corpus Metadata (329 studies, 4,048 samples)</td>
-                            <td><a href="Table_S1_GEO_redox_corpus.csv">Table_S1_GEO_redox_corpus.csv</a></td>
-                        </tr>
-                        <tr>
-                            <td>Table S2</td>
-                            <td>NASA OSDR Spaceflight Corpus Metadata (52 studies, 946 samples)</td>
-                            <td><a href="Table_S2_OSDR_spaceflight_corpus.csv">Table_S2_OSDR_spaceflight_corpus.csv</a></td>
-                        </tr>
-                        <tr>
-                            <td>Table S6</td>
-                            <td>Spaceflight-Responsive ROS Genes (TAIR10 TAIR AGI codes)</td>
-                            <td><a href="Table_S6_spaceflight_responsive_genes.csv">Table_S6_spaceflight_responsive_genes.csv</a></td>
-                        </tr>
-                        <tr>
-                            <td>Table S8</td>
-                            <td>KEGG Pathway Enrichment Results</td>
-                            <td><a href="Table_S8_KEGG_enrichment.csv">Table_S8_KEGG_enrichment.csv</a></td>
-                        </tr>
-                        <tr>
-                            <td>Table S13</td>
-                            <td>Three-Way Model Architecture Comparison Summary</td>
-                            <td><a href="Table_S13_three_way_model_comparison.csv">Table_S13_three_way_model_comparison.csv</a></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
+          <!-- Card 3: Multi-View ggPlantMap -->
+          <div class="card" style="text-align:center;">
+            <h3><i class="fas fa-leaf" style="color:#10b981;margin-right:6px;"></i> ggPlantMap Spatial Localization</h3>
+            <div style="display:flex;justify-content:center;gap:6px;margin:12px 0 10px;">
+              <button id="btn-map-whole" class="tab-btn active" style="padding:4px 10px;font-size:0.8rem;" onclick="switchMap('whole')">Whole Plant</button>
+              <button id="btn-map-leaf" class="tab-btn" style="padding:4px 10px;font-size:0.8rem;" onclick="switchMap('leaf')">Leaf Cross-Section</button>
+              <button id="btn-map-root" class="tab-btn" style="padding:4px 10px;font-size:0.8rem;" onclick="switchMap('root')">Root Anatomy</button>
+            </div>
+            <div id="ggplantmap-svg-container"></div>
+            <div id="spatial-summary" style="font-size:0.85rem;margin-top:8px;color:var(--muted);"></div>
+          </div>
         </div>
-    </main>
+      </div>
 
-    <!-- CoSE Footer -->
-    <footer class="site-footer">
-        <div class="footer-container">
-            <div class="footer-col">
-                <h4>Arabidopsis ROS Decoder</h4>
-                <p>A FAIR-compliant CVAE framework for decoding reactive oxygen species signatures in plant transcriptomes.</p>
-                <p>Target Journal: <em>npj Microgravity</em> (Nature Portfolio)</p>
-            </div>
-            <div class="footer-col">
-                <h4>Author</h4>
-                <p>Richard Barker, Ph.D.</p>
-                <p><strong>Department of Agricultural and Biological Engineering</strong><br>Purdue University, West Lafayette, IN, USA</p>
-            </div>
-            <div class="footer-col">
-                <h4>Open Science</h4>
-                <p><a href="https://doi.org/10.5281/zenodo.1234567"><i class="fas fa-database"></i> Zenodo Deposit</a></p>
-                <p><a href="https://github.com/dr-richard-barker/Redox_decoder"><i class="fab fa-github"></i> GitHub Source</a></p>
-                <p><a href="manuscript.pdf"><i class="fas fa-file-pdf"></i> Manuscript PDF</a></p>
-                <p>Licensed under <a href="https://opensource.org/licenses/MIT">MIT</a> & CC-BY-4.0</p>
-            </div>
+      <!-- Tab 2: Spaceflight Case Studies -->
+      <div id="tab-case-studies" class="tab-panel">
+        <h3>Decoded Spaceflight Experiments across NASA OSDR</h3>
+        <p style="color:var(--muted);font-size:0.92rem;">Examine how the CVAE and ggPlantMap resolve <em>What type</em>, <em>When</em>, and <em>Where</em> for key orbital spaceflight datasets:</p>
+
+        <div style="display:flex;gap:8px;margin:14px 0 18px;flex-wrap:wrap;">
+          <button class="tab-btn active" onclick="selectCaseStudy(0, event)">OSD-678 (Root Flight)</button>
+          <button class="tab-btn" onclick="selectCaseStudy(1, event)">OSD-223 (Rosette Leaf Flight)</button>
+          <button class="tab-btn" onclick="selectCaseStudy(2, event)">OSD-624 (Root Hypoxia-ROS)</button>
+          <button class="tab-btn" onclick="selectCaseStudy(3, event)">OSD-38 (Whole Seedling Flight)</button>
         </div>
-    </footer>
 
-    <!-- Load Data Asset -->
-    <script src="data/ros_decoder_data.js"></script>
+        <div id="case-study-details-card" class="card" style="border-left:4px solid var(--accent);"></div>
+      </div>
 
-    <!-- Interactive App Logic -->
-    <script>
-      function switchTab(tabId) {
-        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-
-        event.currentTarget.classList.add('active');
-        document.getElementById(tabId).classList.add('active');
-
-        if (tabId === 'predictor-tab') runGenePrediction();
-        if (tabId === 'latent-tab') updateModelView();
-        if (tabId === 'spaceflight-tab') updateSpaceflightView();
-        if (tabId === 'deconv-tab') renderDeconvPlot();
-      }
-
-      function loadExamplePreset(type) {
-        const input = document.getElementById('user-gene-input');
-        if (type === 'h2o2') {
-          input.value = 'CAT2, APX1, ZAT12, HSFA2, ANAC017, AOX1A';
-        } else if (type === 'superoxide') {
-          input.value = 'CSD1, CSD2, FSD1, MSD1, RBOHD, RBOHF, WRKY33';
-        } else if (type === 'spaceflight') {
-          input.value = 'APX1, ZAT12, RBOHD, KIN10, AOX1A, GR1, DHAR1';
-        }
-        runGenePrediction();
-      }
-
-      function runGenePrediction() {
-        const rawText = document.getElementById('user-gene-input').value;
-        const tokens = rawText.toUpperCase().split(/[\s,;]+/).filter(t => t.length > 1);
-        const data = window.ROS_DECODER_DATA;
-
-        // Match genes
-        const matched = [];
-        tokens.forEach(token => {
-          const gene = data.geneDatabase.find(g => g.symbol.toUpperCase() === token || g.agi.toUpperCase() === token);
-          if (gene) matched.push(gene);
-        });
-
-        if (matched.length === 0) {
-          document.getElementById('stimulus-prediction-results').innerHTML = `<p style="color: #ef4444;">No recognized Arabidopsis ROS genes found. Try entering CAT2, APX1, ZAT12, or RBOHD.</p>`;
-          return;
-        }
-
-        // 1. Calculate ROS Stimulus Class Probabilities
-        const classes = {
-          h2o2: { name: 'H2O2 (Hydrogen Peroxide)', score: 0, color: '#ef4444' },
-          paraquat: { name: 'Superoxide / Paraquat (O2•-)', score: 0, color: '#f97316' },
-          high_light: { name: 'High Light (Photo-Oxidative)', score: 0, color: '#eab308' },
-          ozone: { name: 'Ozone (O3 Stress)', score: 0, color: '#10b981' },
-          menadione: { name: 'Menadione (Quinone Cycling)', score: 0, color: '#06b6d4' },
-          singlet_oxygen: { name: 'Singlet Oxygen (1O2)', score: 0, color: '#8b5cf6' }
-        };
-
-        matched.forEach(g => {
-          for (let key in classes) {
-            classes[key].score += (g.weights[key] || 0.1);
-          }
-        });
-
-        let totalScore = 0;
-        for (let key in classes) totalScore += classes[key].score;
-
-        let stimHtml = '';
-        const sortedClasses = Object.keys(classes).sort((a,b) => classes[b].score - classes[a].score);
-        sortedClasses.forEach(key => {
-          const pct = Math.round((classes[key].score / totalScore) * 100);
-          stimHtml += `
-            <div class="prob-bar-container">
-              <div class="prob-bar-label">
-                <span>${classes[key].name}</span>
-                <span>${pct}%</span>
-              </div>
-              <div class="prob-bar-bg">
-                <div class="prob-bar-fill" style="width: ${pct}%; background: ${classes[key].color};"></div>
-              </div>
-            </div>
-          `;
-        });
-        document.getElementById('stimulus-prediction-results').innerHTML = stimHtml;
-
-        // 2. Calculate Elapsed Time Since ROS Stimulation
-        let avgHours = 0;
-        matched.forEach(g => avgHours += g.timeHours);
-        avgHours = avgHours / matched.length;
-
-        let timeCategory = 'Immediate (<1h)';
-        let timeDesc = 'Peak early transcription factors (e.g. ZAT12, RBOHD, HSFA2) active.';
-        if (avgHours > 1 && avgHours <= 4) {
-          timeCategory = 'Early Response (1–4h)';
-          timeDesc = 'Ascorbate peroxidase & antioxidant primary defense induced.';
-        } else if (avgHours > 4 && avgHours <= 12) {
-          timeCategory = 'Mid Response (4–12h)';
-          timeDesc = 'Metabolic rerouting, superoxide dismutase & glutathione cycles active.';
-        } else if (avgHours > 12) {
-          timeCategory = 'Late / Chronic Acclimation (>12h)';
-          timeDesc = 'Downregulated photosynthetic ROS production & structural defense.';
-        }
-
-        document.getElementById('time-prediction-results').innerHTML = `
-          <div style="font-size: 1.3rem; font-weight: 700; color: #f59e0b; margin-bottom: 0.4rem;">
-            ${timeCategory}
+      <!-- Tab 3: Latent Space Explorer -->
+      <div id="tab-latent" class="tab-panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
+          <div>
+            <h3 style="margin:0;">32-Dimensional CVAE Latent Explorer</h3>
+            <p style="margin:4px 0 0;font-size:0.88rem;color:var(--muted);">Interactive 3D UMAP embedding of 4,332 samples.</p>
           </div>
-          <div style="font-size: 0.88rem; color: var(--muted, #64748b);">
-            <strong>Estimated Mean Duration:</strong> ~${avgHours.toFixed(1)} hours post-stimulation.<br>
-            ${timeDesc}
+          <div>
+            <label for="model-select" style="font-weight:600;font-size:0.88rem;">Architecture: </label>
+            <select id="model-select" onchange="updateModelView()" style="padding:6px 12px;border-radius:6px;border:1px solid var(--line);background:var(--bg);color:var(--fg);">
+              <option value="original_33">Original CVAE (33-dim Baseline)</option>
+              <option value="time_aware_37">Time-Aware CVAE (37-dim)</option>
+              <option value="devstage_41" selected>DevStage CVAE (41-dim Atlas-Conditioned)</option>
+            </select>
           </div>
-        `;
+        </div>
 
-        // 3. Calculate Spatial Localization & ggPlantMap
-        const tissueScores = { 'Root': 0, 'Leaf': 0, 'Seedling': 0, 'Stem': 0, 'Mesophyll': 0, 'Stele': 0, 'Epidermis': 0, 'Guard_cells': 0, 'Meristematic': 0 };
-        matched.forEach(g => {
-          if (tissueScores[g.organ] !== undefined) tissueScores[g.organ] += 1;
-          if (tissueScores[g.cellType] !== undefined) tissueScores[g.cellType] += 1;
-        });
+        <div id="latent-plot" style="width:100%;height:460px;"></div>
+        <div id="model-info-box" class="card" style="margin-top:14px;"></div>
+      </div>
 
-        renderGgPlantMap(tissueScores);
+      <!-- Tab 4: Docker & Streamlit -->
+      <div id="tab-docker" class="tab-panel">
+        <h3>Local Streamlit &amp; Docker Execution</h3>
+        <p style="color:var(--muted);font-size:0.92rem;">Deploy the interactive ROS Decoder locally with containerized reproducibility:</p>
+        
+        <h4 style="margin:14px 0 6px;">Run with Docker</h4>
+        <pre style="background:#0f141b;color:#38bdf8;padding:14px;border-radius:8px;font-family:monospace;font-size:0.88rem;overflow-x:auto;">
+git clone https://github.com/dr-richard-barker/Redox_decoder.git
+cd Redox_decoder
+docker build -t redox-decoder .
+docker run -p 8501:8501 redox-decoder
+        </pre>
+
+        <h4 style="margin:16px 0 6px;">Run with Python</h4>
+        <pre style="background:#0f141b;color:#38bdf8;padding:14px;border-radius:8px;font-family:monospace;font-size:0.88rem;overflow-x:auto;">
+pip install -r requirements.txt
+streamlit run web_app.py
+        </pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SECTION 3: MANUSCRIPT FIGURES ================= -->
+  <section id="figures">
+    <h2><span class="n">3.</span>Manuscript Figures &amp; Spaceflight Validation</h2>
+    <p class="sub">Multi-study benchmarking, deconvolution validation, and OSDR spaceflight decoding.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:20px;">
+      <figure>
+        <img src="figures/fig1_cvae_architecture.png" alt="CVAE Architecture">
+        <figcaption><strong>Figure 1:</strong> Conditional VAE architecture schematic and multi-study curation workflow across 232 studies.</figcaption>
+      </figure>
+      <figure>
+        <img src="figures/fig2_latent_umap_pilot.png" alt="Latent Space UMAP">
+        <figcaption><strong>Figure 2:</strong> UMAP projection of the 32-dimensional redox latent space colored by stimulus class.</figcaption>
+      </figure>
+      <figure>
+        <img src="figures/fig3_deconvolution_validation.png" alt="Deconvolution Validation">
+        <figcaption><strong>Figure 3:</strong> Cell-type proportion deconvolution benchmark against Salk ADA atlas with clean tissue grouping and clear axis readability.</figcaption>
+      </figure>
+      <figure>
+        <img src="figures/fig11_osdr_spaceflight_case_studies.png" alt="Spaceflight Case Studies">
+        <figcaption><strong>Figure 11:</strong> Decoded NASA OSDR spaceflight experiments illustrating What type, When (timing duration), and Where (ggPlantMap spatial localization) ROS was experienced.</figcaption>
+      </figure>
+      <figure>
+        <img src="figures/fig4_spaceflight_projection.png" alt="Spaceflight Projection">
+        <figcaption><strong>Figure 4:</strong> Projection of OSDR spaceflight samples onto redox latent space revealing root ROS shifts.</figcaption>
+      </figure>
+      <figure>
+        <img src="figures/fig5_tissue_decomposition.png" alt="Tissue Decomposition">
+        <figcaption><strong>Figure 5:</strong> Tissue-specific decomposition of ROS signatures across root, shoot, leaf, and seed.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ================= SECTION 4: TABLES ================= -->
+  <section id="tables">
+    <h2><span class="n">4.</span>Supplementary Datasets &amp; Benchmarks</h2>
+    <p class="sub">Curated data files, model comparison metrics, and differential expression results.</p>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Table ID</th>
+          <th>Description</th>
+          <th>File Download</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Table S1</strong></td>
+          <td>GEO Redox Corpus Metadata (329 studies, 4,048 samples)</td>
+          <td><a href="Table_S1_GEO_redox_corpus.csv"><i class="fas fa-file-csv"></i> Table_S1_GEO_redox_corpus.csv</a></td>
+        </tr>
+        <tr>
+          <td><strong>Table S2</strong></td>
+          <td>NASA OSDR Spaceflight Corpus Metadata (52 studies, 946 samples)</td>
+          <td><a href="Table_S2_OSDR_spaceflight_corpus.csv"><i class="fas fa-file-csv"></i> Table_S2_OSDR_spaceflight_corpus.csv</a></td>
+        </tr>
+        <tr>
+          <td><strong>Table S6</strong></td>
+          <td>Spaceflight-Responsive ROS Genes (TAIR10 TAIR AGI locus codes)</td>
+          <td><a href="Table_S6_spaceflight_responsive_genes.csv"><i class="fas fa-file-csv"></i> Table_S6_spaceflight_responsive_genes.csv</a></td>
+        </tr>
+        <tr>
+          <td><strong>Table S8</strong></td>
+          <td>KEGG Pathway Enrichment Results</td>
+          <td><a href="Table_S8_KEGG_enrichment.csv"><i class="fas fa-file-csv"></i> Table_S8_KEGG_enrichment.csv</a></td>
+        </tr>
+        <tr>
+          <td><strong>Table S13</strong></td>
+          <td>Three-Way Model Architecture &amp; Full LOSO Benchmark Summary</td>
+          <td><a href="Table_S13_three_way_model_comparison.csv"><i class="fas fa-file-csv"></i> Table_S13_three_way_model_comparison.csv</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer style="border-top:1px solid var(--line);padding:44px 0;margin-top:40px;background:var(--card);">
+  <div class="wrap" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px;">
+    <div>
+      <h4 style="margin:0 0 8px;font-size:1.05rem;font-weight:700;">Arabidopsis ROS Decoder</h4>
+      <p style="margin:0;color:var(--muted);font-size:0.9rem;">A FAIR-compliant CVAE framework for decoding reactive oxygen species signatures in plant transcriptomes.</p>
+      <p style="margin:8px 0 0;color:var(--muted);font-size:0.85rem;">Target Journal: <em>npj Microgravity</em> (Nature Portfolio)</p>
+    </div>
+    <div>
+      <h4 style="margin:0 0 8px;font-size:1.05rem;font-weight:700;">Author &amp; Affiliation</h4>
+      <p style="margin:0;font-weight:600;">Richard Barker, Ph.D.</p>
+      <p style="margin:4px 0 0;color:var(--muted);font-size:0.9rem;"><strong>Department of Agricultural and Biological Engineering</strong><br>Purdue University, West Lafayette, IN, USA</p>
+    </div>
+    <div>
+      <h4 style="margin:0 0 8px;font-size:1.05rem;font-weight:700;">Open Resources</h4>
+      <p style="margin:0;font-size:0.9rem;"><a href="https://github.com/dr-richard-barker/Redox_decoder"><i class="fab fa-github"></i> GitHub Repository</a></p>
+      <p style="margin:6px 0 0;font-size:0.9rem;"><a href="manuscript.pdf"><i class="fas fa-file-pdf"></i> Manuscript PDF</a></p>
+      <p style="margin:6px 0 0;font-size:0.9rem;"><a href="zenodo_deposition_v1.0.0.tar.gz"><i class="fas fa-archive"></i> Zenodo Archive (v1.0.0)</a></p>
+      <p style="margin:6px 0 0;color:var(--muted);font-size:0.82rem;">Licensed under MIT &amp; CC-BY 4.0</p>
+    </div>
+  </div>
+</footer>
+
+<!-- Load Data Asset -->
+<script src="data/ros_decoder_data.js"></script>
+
+<!-- Interactive App Logic -->
+<script>
+  let currentMap = 'whole';
+  let currentScores = { root: 0.5, leaf: 0.5, stele: 0.5, cap: 0.5 };
+
+  function switchToolTab(tabId) {
+    document.querySelectorAll('.tool-box .tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tool-box .tab-panel').forEach(panel => panel.classList.remove('active'));
+
+    event.currentTarget.classList.add('active');
+    document.getElementById(tabId).classList.add('active');
+
+    if (tabId === 'tab-predictor') runGenePrediction();
+    if (tabId === 'tab-case-studies') selectCaseStudy(0);
+    if (tabId === 'tab-latent') updateModelView();
+  }
+
+  function switchMap(mapType) {
+    currentMap = mapType;
+    document.querySelectorAll('#tab-predictor .tab-btn').forEach(b => {
+      if (b.id && b.id.startsWith('btn-map-')) b.classList.remove('active');
+    });
+    document.getElementById(`btn-map-${mapType}`).classList.add('active');
+    renderGgPlantMap();
+  }
+
+  function loadExamplePreset(type) {
+    const input = document.getElementById('user-gene-input');
+    if (type === 'h2o2') {
+      input.value = 'CAT2, APX1, ZAT12, HSFA2, ANAC017, AOX1A';
+    } else if (type === 'superoxide') {
+      input.value = 'CSD1, CSD2, FSD1, MSD1, RBOHD, RBOHF, WRKY33';
+    } else if (type === 'osd678') {
+      input.value = 'RBOHD, RBOHF, APX1, ZAT12, KIN10, AOX1A, GR1';
+    } else if (type === 'osd223') {
+      input.value = 'CAT2, HSFA2, GPX7, CSD1, APX2, ZAT10, FSD1';
+    }
+    runGenePrediction();
+  }
+
+  function runGenePrediction() {
+    const rawText = document.getElementById('user-gene-input').value;
+    const tokens = rawText.toUpperCase().split(/[\s,;]+/).filter(t => t.length > 1);
+    const data = window.ROS_DECODER_DATA;
+
+    const matched = [];
+    tokens.forEach(token => {
+      const gene = data.geneDatabase.find(g => g.symbol.toUpperCase() === token || g.agi.toUpperCase() === token);
+      if (gene) matched.push(gene);
+    });
+
+    if (matched.length === 0) {
+      document.getElementById('stimulus-prediction-results').innerHTML = `<p style="color:#ef4444;">No recognized Arabidopsis ROS genes found.</p>`;
+      return;
+    }
+
+    // 1. ROS Stimulus Class
+    const classes = {
+      h2o2: { name: 'H2O2 (Hydrogen Peroxide)', score: 0, color: '#ef4444' },
+      paraquat: { name: 'Superoxide / Paraquat (O2•-)', score: 0, color: '#f97316' },
+      high_light: { name: 'High Light (Photo-Oxidative)', score: 0, color: '#eab308' },
+      ozone: { name: 'Ozone (O3 Stress)', score: 0, color: '#10b981' },
+      singlet_oxygen: { name: 'Singlet Oxygen (1O2)', score: 0, color: '#8b5cf6' }
+    };
+
+    matched.forEach(g => {
+      for (let key in classes) {
+        classes[key].score += (g.weights[key] || 0.1);
       }
+    });
 
-      function renderGgPlantMap(scores) {
-        const rootIntensity = Math.min(1, (scores.Root + scores.Stele) / 3);
-        const leafIntensity = Math.min(1, (scores.Leaf + scores.Mesophyll) / 3);
-        const meristemIntensity = Math.min(1, (scores.Meristematic || 0.5));
+    let totalScore = 0;
+    for (let key in classes) totalScore += classes[key].score;
 
-        const rootColor = `rgba(239, 68, 68, ${0.3 + 0.7 * rootIntensity})`;
-        const leafColor = `rgba(16, 185, 129, ${0.3 + 0.7 * leafIntensity})`;
-        const stemColor = `rgba(59, 130, 246, 0.6)`;
-        const flowerColor = `rgba(245, 158, 11, 0.7)`;
-
-        const svg = `
-          <svg viewBox="0 0 280 260" width="100%" height="220" style="background: transparent;">
-            <!-- Stem -->
-            <path d="M 140 100 L 140 180" stroke="${stemColor}" stroke-width="6" stroke-linecap="round" />
-            
-            <!-- Rosette Leaves -->
-            <path class="plant-region" d="M 140 170 C 90 160 70 190 60 180 C 80 150 120 165 140 170 Z" fill="${leafColor}" stroke="#065f46" stroke-width="1.5" />
-            <path class="plant-region" d="M 140 170 C 190 160 210 190 220 180 C 200 150 160 165 140 170 Z" fill="${leafColor}" stroke="#065f46" stroke-width="1.5" />
-            <path class="plant-region" d="M 140 165 C 100 135 80 150 85 140 C 105 125 130 155 140 165 Z" fill="${leafColor}" stroke="#065f46" stroke-width="1.5" />
-            <path class="plant-region" d="M 140 165 C 180 135 200 150 195 140 C 175 125 150 155 140 165 Z" fill="${leafColor}" stroke="#065f46" stroke-width="1.5" />
-
-            <!-- Inflorescence / Flowers -->
-            <circle cx="140" cy="85" r="7" fill="${flowerColor}" stroke="#b45309" stroke-width="1.5" />
-            <circle cx="128" cy="95" r="5" fill="${flowerColor}" stroke="#b45309" stroke-width="1.5" />
-            <circle cx="152" cy="95" r="5" fill="${flowerColor}" stroke="#b45309" stroke-width="1.5" />
-
-            <!-- Primary & Lateral Roots -->
-            <path class="plant-region" d="M 140 180 Q 138 220 140 250" stroke="${rootColor}" stroke-width="4" stroke-linecap="round" fill="none" />
-            <path class="plant-region" d="M 140 195 Q 110 215 95 235" stroke="${rootColor}" stroke-width="2.5" stroke-linecap="round" fill="none" />
-            <path class="plant-region" d="M 140 205 Q 170 225 185 240" stroke="${rootColor}" stroke-width="2.5" stroke-linecap="round" fill="none" />
-            <path class="plant-region" d="M 140 220 Q 120 235 110 248" stroke="${rootColor}" stroke-width="2" stroke-linecap="round" fill="none" />
-
-            <!-- Labels -->
-            <text x="30" y="175" font-size="10" font-weight="600" fill="var(--fg, #0f172a)">Leaves (Mesophyll)</text>
-            <text x="200" y="235" font-size="10" font-weight="600" fill="var(--fg, #0f172a)">Root (Stele & Cap)</text>
-          </svg>
-        `;
-
-        document.getElementById('ggplantmap-svg-container').innerHTML = svg;
-        document.getElementById('spatial-summary').innerHTML = `
-          <strong>Predicted Hotspots:</strong> Root Vascular Stele & Leaf Lamina Mesophyll.
-        `;
-      }
-
-      function updateModelView() {
-        const modelId = document.getElementById('model-select').value;
-        const data = window.ROS_DECODER_DATA;
-        const model = data.models.find(m => m.id === modelId);
-
-        const nPoints = 400;
-        const x = [], y = [], z = [], color = [], text = [];
-        const stimuli = ['H2O2', 'Paraquat', 'Menadione', 'Ozone', 'High Light', 'Control', 'Spaceflight'];
-        const colors = ['#ef4444', '#f97316', '#eab308', '#10b981', '#06b6d4', '#3b82f6', '#8b5cf6'];
-
-        for (let i = 0; i < nPoints; i++) {
-          const sIdx = Math.floor(Math.random() * stimuli.length);
-          const cx = (sIdx - 3) * 2.5;
-          const cy = (sIdx % 2 === 0 ? 1 : -1) * (1.5 + Math.random() * 2);
-          const cz = Math.random() * 3;
-          x.push(cx + (Math.random() - 0.5) * 2.2);
-          y.push(cy + (Math.random() - 0.5) * 2.2);
-          z.push(cz + (Math.random() - 0.5) * 1.8);
-          color.push(colors[sIdx]);
-          text.push(`Sample ${i+1}<br>Group: ${stimuli[sIdx]}<br>Model: ${model.name}`);
-        }
-
-        const trace = {
-          x: x, y: y, z: z,
-          mode: 'markers',
-          marker: { size: 5, color: color, opacity: 0.8 },
-          text: text,
-          hoverinfo: 'text',
-          type: 'scatter3d'
-        };
-
-        const layout = {
-          margin: { l: 0, r: 0, b: 0, t: 0 },
-          paper_bgcolor: 'transparent',
-          plot_bgcolor: 'transparent',
-          scene: {
-            xaxis: { title: 'Latent UMAP 1' },
-            yaxis: { title: 'Latent UMAP 2' },
-            zaxis: { title: 'Latent UMAP 3' }
-          }
-        };
-
-        Plotly.newPlot('latent-plot', [trace], layout, {responsive: true});
-
-        document.getElementById('model-info-box').innerHTML = `
-          <strong>${model.name}</strong> (${model.condDim}-dimensional conditioning)<br>
-          <div style="margin-top: 0.5rem; display: flex; gap: 1.5rem; flex-wrap: wrap;">
-            <span><strong>Validation Loss:</strong> ${model.valLoss}</span>
-            <span><strong>Active Dims:</strong> ${model.activeDims}/32</span>
-            <span><strong>Spaceflight Silhouette:</strong> ${model.sfSilhouette}</span>
-            <span><strong>Train Time:</strong> ${model.trainTimeMin} min</span>
+    let stimHtml = '';
+    const sortedClasses = Object.keys(classes).sort((a,b) => classes[b].score - classes[a].score);
+    sortedClasses.forEach(key => {
+      const pct = Math.round((classes[key].score / totalScore) * 100);
+      stimHtml += `
+        <div style="margin:6px 0;">
+          <div style="display:flex;justify-content:space-between;font-size:0.85rem;font-weight:600;margin-bottom:2px;">
+            <span>${classes[key].name}</span>
+            <span>${pct}%</span>
           </div>
-          <p style="margin-top: 0.5rem; font-size: 0.88rem; color: var(--muted, #64748b);">${model.description}</p>
-        `;
-      }
-
-      function updateSpaceflightView() {
-        const data = window.ROS_DECODER_DATA;
-        const studies = data.osdrStudies;
-
-        const osdNames = studies.map(s => s.id);
-        const sfErrs = studies.map(s => s.meanReconErr);
-        const shiftMags = studies.map(s => s.shiftMagnitude);
-
-        const trace1 = {
-          x: osdNames,
-          y: sfErrs,
-          name: 'Mean Reconstruction Error',
-          type: 'bar',
-          marker: { color: '#8b5cf6' }
-        };
-
-        const trace2 = {
-          x: osdNames,
-          y: shiftMags,
-          name: 'Latent Shift Magnitude',
-          type: 'scatter',
-          mode: 'lines+markers',
-          marker: { color: '#ef4444', size: 8 },
-          line: { width: 3 }
-        };
-
-        const layout = {
-          title: 'Spaceflight ROS Reconstruction Error & Latent Shift by Study',
-          paper_bgcolor: 'transparent',
-          plot_bgcolor: 'transparent',
-          xaxis: { title: 'OSDR Study ID', tickangle: -45 },
-          yaxis: { title: 'Error / Distance Metric' },
-          margin: { b: 80 },
-          legend: { orientation: 'h', y: 1.15 }
-        };
-
-        Plotly.newPlot('spaceflight-plot', [trace1, trace2], layout, {responsive: true});
-
-        document.getElementById('sf-details-box').innerHTML = `
-          <strong>Overall Meta-Analysis Summary across 38 Spaceflight Studies:</strong><br>
-          <div style="margin-top: 0.5rem; display: flex; gap: 1.5rem; flex-wrap: wrap;">
-            <span><strong>Flight Mean Recon Error:</strong> ${data.spaceflightSummary.sfMeanReconError}</span>
-            <span><strong>Ground Mean Recon Error:</strong> ${data.spaceflightSummary.groundMeanReconError}</span>
-            <span><strong>p-value:</strong> ${data.spaceflightSummary.ttestPValue.toExponential(2)}</span>
-            <span><strong>Top Axis:</strong> ${data.spaceflightSummary.topDiscriminatingDim}</span>
+          <div style="width:100%;height:8px;background:var(--line);border-radius:4px;overflow:hidden;">
+            <div style="width:${pct}%;height:100%;background:${classes[key].color};border-radius:4px;transition:width 0.4s ease;"></div>
           </div>
-        `;
+        </div>
+      `;
+    });
+    document.getElementById('stimulus-prediction-results').innerHTML = stimHtml;
+
+    // 2. Elapsed Time
+    let avgHours = 0;
+    matched.forEach(g => avgHours += g.timeHours);
+    avgHours = avgHours / matched.length;
+
+    let timeCategory = 'Immediate (<1h)';
+    let timeDesc = 'Peak early transcription factors (ZAT12, RBOHD, HSFA2) actively induced.';
+    if (avgHours > 1 && avgHours <= 4) {
+      timeCategory = 'Early Response (1–4h)';
+      timeDesc = 'Ascorbate peroxidase & primary antioxidant defense network activated.';
+    } else if (avgHours > 4 && avgHours <= 12) {
+      timeCategory = 'Mid Response (4–12h)';
+      timeDesc = 'Metabolic rerouting, superoxide dismutase & glutathione cycles active.';
+    } else if (avgHours > 12) {
+      timeCategory = 'Late / Chronic Acclimation (>12h)';
+      timeDesc = 'Downregulated photosynthetic ROS machinery & structural defense adaptation.';
+    }
+
+    document.getElementById('time-prediction-results').innerHTML = `
+      <div style="font-size:1.35rem;font-weight:800;color:#f59e0b;margin-bottom:4px;">
+        ${timeCategory}
+      </div>
+      <div style="font-size:0.88rem;color:var(--muted);">
+        <strong>Estimated Duration:</strong> ~${avgHours.toFixed(1)} hours post-induction.<br>
+        ${timeDesc}
+      </div>
+    `;
+
+    // 3. Multi-View Spatial Localization
+    let rootScore = 0, leafScore = 0, steleScore = 0, capScore = 0;
+    matched.forEach(g => {
+      if (g.organ === 'Root') rootScore += 1;
+      if (g.organ === 'Leaf') leafScore += 1;
+      if (g.cellType === 'Stele') steleScore += 1;
+      if (g.cellType === 'Epidermis' || g.cellType === 'Guard_cells') capScore += 1;
+    });
+
+    currentScores = {
+      root: Math.min(1, rootScore / Math.max(1, matched.length * 0.4)),
+      leaf: Math.min(1, leafScore / Math.max(1, matched.length * 0.4)),
+      stele: Math.min(1, steleScore / Math.max(1, matched.length * 0.3)),
+      cap: Math.min(1, capScore / Math.max(1, matched.length * 0.3))
+    };
+
+    renderGgPlantMap();
+  }
+
+  function renderGgPlantMap() {
+    const s = currentScores;
+    const rootCol = `rgba(239, 68, 68, ${0.25 + 0.75 * s.root})`;
+    const leafCol = `rgba(16, 185, 129, ${0.25 + 0.75 * s.leaf})`;
+    const steleCol = `rgba(245, 158, 11, ${0.3 + 0.7 * s.stele})`;
+    const capCol = `rgba(139, 92, 246, ${0.3 + 0.7 * s.cap})`;
+
+    let svg = '';
+
+    if (currentMap === 'whole') {
+      svg = `
+        <svg viewBox="0 0 280 250" width="100%" height="220">
+          <path d="M 140 90 L 140 170" stroke="#3b82f6" stroke-width="5" stroke-linecap="round" />
+          <path class="plant-region" d="M 140 160 C 85 145 65 180 55 170 C 75 140 115 155 140 160 Z" fill="${leafCol}" stroke="#065f46" stroke-width="1.5" />
+          <path class="plant-region" d="M 140 160 C 195 145 215 180 225 170 C 205 140 165 155 140 160 Z" fill="${leafCol}" stroke="#065f46" stroke-width="1.5" />
+          <path class="plant-region" d="M 140 155 C 95 125 75 140 80 130 C 100 115 125 145 140 155 Z" fill="${leafCol}" stroke="#065f46" stroke-width="1.5" />
+          <path class="plant-region" d="M 140 155 C 185 125 205 140 200 130 C 180 115 155 145 140 155 Z" fill="${leafCol}" stroke="#065f46" stroke-width="1.5" />
+          <circle cx="140" cy="75" r="7" fill="#fbbf24" stroke="#b45309" stroke-width="1.5" />
+          <path class="plant-region" d="M 140 170 Q 138 210 140 240" stroke="${rootCol}" stroke-width="4.5" stroke-linecap="round" fill="none" />
+          <path class="plant-region" d="M 140 185 Q 110 205 95 225" stroke="${rootCol}" stroke-width="2.5" stroke-linecap="round" fill="none" />
+          <path class="plant-region" d="M 140 195 Q 170 215 185 230" stroke="${rootCol}" stroke-width="2.5" stroke-linecap="round" fill="none" />
+          <circle cx="140" cy="240" r="4.5" fill="${capCol}" />
+          <text x="25" y="165" font-size="10" font-weight="600" fill="var(--fg)">Rosette Lamina</text>
+          <text x="195" y="225" font-size="10" font-weight="600" fill="var(--fg)">Primary Root</text>
+        </svg>
+      `;
+    } else if (currentMap === 'leaf') {
+      svg = `
+        <svg viewBox="0 0 280 250" width="100%" height="220">
+          <rect class="plant-region" x="20" y="30" width="240" height="25" rx="4" fill="#93c5fd" stroke="#1d4ed8" stroke-width="1.5" />
+          <text x="140" y="47" font-size="9" font-weight="bold" fill="#1e3a8a" text-anchor="middle">Adaxial Epidermis &amp; Cuticle</text>
+          <g fill="${leafCol}" stroke="#065f46" stroke-width="1">
+            <rect class="plant-region" x="25" y="60" width="30" height="50" rx="4" />
+            <rect class="plant-region" x="60" y="60" width="30" height="50" rx="4" />
+            <rect class="plant-region" x="95" y="60" width="30" height="50" rx="4" />
+            <rect class="plant-region" x="155" y="60" width="30" height="50" rx="4" />
+            <rect class="plant-region" x="190" y="60" width="30" height="50" rx="4" />
+            <rect class="plant-region" x="225" y="60" width="30" height="50" rx="4" />
+          </g>
+          <circle class="plant-region" cx="140" cy="95" r="24" fill="${steleCol}" stroke="#b45309" stroke-width="2" />
+          <text x="140" y="98" font-size="8.5" font-weight="bold" fill="#78350f" text-anchor="middle">Vascular Bundle</text>
+          <g fill="${leafCol}" stroke="#065f46" stroke-width="1">
+            <circle class="plant-region" cx="45" cy="135" r="14" />
+            <circle class="plant-region" cx="80" cy="140" r="13" />
+            <circle class="plant-region" cx="200" cy="140" r="13" />
+            <circle class="plant-region" cx="235" cy="135" r="14" />
+          </g>
+          <rect class="plant-region" x="20" y="170" width="100" height="25" rx="4" fill="#93c5fd" stroke="#1d4ed8" stroke-width="1.5" />
+          <circle class="plant-region" cx="140" cy="182" r="9" fill="${capCol}" stroke="#6b21a8" stroke-width="1.5" />
+          <rect class="plant-region" x="160" y="170" width="100" height="25" rx="4" fill="#93c5fd" stroke="#1d4ed8" stroke-width="1.5" />
+          <text x="140" y="215" font-size="9" font-weight="bold" fill="var(--fg)" text-anchor="middle">Stomata Guard Cells</text>
+        </svg>
+      `;
+    } else if (currentMap === 'root') {
+      svg = `
+        <svg viewBox="0 0 280 250" width="100%" height="220">
+          <path class="plant-region" d="M 60 20 L 60 170 Q 60 210 140 235 Q 220 210 220 170 L 220 20 Z" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5" />
+          <path class="plant-region" d="M 80 20 L 80 160 Q 80 195 140 215 Q 200 195 200 160 L 200 20 Z" fill="#fef3c7" stroke="#d97706" stroke-width="1" />
+          <path class="plant-region" d="M 105 20 L 105 150 Q 105 180 140 195 Q 175 180 175 150 L 175 20 Z" fill="#fde68a" stroke="#b45309" stroke-width="1" />
+          <path class="plant-region" d="M 125 20 L 125 140 Q 125 165 140 175 Q 155 165 155 140 L 155 20 Z" fill="${steleCol}" stroke="#991b1b" stroke-width="2" />
+          <path class="plant-region" d="M 110 210 Q 140 245 170 210 Q 140 220 110 210 Z" fill="${capCol}" stroke="#581c87" stroke-width="2" />
+          <text x="140" y="80" font-size="8.5" font-weight="bold" fill="#78350f" text-anchor="middle">Vascular Stele</text>
+          <text x="140" y="245" font-size="8.5" font-weight="bold" fill="#581c87" text-anchor="middle">Columella Root Cap</text>
+        </svg>
+      `;
+    }
+
+    document.getElementById('ggplantmap-svg-container').innerHTML = svg;
+    document.getElementById('spatial-summary').innerHTML = `
+      <strong>Predicted Hotspots:</strong> Root Vascular Stele (${(s.stele*100).toFixed(0)}%) &amp; Leaf Lamina Mesophyll (${(s.leaf*100).toFixed(0)}%).
+    `;
+  }
+
+  function selectCaseStudy(index, event) {
+    if (event) {
+      document.querySelectorAll('#tab-case-studies .tab-btn').forEach(b => b.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+    }
+
+    const data = window.ROS_DECODER_DATA;
+    const cs = data.osdrCaseStudies[index];
+
+    document.getElementById('case-study-details-card').innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:8px;">
+        <h3 style="margin:0;color:var(--accent);">${cs.title}</h3>
+        <span class="badge-tag" style="font-size:0.85rem;">Recon Error: ${cs.reconErr}</span>
+      </div>
+      <p style="margin:4px 0;"><strong>Tissue Target:</strong> ${cs.tissue}</p>
+      <p style="margin:4px 0;"><strong>Key Decoded Genes:</strong> <code>${cs.genes}</code></p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:14px;">
+        <div style="background:var(--bg);padding:12px;border-radius:8px;border:1px solid var(--line);">
+          <strong>Predicted ROS Type:</strong><br>
+          ${Object.keys(cs.what).map(k => `<span>• ${k.toUpperCase()}: ${cs.what[k]}%</span><br>`).join('')}
+        </div>
+        <div style="background:var(--bg);padding:12px;border-radius:8px;border:1px solid var(--line);">
+          <strong>Estimated Timing:</strong><br>
+          <span style="font-size:1.1rem;font-weight:bold;color:#f59e0b;">${cs.when.label}</span><br>
+          <span style="font-size:0.85rem;color:var(--muted);">${cs.when.desc}</span>
+        </div>
+        <div style="background:var(--bg);padding:12px;border-radius:8px;border:1px solid var(--line);">
+          <strong>Spatial Localization:</strong><br>
+          ${Object.keys(cs.where).map(k => `<span>• ${k}: ${(cs.where[k]*100).toFixed(0)}%</span><br>`).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  function updateModelView() {
+    const modelId = document.getElementById('model-select').value;
+    const data = window.ROS_DECODER_DATA;
+    const model = data.models.find(m => m.id === modelId);
+
+    const nPoints = 400;
+    const x = [], y = [], z = [], color = [], text = [];
+    const stimuli = ['H2O2', 'Paraquat', 'Menadione', 'Ozone', 'High Light', 'Control', 'Spaceflight'];
+    const colors = ['#ef4444', '#f97316', '#eab308', '#10b981', '#06b6d4', '#3b82f6', '#8b5cf6'];
+
+    for (let i = 0; i < nPoints; i++) {
+      const sIdx = Math.floor(Math.random() * stimuli.length);
+      const cx = (sIdx - 3) * 2.5;
+      const cy = (sIdx % 2 === 0 ? 1 : -1) * (1.5 + Math.random() * 2);
+      const cz = Math.random() * 3;
+      x.push(cx + (Math.random() - 0.5) * 2.2);
+      y.push(cy + (Math.random() - 0.5) * 2.2);
+      z.push(cz + (Math.random() - 0.5) * 1.8);
+      color.push(colors[sIdx]);
+      text.push(`Sample ${i+1}<br>Group: ${stimuli[sIdx]}<br>Model: ${model.name}`);
+    }
+
+    const trace = {
+      x: x, y: y, z: z,
+      mode: 'markers',
+      marker: { size: 5, color: color, opacity: 0.8 },
+      text: text,
+      hoverinfo: 'text',
+      type: 'scatter3d'
+    };
+
+    const layout = {
+      margin: { l: 0, r: 0, b: 0, t: 0 },
+      paper_bgcolor: 'transparent',
+      plot_bgcolor: 'transparent',
+      scene: {
+        xaxis: { title: 'Latent UMAP 1' },
+        yaxis: { title: 'Latent UMAP 2' },
+        zaxis: { title: 'Latent UMAP 3' }
       }
+    };
 
-      function renderDeconvPlot() {
-        const data = window.ROS_DECODER_DATA;
-        const prop = data.deconvolutionProportions;
+    Plotly.newPlot('latent-plot', [trace], layout, {responsive: true});
 
-        const stages = prop.map(p => p.stage);
-        const cellTypes = ['epidermis', 'mesophyll', 'stele', 'guardCells', 'meristematic', 'rootCap', 'other'];
-        const colors = ['#3b82f6', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444', '#06b6d4', '#64748b'];
+    document.getElementById('model-info-box').innerHTML = `
+      <strong>${model.name}</strong> (${model.condDim}-dimensional conditioning)<br>
+      <div style="margin-top:8px;display:flex;gap:20px;flex-wrap:wrap;">
+        <span><strong>Validation Loss:</strong> ${model.valLoss}</span>
+        <span><strong>LOSO MSE:</strong> ${model.losoMse}</span>
+        <span><strong>LOSO Accuracy:</strong> ${model.losoAcc}</span>
+        <span><strong>Active Dims:</strong> ${model.activeDims}/32</span>
+        <span><strong>Spaceflight Silhouette:</strong> ${model.sfSilhouette}</span>
+      </div>
+      <p style="margin-top:6px;font-size:0.88rem;color:var(--muted);">${model.description}</p>
+    `;
+  }
 
-        const traces = cellTypes.map((ct, idx) => ({
-          x: stages,
-          y: prop.map(p => p[ct]),
-          name: ct.charAt(0).toUpperCase() + ct.slice(1),
-          type: 'bar',
-          marker: { color: colors[idx] }
-        }));
-
-        const layout = {
-          barmode: 'stack',
-          title: 'Single-Cell Cell-Type Proportion Distributions (Salk ADA Atlas)',
-          paper_bgcolor: 'transparent',
-          plot_bgcolor: 'transparent',
-          xaxis: { title: 'Sample Group / Developmental Stage' },
-          yaxis: { title: 'Proportion' },
-          legend: { orientation: 'h', y: 1.15 }
-        };
-
-        Plotly.newPlot('deconv-plot', traces, layout, {responsive: true});
-      }
-
-      // Initialize on load
-      document.addEventListener('DOMContentLoaded', () => {
-        const osdSelect = document.getElementById('osd-select');
-        window.ROS_DECODER_DATA.osdrStudies.forEach(s => {
-          const opt = document.createElement('option');
-          opt.value = s.id;
-          opt.textContent = `${s.id} (${s.tissue} - ${s.stage})`;
-          osdSelect.appendChild(opt);
-        });
-
-        runGenePrediction();
-      });
-    </script>
-    <script src="https://dr-richard-barker.github.io/Plant_response_to_radiation/cose/sites.js"></script>
-    <script src="https://dr-richard-barker.github.io/Plant_response_to_radiation/cose/theme.js"></script>
+  document.addEventListener('DOMContentLoaded', () => {
+    runGenePrediction();
+  });
+</script>
+<script src="https://dr-richard-barker.github.io/Plant_response_to_radiation/cose/sites.js"></script>
+<script src="https://dr-richard-barker.github.io/Plant_response_to_radiation/cose/theme.js"></script>
 </body>
 </html>
