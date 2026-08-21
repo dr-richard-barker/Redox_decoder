@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Arabidopsis ROS Decoder | CVAE & Spaceflight Transcriptomics</title>
-  <meta name="description" content="A conditional variational autoencoder (CVAE) framework with single-cell deconvolution for decoding reactive oxygen species (ROS) signatures and NASA spaceflight transcriptomes.">
-  <script>
-    (function() {
-      let theme = localStorage.getItem('cose_theme');
-      if (!theme) {
-        theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      }
-      document.documentElement.setAttribute('data-theme', theme);
-    })();
-  </script>
-  <link rel="stylesheet" href="assets/theme.css">
-  <link rel="stylesheet" href="https://dr-richard-barker.github.io/Plant_response_to_radiation/cose/cose-theme.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Plotly.js -->
-  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arabidopsis ROS Decoder | CVAE & Spaceflight Transcriptomics</title>
+<meta name="description" content="A conditional variational autoencoder (CVAE) framework with single-cell deconvolution for decoding reactive oxygen species (ROS) signatures and NASA spaceflight transcriptomes.">
+<script>
+  (function() {
+    let theme = localStorage.getItem('cose_theme');
+    if (!theme) {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    document.documentElement.setAttribute('data-theme', theme);
+  })();
+</script>
+<link rel="stylesheet" href="assets/theme.css">
+<link rel="stylesheet" href="https://dr-richard-barker.github.io/Plant_response_to_radiation/cose/cose-theme.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!-- Plotly.js -->
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
 </head>
 <body data-site-id="Redox_decoder">
 
@@ -26,7 +26,7 @@
   <div class="wrap">
     <p class="eyebrow">Redox Transcriptional Autoencoder · NASA OSDR &amp; Salk ADA</p>
     <h1>Arabidopsis Redox Transcriptional Autoencoder &amp; Spaceflight ROS Decoder</h1>
-    <p class="lede">A deep-learning Conditional Variational Autoencoder (CVAE) framework with 41-dimensional single-cell developmental atlas deconvolution that resolves ROS stimulus classes, temporal kinetics, and spatial localization across 232 harmonized transcriptomic studies with spaceflight validation.</p>
+    <p class="lede">A cross-study transcriptomic pipeline and Conditional Variational Autoencoder (CVAE) that resolves ROS stimulus classes, temporal kinetics, and spatial tissue localization across 232 harmonized studies with NASA spaceflight validation.</p>
     <p class="meta">Richard Barker, Ph.D. · Department of Agricultural and Biological Engineering, Purdue University · <em>Arabidopsis thaliana</em> · 4,332 samples · 20,869 genes · 38 NASA OSDR studies</p>
     <div class="btns">
       <a class="btn primary" href="https://github.com/dr-richard-barker/Redox_decoder/blob/main/manuscript.md"><i class="fas fa-book-open"></i> Read the manuscript</a>
@@ -74,8 +74,8 @@
 
   <!-- ================= SECTION 2: INTERACTIVE WORKBENCH ================= -->
   <section id="tool">
-    <h2><span class="n">2.</span>ROS Autodecoder &amp; Multi-View ggPlantMap Workbench</h2>
-    <p class="sub">Input your gene list to decode ROS stimulus type, elapsed duration, and spatial organ/cellular localization.</p>
+    <h2><span class="n">2.</span>ROS Autodecoder &amp; ggPlantMap Spatial Workbench</h2>
+    <p class="sub">Input your gene list to decode ROS stimulus type, duration, and authentic ggPlantMap anatomical localization.</p>
 
     <div class="tool-box">
       <div class="tab-nav">
@@ -88,7 +88,7 @@
       <!-- Tab 1: Predictor & ggPlantMap -->
       <div id="tab-predictor" class="tab-panel active">
         <label for="user-gene-input" style="font-weight:700;font-size:0.95rem;display:block;margin-bottom:8px;">
-          Paste comma- or space-separated TAIR10 symbols or AGI codes:
+          Paste comma- or space-separated TAIR10 symbols or AGI locus codes:
         </label>
         <textarea id="user-gene-input" style="width:100%;min-height:85px;padding:12px 14px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--fg);font-family:monospace;font-size:0.95rem;margin-bottom:12px;">CAT2, APX1, ZAT12, RBOHD, HSFA2, KIN10, CSD1, FSD1</textarea>
 
@@ -113,15 +113,15 @@
             <div id="time-prediction-results" style="margin-top:12px;"></div>
           </div>
 
-          <!-- Card 3: Multi-View ggPlantMap -->
+          <!-- Card 3: Authentic ggPlantMap Spatial Map -->
           <div class="card" style="text-align:center;">
             <h3><i class="fas fa-leaf" style="color:#10b981;margin-right:6px;"></i> ggPlantMap Spatial Localization</h3>
             <div style="display:flex;justify-content:center;gap:6px;margin:12px 0 10px;">
-              <button id="btn-map-whole" class="tab-btn active" style="padding:4px 10px;font-size:0.8rem;" onclick="switchMap('whole')">Whole Plant</button>
-              <button id="btn-map-leaf" class="tab-btn" style="padding:4px 10px;font-size:0.8rem;" onclick="switchMap('leaf')">Leaf Cross-Section</button>
-              <button id="btn-map-root" class="tab-btn" style="padding:4px 10px;font-size:0.8rem;" onclick="switchMap('root')">Root Anatomy</button>
+              <button id="btn-map-rosette" class="tab-btn active" style="padding:4px 10px;font-size:0.8rem;" onclick="switchMap('rosette')">Rosette Map</button>
+              <button id="btn-map-root" class="tab-btn" style="padding:4px 10px;font-size:0.8rem;" onclick="switchMap('root')">Root Map</button>
+              <button id="btn-map-inflorescence" class="tab-btn" style="padding:4px 10px;font-size:0.8rem;" onclick="switchMap('inflorescence')">Inflorescence</button>
             </div>
-            <div id="ggplantmap-svg-container"></div>
+            <div id="ggplantmap-svg-container" style="min-height:230px;"></div>
             <div id="spatial-summary" style="font-size:0.85rem;margin-top:8px;color:var(--muted);"></div>
           </div>
         </div>
@@ -208,12 +208,20 @@ streamlit run web_app.py
         <figcaption><strong>Figure 11:</strong> Decoded NASA OSDR spaceflight experiments illustrating What type, When (timing duration), and Where (ggPlantMap spatial localization) ROS was experienced.</figcaption>
       </figure>
       <figure>
+        <img src="figures/fig9_spatial_ros_patterns.png" alt="Spatial ROS Patterns">
+        <figcaption><strong>Figure 9:</strong> ggPlantMap spatial ROS expression patterns across Arabidopsis rosette, root, and inflorescence anatomy.</figcaption>
+      </figure>
+      <figure>
         <img src="figures/fig4_spaceflight_projection.png" alt="Spaceflight Projection">
         <figcaption><strong>Figure 4:</strong> Projection of OSDR spaceflight samples onto redox latent space revealing root ROS shifts.</figcaption>
       </figure>
       <figure>
         <img src="figures/fig5_tissue_decomposition.png" alt="Tissue Decomposition">
         <figcaption><strong>Figure 5:</strong> Tissue-specific decomposition of ROS signatures across root, shoot, leaf, and seed.</figcaption>
+      </figure>
+      <figure>
+        <img src="figures/fig8_foundation_model_contribution.png" alt="Foundation Model Contribution">
+        <figcaption><strong>Figure 8:</strong> Foundation model cell-type embedding contribution benchmark.</figcaption>
       </figure>
     </div>
   </section>
@@ -291,7 +299,7 @@ streamlit run web_app.py
 
 <!-- Interactive App Logic -->
 <script>
-  let currentMap = 'whole';
+  let currentMap = 'rosette';
   let currentScores = { root: 0.5, leaf: 0.5, stele: 0.5, cap: 0.5 };
 
   function switchToolTab(tabId) {
@@ -430,74 +438,58 @@ streamlit run web_app.py
 
   function renderGgPlantMap() {
     const s = currentScores;
-    const rootCol = `rgba(239, 68, 68, ${0.25 + 0.75 * s.root})`;
-    const leafCol = `rgba(16, 185, 129, ${0.25 + 0.75 * s.leaf})`;
-    const steleCol = `rgba(245, 158, 11, ${0.3 + 0.7 * s.stele})`;
-    const capCol = `rgba(139, 92, 246, ${0.3 + 0.7 * s.cap})`;
+    // Map colors based on ggPlantMap Viridis / Magma scale
+    const cHigh = `rgba(165, 0, 38, ${0.4 + 0.6 * s.leaf})`;
+    const cMid = `rgba(244, 216, 162, 0.85)`;
+    const cRootHigh = `rgba(202, 105, 83, ${0.4 + 0.6 * s.root})`;
+    const cStele = `rgba(126, 112, 165, ${0.4 + 0.6 * s.stele})`;
 
     let svg = '';
 
-    if (currentMap === 'whole') {
+    if (currentMap === 'rosette') {
       svg = `
-        <svg viewBox="0 0 280 250" width="100%" height="220">
-          <path d="M 140 90 L 140 170" stroke="#3b82f6" stroke-width="5" stroke-linecap="round" />
-          <path class="plant-region" d="M 140 160 C 85 145 65 180 55 170 C 75 140 115 155 140 160 Z" fill="${leafCol}" stroke="#065f46" stroke-width="1.5" />
-          <path class="plant-region" d="M 140 160 C 195 145 215 180 225 170 C 205 140 165 155 140 160 Z" fill="${leafCol}" stroke="#065f46" stroke-width="1.5" />
-          <path class="plant-region" d="M 140 155 C 95 125 75 140 80 130 C 100 115 125 145 140 155 Z" fill="${leafCol}" stroke="#065f46" stroke-width="1.5" />
-          <path class="plant-region" d="M 140 155 C 185 125 205 140 200 130 C 180 115 155 145 140 155 Z" fill="${leafCol}" stroke="#065f46" stroke-width="1.5" />
-          <circle cx="140" cy="75" r="7" fill="#fbbf24" stroke="#b45309" stroke-width="1.5" />
-          <path class="plant-region" d="M 140 170 Q 138 210 140 240" stroke="${rootCol}" stroke-width="4.5" stroke-linecap="round" fill="none" />
-          <path class="plant-region" d="M 140 185 Q 110 205 95 225" stroke="${rootCol}" stroke-width="2.5" stroke-linecap="round" fill="none" />
-          <path class="plant-region" d="M 140 195 Q 170 215 185 230" stroke="${rootCol}" stroke-width="2.5" stroke-linecap="round" fill="none" />
-          <circle cx="140" cy="240" r="4.5" fill="${capCol}" />
-          <text x="25" y="165" font-size="10" font-weight="600" fill="var(--fg)">Rosette Lamina</text>
-          <text x="195" y="225" font-size="10" font-weight="600" fill="var(--fg)">Primary Root</text>
-        </svg>
-      `;
-    } else if (currentMap === 'leaf') {
-      svg = `
-        <svg viewBox="0 0 280 250" width="100%" height="220">
-          <rect class="plant-region" x="20" y="30" width="240" height="25" rx="4" fill="#93c5fd" stroke="#1d4ed8" stroke-width="1.5" />
-          <text x="140" y="47" font-size="9" font-weight="bold" fill="#1e3a8a" text-anchor="middle">Adaxial Epidermis &amp; Cuticle</text>
-          <g fill="${leafCol}" stroke="#065f46" stroke-width="1">
-            <rect class="plant-region" x="25" y="60" width="30" height="50" rx="4" />
-            <rect class="plant-region" x="60" y="60" width="30" height="50" rx="4" />
-            <rect class="plant-region" x="95" y="60" width="30" height="50" rx="4" />
-            <rect class="plant-region" x="155" y="60" width="30" height="50" rx="4" />
-            <rect class="plant-region" x="190" y="60" width="30" height="50" rx="4" />
-            <rect class="plant-region" x="225" y="60" width="30" height="50" rx="4" />
-          </g>
-          <circle class="plant-region" cx="140" cy="95" r="24" fill="${steleCol}" stroke="#b45309" stroke-width="2" />
-          <text x="140" y="98" font-size="8.5" font-weight="bold" fill="#78350f" text-anchor="middle">Vascular Bundle</text>
-          <g fill="${leafCol}" stroke="#065f46" stroke-width="1">
-            <circle class="plant-region" cx="45" cy="135" r="14" />
-            <circle class="plant-region" cx="80" cy="140" r="13" />
-            <circle class="plant-region" cx="200" cy="140" r="13" />
-            <circle class="plant-region" cx="235" cy="135" r="14" />
-          </g>
-          <rect class="plant-region" x="20" y="170" width="100" height="25" rx="4" fill="#93c5fd" stroke="#1d4ed8" stroke-width="1.5" />
-          <circle class="plant-region" cx="140" cy="182" r="9" fill="${capCol}" stroke="#6b21a8" stroke-width="1.5" />
-          <rect class="plant-region" x="160" y="170" width="100" height="25" rx="4" fill="#93c5fd" stroke="#1d4ed8" stroke-width="1.5" />
-          <text x="140" y="215" font-size="9" font-weight="bold" fill="var(--fg)" text-anchor="middle">Stomata Guard Cells</text>
+        <svg viewBox="60 20 260 410" width="100%" height="225" style="background:transparent;">
+          <polygon points="184.82,209.32 195.39,211.10 209.88,214.93 225.89,217.09 239.82,207.07 254.27,202.35 277.09,208.24 298.16,225.95 305.91,248.57 305.30,267.03 296.91,279.93 279.83,282.83 260.71,277.33 243.16,263.70 232.55,246.85 220.19,225.05 196.93,216.23" style="stroke-width:1;stroke:#333;fill:${cMid};" />
+          <polygon points="180.76,193.73 190.71,182.74 200.55,162.97 212.87,143.45 224.42,131.09 241.65,121.81 251.80,131.17 249.09,151.94 241.00,166.42 225.56,181.97 211.45,190.19 196.65,194.57 181.53,197.30" style="stroke-width:1;stroke:#333;fill:${cHigh};" />
+          <polygon points="173.80,163.34 174.76,147.96 168.98,128.26 159.75,110.14 157.04,88.04 160.45,70.01 169.27,51.87 178.57,45.26 190.91,53.76 199.14,71.85 201.35,93.43 200.79,110.86 193.57,125.84 184.74,133.92 178.42,155.48" style="stroke-width:1;stroke:#333;fill:${cMid};" />
+          <polygon points="159.45,173.98 152.74,147.13 148.32,103.10 137.20,74.29 125.63,56.31 111.64,41.82 98.60,39.76 90.91,54.97 92.38,85.50 100.45,107.69 113.02,130.48 124.15,141.78 135.01,150.24 146.18,155.94 156.97,180.25" style="stroke-width:1;stroke:#333;fill:${cHigh};" />
+          <polygon points="155.34,223.32 144.12,235.07 131.64,246.75 119.47,239.39 108.12,239.61 95.11,249.31 83.18,260.46 75.45,285.18 76.78,307.13 83.43,322.17 97.48,327.45 107.05,324.07 122.08,312.76 128.72,299.34 133.68,278.17 137.94,252.05" style="stroke-width:1;stroke:#333;fill:${cStele};" />
+          <polygon points="169.84,240.15 169.14,260.56 173.32,284.60 178.72,311.24 177.01,329.05 175.85,353.89 171.86,379.15 164.09,399.26 155.30,405.37 146.26,402.55 141.44,393.72 138.83,378.41 138.05,361.15 139.41,333.18 142.34,314.02 148.73,293.10 156.71,278.62 163.45,254.49" style="stroke-width:1;stroke:#333;fill:${cRootHigh};" />
+          <polygon points="165.64,198.36 160.80,185.35 162.79,169.68 167.63,160.11 173.13,163.72 178.52,173.33 179.64,186.45 178.88,195.34 172.18,192.49" style="stroke-width:1.5;stroke:#990000;fill:${cHigh};" />
         </svg>
       `;
     } else if (currentMap === 'root') {
       svg = `
-        <svg viewBox="0 0 280 250" width="100%" height="220">
-          <path class="plant-region" d="M 60 20 L 60 170 Q 60 210 140 235 Q 220 210 220 170 L 220 20 Z" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5" />
-          <path class="plant-region" d="M 80 20 L 80 160 Q 80 195 140 215 Q 200 195 200 160 L 200 20 Z" fill="#fef3c7" stroke="#d97706" stroke-width="1" />
-          <path class="plant-region" d="M 105 20 L 105 150 Q 105 180 140 195 Q 175 180 175 150 L 175 20 Z" fill="#fde68a" stroke="#b45309" stroke-width="1" />
-          <path class="plant-region" d="M 125 20 L 125 140 Q 125 165 140 175 Q 155 165 155 140 L 155 20 Z" fill="${steleCol}" stroke="#991b1b" stroke-width="2" />
-          <path class="plant-region" d="M 110 210 Q 140 245 170 210 Q 140 220 110 210 Z" fill="${capCol}" stroke="#581c87" stroke-width="2" />
-          <text x="140" y="80" font-size="8.5" font-weight="bold" fill="#78350f" text-anchor="middle">Vascular Stele</text>
-          <text x="140" y="245" font-size="8.5" font-weight="bold" fill="#581c87" text-anchor="middle">Columella Root Cap</text>
+        <svg viewBox="360 20 260 410" width="100%" height="225" style="background:transparent;">
+          <polygon points="511.97,104.52 525.54,103.26 526.72,118.76 518.89,126.09 512.97,124.38" style="stroke-width:1;stroke:#333;fill:${cMid};" />
+          <polygon points="527.85,109.38 542.81,117.50 540.17,130.32 532.16,140.63 527.23,119.38" style="stroke-width:1;stroke:#333;fill:${cMid};" />
+          <polygon points="488.36,122.38 466.75,108.74 473.66,91.69 487.52,95.74" style="stroke-width:1;stroke:#333;fill:${cMid};" />
+          <polygon points="546.15,172.90 567.15,167.62 567.64,188.19 551.60,191.53" style="stroke-width:1;stroke:#333;fill:${cMid};" />
+          <polygon points="551.97,261.62 562.92,239.76 572.87,251.91 564.91,275.09" style="stroke-width:1;stroke:#333;fill:${cMid};" />
+          <polygon points="515.30,343.70 523.44,311.05 535.65,329.83 521.98,346.87" style="stroke-width:1;stroke:#333;fill:${cMid};" />
+          <polygon points="501.51,343.49 502.93,318.97 514.62,343.63 505.67,347.95" style="stroke-width:1;stroke:#333;fill:${cMid};" />
+          <polygon points="481.42,324.41 484.25,351.29 473.34,358.39 465.41,339.31 469.65,319.39" style="stroke-width:1;stroke:#333;fill:${cMid};" />
+          <polygon points="435.84,293.74 443.36,274.66 437.57,257.99 424.04,265.32 421.49,284.93" style="stroke-width:1;stroke:#333;fill:${cMid};" />
+          <polygon points="465.74,265.22 457.74,279.93 444.89,271.52 436.47,236.12 455.53,216.42 460.81,256.42" style="stroke-width:1.5;stroke:#990000;fill:${cRootHigh};" />
+          <polygon points="495.72,286.94 495.58,310.00 481.52,323.86 468.84,315.37 460.43,287.63 478.83,280.91" style="stroke-width:1.5;stroke:#990000;fill:${cRootHigh};" />
+          <polygon points="524.16,270.18 530.55,282.67 514.38,317.76 496.01,287.08 518.39,280.09" style="stroke-width:1.5;stroke:#990000;fill:${cRootHigh};" />
+        </svg>
+      `;
+    } else if (currentMap === 'inflorescence') {
+      svg = `
+        <svg viewBox="660 20 260 410" width="100%" height="225" style="background:transparent;">
+          <polygon points="780,100 810,85 840,110 830,140 790,135" style="stroke-width:1;stroke:#333;fill:${cMid};" />
+          <polygon points="760,150 785,130 820,155 800,185 765,175" style="stroke-width:1;stroke:#333;fill:${cHigh};" />
+          <polygon points="770,210 805,190 840,215 825,250 780,240" style="stroke-width:1;stroke:#333;fill:${cMid};" />
+          <polygon points="750,270 780,250 815,275 795,310 755,295" style="stroke-width:1;stroke:#333;fill:${cHigh};" />
+          <polygon points="760,330 790,315 830,340 810,380 770,365" style="stroke-width:1;stroke:#333;fill:${cStele};" />
         </svg>
       `;
     }
 
     document.getElementById('ggplantmap-svg-container').innerHTML = svg;
     document.getElementById('spatial-summary').innerHTML = `
-      <strong>Predicted Hotspots:</strong> Root Vascular Stele (${(s.stele*100).toFixed(0)}%) &amp; Leaf Lamina Mesophyll (${(s.leaf*100).toFixed(0)}%).
+      <strong>ggPlantMap Localization:</strong> Active expression in Arabidopsis Rosette Lamina (${(s.leaf*100).toFixed(0)}%) &amp; Primary Root Stele (${(s.root*100).toFixed(0)}%).
     `;
   }
 
