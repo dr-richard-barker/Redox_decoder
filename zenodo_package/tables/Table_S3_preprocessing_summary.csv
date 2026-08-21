@@ -1,0 +1,15 @@
+Metric,Value
+Gene universe (TAIR10/Araport11),"38,690"
+Working genes (>=80% presence),"20,869"
+Total studies (after QC),232
+Total samples (after QC),"4,332"
+Studies excluded,20
+Batch correction method,limma::removeBatchEffect
+Number of batches,232
+Value range (corrected),"[-18.18, 30.86]"
+Mean (corrected),5.279
+SD (corrected),2.370
+ADA reference cells,"29,993"
+ADA reference genes,"18,530"
+ADA reference cell types,17
+ADA reference stages,4

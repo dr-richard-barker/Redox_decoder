@@ -1,0 +1,49 @@
+{
+  "GEO Redox Corpus": {
+    "total_studies": 329,
+    "studies_with_expression_data": 213,
+    "total_samples": 4048
+  },
+  "OSDR Spaceflight Corpus": {
+    "total_studies": 52,
+    "studies_with_expression_data": 39,
+    "total_samples": 946,
+    "osd_studies": 41,
+    "gse_federated": 11,
+    "excluded": 3
+  },
+  "Salk ADA Atlas": {
+    "stages_downloaded": 4,
+    "total_cells": 61671,
+    "total_genes": 21543,
+    "stages": {
+      "seed_0d": {
+        "cells": 13149,
+        "cell_types": 6
+      },
+      "seedling_3d": {
+        "cells": 14609,
+        "cell_types": 8
+      },
+      "rosette_21d": {
+        "cells": 22025,
+        "cell_types": 5
+      },
+      "flower": {
+        "cells": 11888,
+        "cell_types": 9
+      }
+    }
+  },
+  "Foundation Models": {
+    "scPlantFormer": {
+      "status": "code_available_no_weights",
+      "github": "zhanglab-wbgcas/scPlantFormer"
+    },
+    "scPlantLLM": {
+      "status": "code_available_no_weights",
+      "github": "compbioNJU/scPlantLLM"
+    },
+    "decision": "ADA-only deconvolution (MuSiC) as primary approach"
+  }
+}

@@ -156,30 +156,9 @@
       .ggplantmap-container {
         border: 1px solid var(--line, #e2e8f0);
         border-radius: 8px;
-        padding: 1.25rem;
+        padding: 1rem;
         background: var(--card, #ffffff);
         text-align: center;
-      }
-      .map-switcher {
-        display: flex;
-        justify-content: center;
-        gap: 0.5rem;
-        margin-bottom: 1rem;
-      }
-      .map-switch-btn {
-        padding: 0.35rem 0.75rem;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        border: 1px solid var(--line, #cbd5e1);
-        background: var(--bg, #f8fafc);
-        color: var(--fg, #0f172a);
-        cursor: pointer;
-      }
-      .map-switch-btn.active {
-        background: var(--accent, #2563eb);
-        color: #ffffff;
-        border-color: var(--accent, #2563eb);
       }
       .figure-grid {
         display: grid;
@@ -230,21 +209,8 @@
         color: #2563eb;
       }
       .plant-region {
-        transition: fill 0.4s ease, stroke 0.4s ease;
-      }
-      .plant-region:hover {
-        opacity: 0.85;
-        stroke-width: 2.5px;
-      }
-      .docker-box {
-        background: #0f172a;
-        color: #38bdf8;
-        padding: 1rem;
-        border-radius: 8px;
-        font-family: monospace;
-        font-size: 0.88rem;
-        overflow-x: auto;
-        margin-top: 1rem;
+        transition: fill 0.3s ease, stroke 0.3s ease;
+        cursor: pointer;
       }
     </style>
 </head>
@@ -306,7 +272,7 @@
             <!-- Interactive Web Tool Section -->
             <section id="interactive-tool">
                 <h2>Interactive ROS Predictor & Decoder Workbench</h2>
-                <p>Paste a gene list to predict ROS stimulus class, timing, and multi-view ggPlantMap spatial localization, or explore spaceflight case studies below:</p>
+                <p>Paste a gene list to predict ROS stimulus class, timing, and spatial ggPlantMap localization, or explore latent space embeddings below:</p>
 
                 <div class="decoder-container">
                     <div class="decoder-header">
@@ -314,15 +280,15 @@
                             <i class="fas fa-seedling" style="color: #10b981;"></i> ROS Decoder & ggPlantMap Predictor
                         </div>
                         <div style="font-size: 0.85rem; color: var(--muted, #64748b);">
-                            Version 1.2.0 | Standalone Client-Side Application
+                            Version 1.1.0 | Standalone Client-Side Application
                         </div>
                     </div>
 
                     <div class="decoder-tabs">
                         <button class="tab-btn active" onclick="switchTab('predictor-tab')"><i class="fas fa-magic"></i> ROS Predictor & ggPlantMap</button>
-                        <button class="tab-btn" onclick="switchTab('spaceflight-tab')"><i class="fas fa-rocket"></i> Spaceflight Case Studies</button>
-                        <button class="tab-btn" onclick="switchTab('latent-tab')"><i class="fas fa-cube"></i> Latent Space (3 Models)</button>
-                        <button class="tab-btn" onclick="switchTab('docker-tab')"><i class="fab fa-docker"></i> Docker Execution</button>
+                        <button class="tab-btn" onclick="switchTab('latent-tab')"><i class="fas fa-cube"></i> Latent Space</button>
+                        <button class="tab-btn" onclick="switchTab('spaceflight-tab')"><i class="fas fa-rocket"></i> Spaceflight Decoder</button>
+                        <button class="tab-btn" onclick="switchTab('deconv-tab')"><i class="fas fa-chart-bar"></i> Cell Deconvolution</button>
                     </div>
 
                     <!-- Tab 1: Multi-Gene ROS Predictor & ggPlantMap Visualizer -->
@@ -338,8 +304,7 @@
                             <button class="action-btn" onclick="runGenePrediction()"><i class="fas fa-bolt"></i> Decode ROS State & Map Localization</button>
                             <button class="tab-btn" onclick="loadExamplePreset('h2o2')">Example: H2O2 Burst</button>
                             <button class="tab-btn" onclick="loadExamplePreset('superoxide')">Example: Superoxide / Paraquat</button>
-                            <button class="tab-btn" onclick="loadExamplePreset('osd678')">Preset: OSD-678 (Root Flight)</button>
-                            <button class="tab-btn" onclick="loadExamplePreset('osd223')">Preset: OSD-223 (Rosette Flight)</button>
+                            <button class="tab-btn" onclick="loadExamplePreset('spaceflight')">Example: Spaceflight Signature</button>
                         </div>
 
                         <div class="prediction-grid">
@@ -355,38 +320,16 @@
                                 <div id="time-prediction-results"></div>
                             </div>
 
-                            <!-- Card 3: Multi-View ggPlantMap -->
+                            <!-- Card 3: Spatial ggPlantMap -->
                             <div class="metric-card ggplantmap-container">
                                 <h4><i class="fas fa-leaf" style="color: #10b981;"></i> ggPlantMap Spatial Localization</h4>
-                                <div class="map-switcher">
-                                    <button id="btn-map-whole" class="map-switch-btn active" onclick="switchMap('whole')">Whole Plant</button>
-                                    <button id="btn-map-leaf" class="map-switch-btn" onclick="switchMap('leaf')">Leaf Cross-Section</button>
-                                    <button id="btn-map-root" class="map-switch-btn" onclick="switchMap('root')">Root Anatomy</button>
-                                </div>
-                                <div id="ggplantmap-svg-container"></div>
-                                <div id="spatial-summary" style="font-size: 0.85rem; margin-top: 0.6rem; color: var(--muted, #64748b);"></div>
+                                <div id="ggplantmap-svg-container" style="margin-top: 1rem;"></div>
+                                <div id="spatial-summary" style="font-size: 0.85rem; margin-top: 0.5rem; color: var(--muted, #64748b);"></div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Tab 2: Spaceflight Case Studies -->
-                    <div id="spaceflight-tab" class="tab-content">
-                        <h3>NASA OSDR Spaceflight Experiments: Decoded ROS Profiles</h3>
-                        <p style="font-size: 0.88rem; color: var(--muted, #64748b);">
-                            Explore how the CVAE and ggPlantMap decode <em>What type</em>, <em>When</em>, and <em>Where</em> ROS was experienced in spaceflight:
-                        </p>
-
-                        <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
-                            <button class="tab-btn active" onclick="selectCaseStudy(0, event)">OSD-678 (Root Flight)</button>
-                            <button class="tab-btn" onclick="selectCaseStudy(1, event)">OSD-223 (Rosette Leaf)</button>
-                            <button class="tab-btn" onclick="selectCaseStudy(2, event)">OSD-624 (Root Hypoxia-ROS)</button>
-                            <button class="tab-btn" onclick="selectCaseStudy(3, event)">OSD-38 (Whole Seedling)</button>
-                        </div>
-
-                        <div id="case-study-details-card" class="metric-card" style="border-left: 4px solid var(--accent, #2563eb);"></div>
-                    </div>
-
-                    <!-- Tab 3: Latent Space Explorer -->
+                    <!-- Tab 2: Latent Space Explorer -->
                     <div id="latent-tab" class="tab-content">
                         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
                             <div>
@@ -396,9 +339,9 @@
                             <div>
                                 <label for="model-select" style="font-weight: 600; font-size: 0.88rem;">Select Model: </label>
                                 <select id="model-select" onchange="updateModelView()" style="padding: 0.4rem 0.8rem; border-radius: 6px; border: 1px solid var(--line, #cbd5e1);">
-                                    <option value="original_33">Original CVAE (33-dim Baseline)</option>
-                                    <option value="time_aware_37">Time-Aware CVAE (37-dim)</option>
-                                    <option value="devstage_41" selected>DevStage CVAE (41-dim Atlas-Conditioned)</option>
+                                    <option value="original_33">Original CVAE (33-dim)</option>
+                                    <option value="time_aware_37" selected>Time-Aware CVAE (37-dim)</option>
+                                    <option value="devstage_41">DevStage CVAE (41-dim)</option>
                                 </select>
                             </div>
                         </div>
@@ -407,29 +350,27 @@
                         <div id="model-info-box" class="metric-card" style="margin-top: 1rem;"></div>
                     </div>
 
-                    <!-- Tab 4: Docker Execution -->
-                    <div id="docker-tab" class="tab-content">
-                        <h3>Local Docker & Streamlit Deployment</h3>
-                        <p style="font-size: 0.88rem; color: var(--muted, #64748b);">
-                            The ROS Decoder Streamlit web tool can be deployed locally using Docker or Python:
-                        </p>
+                    <!-- Tab 3: Spaceflight Redox Decoder -->
+                    <div id="spaceflight-tab" class="tab-content">
+                        <h3>NASA OSDR Spaceflight ROS Shift Decoder</h3>
+                        <p style="font-size: 0.88rem; color: var(--muted, #64748b);">Reconstruction error elevation and latent shifts across 38 spaceflight studies.</p>
                         
-                        <h4>Option A: Run with Docker</h4>
-                        <div class="docker-box">
-# 1. Clone the repository<br>
-git clone https://github.com/dr-richard-barker/Redox_decoder.git<br>
-cd Redox_decoder<br><br>
-# 2. Build the Docker container<br>
-docker build -t redox-decoder .<br><br>
-# 3. Run the container on port 8501<br>
-docker run -p 8501:8501 redox-decoder
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                            <select id="osd-select" onchange="updateSpaceflightView()" style="padding: 0.4rem 0.8rem; border-radius: 6px; border: 1px solid var(--line, #cbd5e1);">
+                                <option value="ALL">All OSDR Studies (Combined Meta-Analysis)</option>
+                            </select>
                         </div>
 
-                        <h4 style="margin-top: 1.5rem;">Option B: Run with Python & Streamlit</h4>
-                        <div class="docker-box">
-pip install -r requirements.txt<br>
-streamlit run web_app.py
-                        </div>
+                        <div id="spaceflight-plot" style="width: 100%; height: 420px;"></div>
+                        <div id="sf-details-box" class="metric-card" style="margin-top: 1rem;"></div>
+                    </div>
+
+                    <!-- Tab 4: Cell Deconvolution -->
+                    <div id="deconv-tab" class="tab-content">
+                        <h3>Single-Cell Deconvolution (Salk ADA Atlas)</h3>
+                        <p style="font-size: 0.88rem; color: var(--muted, #64748b);">Cell-type proportion distributions across developmental stages and spaceflight vs ground roots.</p>
+
+                        <div id="deconv-plot" style="width: 100%; height: 420px;"></div>
                     </div>
                 </div>
             </section>
@@ -451,16 +392,16 @@ streamlit run web_app.py
                         <figcaption><strong>Figure 3:</strong> Cell-type proportion deconvolution benchmark against Salk ADA atlas with clean tissue grouping and clear axis readability.</figcaption>
                     </figure>
                     <figure>
-                        <img src="figures/fig11_osdr_spaceflight_case_studies.png" alt="Spaceflight Case Studies">
-                        <figcaption><strong>Figure 11:</strong> OSDR spaceflight case studies decoded by CVAE & ggPlantMap across What, When, and Where.</figcaption>
-                    </figure>
-                    <figure>
                         <img src="figures/fig4_spaceflight_projection.png" alt="Spaceflight Projection">
                         <figcaption><strong>Figure 4:</strong> Projection of OSDR spaceflight samples onto redox latent space revealing root ROS shifts.</figcaption>
                     </figure>
                     <figure>
                         <img src="figures/fig5_tissue_decomposition.png" alt="Tissue Decomposition">
                         <figcaption><strong>Figure 5:</strong> Tissue-specific decomposition of ROS signatures across root, shoot, leaf, and seed.</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="figures/fig8_foundation_model_contribution.png" alt="Foundation Model Contribution">
+                        <figcaption><strong>Figure 8:</strong> Comparative evaluation of foundation model embeddings for single-cell deconvolution.</figcaption>
                     </figure>
                 </div>
             </section>
@@ -499,7 +440,7 @@ streamlit run web_app.py
                         </tr>
                         <tr>
                             <td>Table S13</td>
-                            <td>Three-Way Model Architecture & Full LOSO Benchmark Summary</td>
+                            <td>Three-Way Model Architecture Comparison Summary</td>
                             <td><a href="Table_S13_three_way_model_comparison.csv">Table_S13_three_way_model_comparison.csv</a></td>
                         </tr>
                     </tbody>
@@ -536,9 +477,6 @@ streamlit run web_app.py
 
     <!-- Interactive App Logic -->
     <script>
-      let currentMap = 'whole';
-      let currentScores = { root: 0.5, leaf: 0.5, stele: 0.5, cap: 0.5 };
-
       function switchTab(tabId) {
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
@@ -547,15 +485,9 @@ streamlit run web_app.py
         document.getElementById(tabId).classList.add('active');
 
         if (tabId === 'predictor-tab') runGenePrediction();
-        if (tabId === 'spaceflight-tab') selectCaseStudy(0);
         if (tabId === 'latent-tab') updateModelView();
-      }
-
-      function switchMap(mapType) {
-        currentMap = mapType;
-        document.querySelectorAll('.map-switch-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(`btn-map-${mapType}`).classList.add('active');
-        renderGgPlantMap();
+        if (tabId === 'spaceflight-tab') updateSpaceflightView();
+        if (tabId === 'deconv-tab') renderDeconvPlot();
       }
 
       function loadExamplePreset(type) {
@@ -564,10 +496,8 @@ streamlit run web_app.py
           input.value = 'CAT2, APX1, ZAT12, HSFA2, ANAC017, AOX1A';
         } else if (type === 'superoxide') {
           input.value = 'CSD1, CSD2, FSD1, MSD1, RBOHD, RBOHF, WRKY33';
-        } else if (type === 'osd678') {
-          input.value = 'RBOHD, RBOHF, APX1, ZAT12, KIN10, AOX1A, GR1';
-        } else if (type === 'osd223') {
-          input.value = 'CAT2, HSFA2, GPX7, CSD1, APX2, ZAT10, FSD1';
+        } else if (type === 'spaceflight') {
+          input.value = 'APX1, ZAT12, RBOHD, KIN10, AOX1A, GR1, DHAR1';
         }
         runGenePrediction();
       }
@@ -577,6 +507,7 @@ streamlit run web_app.py
         const tokens = rawText.toUpperCase().split(/[\s,;]+/).filter(t => t.length > 1);
         const data = window.ROS_DECODER_DATA;
 
+        // Match genes
         const matched = [];
         tokens.forEach(token => {
           const gene = data.geneDatabase.find(g => g.symbol.toUpperCase() === token || g.agi.toUpperCase() === token);
@@ -584,16 +515,17 @@ streamlit run web_app.py
         });
 
         if (matched.length === 0) {
-          document.getElementById('stimulus-prediction-results').innerHTML = `<p style="color: #ef4444;">No recognized Arabidopsis ROS genes found.</p>`;
+          document.getElementById('stimulus-prediction-results').innerHTML = `<p style="color: #ef4444;">No recognized Arabidopsis ROS genes found. Try entering CAT2, APX1, ZAT12, or RBOHD.</p>`;
           return;
         }
 
-        // 1. ROS Stimulus Class
+        // 1. Calculate ROS Stimulus Class Probabilities
         const classes = {
           h2o2: { name: 'H2O2 (Hydrogen Peroxide)', score: 0, color: '#ef4444' },
           paraquat: { name: 'Superoxide / Paraquat (O2•-)', score: 0, color: '#f97316' },
           high_light: { name: 'High Light (Photo-Oxidative)', score: 0, color: '#eab308' },
           ozone: { name: 'Ozone (O3 Stress)', score: 0, color: '#10b981' },
+          menadione: { name: 'Menadione (Quinone Cycling)', score: 0, color: '#06b6d4' },
           singlet_oxygen: { name: 'Singlet Oxygen (1O2)', score: 0, color: '#8b5cf6' }
         };
 
@@ -624,22 +556,22 @@ streamlit run web_app.py
         });
         document.getElementById('stimulus-prediction-results').innerHTML = stimHtml;
 
-        // 2. Elapsed Time
+        // 2. Calculate Elapsed Time Since ROS Stimulation
         let avgHours = 0;
         matched.forEach(g => avgHours += g.timeHours);
         avgHours = avgHours / matched.length;
 
         let timeCategory = 'Immediate (<1h)';
-        let timeDesc = 'Peak early transcription factors (ZAT12, RBOHD, HSFA2) actively induced.';
+        let timeDesc = 'Peak early transcription factors (e.g. ZAT12, RBOHD, HSFA2) active.';
         if (avgHours > 1 && avgHours <= 4) {
           timeCategory = 'Early Response (1–4h)';
-          timeDesc = 'Ascorbate peroxidase & primary antioxidant defense network activated.';
+          timeDesc = 'Ascorbate peroxidase & antioxidant primary defense induced.';
         } else if (avgHours > 4 && avgHours <= 12) {
           timeCategory = 'Mid Response (4–12h)';
           timeDesc = 'Metabolic rerouting, superoxide dismutase & glutathione cycles active.';
         } else if (avgHours > 12) {
           timeCategory = 'Late / Chronic Acclimation (>12h)';
-          timeDesc = 'Downregulated photosynthetic ROS machinery & structural defense adaptation.';
+          timeDesc = 'Downregulated photosynthetic ROS production & structural defense.';
         }
 
         document.getElementById('time-prediction-results').innerHTML = `
@@ -647,152 +579,62 @@ streamlit run web_app.py
             ${timeCategory}
           </div>
           <div style="font-size: 0.88rem; color: var(--muted, #64748b);">
-            <strong>Estimated Mean Duration:</strong> ~${avgHours.toFixed(1)} hours post-induction.<br>
+            <strong>Estimated Mean Duration:</strong> ~${avgHours.toFixed(1)} hours post-stimulation.<br>
             ${timeDesc}
           </div>
         `;
 
-        // 3. Multi-View Spatial Localization
-        let rootScore = 0, leafScore = 0, steleScore = 0, capScore = 0;
+        // 3. Calculate Spatial Localization & ggPlantMap
+        const tissueScores = { 'Root': 0, 'Leaf': 0, 'Seedling': 0, 'Stem': 0, 'Mesophyll': 0, 'Stele': 0, 'Epidermis': 0, 'Guard_cells': 0, 'Meristematic': 0 };
         matched.forEach(g => {
-          if (g.organ === 'Root') rootScore += 1;
-          if (g.organ === 'Leaf') leafScore += 1;
-          if (g.cellType === 'Stele') steleScore += 1;
-          if (g.cellType === 'Epidermis' || g.cellType === 'Guard_cells') capScore += 1;
+          if (tissueScores[g.organ] !== undefined) tissueScores[g.organ] += 1;
+          if (tissueScores[g.cellType] !== undefined) tissueScores[g.cellType] += 1;
         });
 
-        currentScores = {
-          root: Math.min(1, rootScore / Math.max(1, matched.length * 0.4)),
-          leaf: Math.min(1, leafScore / Math.max(1, matched.length * 0.4)),
-          stele: Math.min(1, steleScore / Math.max(1, matched.length * 0.3)),
-          cap: Math.min(1, capScore / Math.max(1, matched.length * 0.3))
-        };
-
-        renderGgPlantMap();
+        renderGgPlantMap(tissueScores);
       }
 
-      function renderGgPlantMap() {
-        const s = currentScores;
-        const rootCol = `rgba(239, 68, 68, ${0.25 + 0.75 * s.root})`;
-        const leafCol = `rgba(16, 185, 129, ${0.25 + 0.75 * s.leaf})`;
-        const steleCol = `rgba(245, 158, 11, ${0.3 + 0.7 * s.stele})`;
-        const capCol = `rgba(139, 92, 246, ${0.3 + 0.7 * s.cap})`;
+      function renderGgPlantMap(scores) {
+        const rootIntensity = Math.min(1, (scores.Root + scores.Stele) / 3);
+        const leafIntensity = Math.min(1, (scores.Leaf + scores.Mesophyll) / 3);
+        const meristemIntensity = Math.min(1, (scores.Meristematic || 0.5));
 
-        let svg = '';
+        const rootColor = `rgba(239, 68, 68, ${0.3 + 0.7 * rootIntensity})`;
+        const leafColor = `rgba(16, 185, 129, ${0.3 + 0.7 * leafIntensity})`;
+        const stemColor = `rgba(59, 130, 246, 0.6)`;
+        const flowerColor = `rgba(245, 158, 11, 0.7)`;
 
-        if (currentMap === 'whole') {
-          svg = `
-            <svg viewBox="0 0 280 250" width="100%" height="220">
-              <!-- Stem -->
-              <path d="M 140 90 L 140 170" stroke="#3b82f6" stroke-width="5" stroke-linecap="round" />
-              <!-- Rosette Leaves -->
-              <path class="plant-region" d="M 140 160 C 85 145 65 180 55 170 C 75 140 115 155 140 160 Z" fill="${leafCol}" stroke="#065f46" stroke-width="1.5" />
-              <path class="plant-region" d="M 140 160 C 195 145 215 180 225 170 C 205 140 165 155 140 160 Z" fill="${leafCol}" stroke="#065f46" stroke-width="1.5" />
-              <path class="plant-region" d="M 140 155 C 95 125 75 140 80 130 C 100 115 125 145 140 155 Z" fill="${leafCol}" stroke="#065f46" stroke-width="1.5" />
-              <path class="plant-region" d="M 140 155 C 185 125 205 140 200 130 C 180 115 155 145 140 155 Z" fill="${leafCol}" stroke="#065f46" stroke-width="1.5" />
-              <!-- Inflorescence -->
-              <circle cx="140" cy="75" r="7" fill="#fbbf24" stroke="#b45309" stroke-width="1.5" />
-              <circle cx="128" cy="85" r="5" fill="#fbbf24" stroke="#b45309" stroke-width="1.5" />
-              <circle cx="152" cy="85" r="5" fill="#fbbf24" stroke="#b45309" stroke-width="1.5" />
-              <!-- Primary & Lateral Roots -->
-              <path class="plant-region" d="M 140 170 Q 138 210 140 240" stroke="${rootCol}" stroke-width="4.5" stroke-linecap="round" fill="none" />
-              <path class="plant-region" d="M 140 185 Q 110 205 95 225" stroke="${rootCol}" stroke-width="2.5" stroke-linecap="round" fill="none" />
-              <path class="plant-region" d="M 140 195 Q 170 215 185 230" stroke="${rootCol}" stroke-width="2.5" stroke-linecap="round" fill="none" />
-              <circle cx="140" cy="240" r="4" fill="${capCol}" />
-              <!-- Labels -->
-              <text x="25" y="165" font-size="10" font-weight="600" fill="var(--fg, #0f172a)">Rosette Lamina</text>
-              <text x="195" y="225" font-size="10" font-weight="600" fill="var(--fg, #0f172a)">Primary Root</text>
-            </svg>
-          `;
-        } else if (currentMap === 'leaf') {
-          svg = `
-            <svg viewBox="0 0 280 250" width="100%" height="220">
-              <!-- Upper Cuticle & Adaxial Epidermis -->
-              <rect class="plant-region" x="20" y="30" width="240" height="25" rx="4" fill="#93c5fd" stroke="#1d4ed8" stroke-width="1.5" />
-              <text x="140" y="47" font-size="9" font-weight="bold" fill="#1e3a8a" text-anchor="middle">Adaxial Epidermis & Cuticle</text>
-              <!-- Palisade Mesophyll -->
-              <g fill="${leafCol}" stroke="#065f46" stroke-width="1">
-                <rect class="plant-region" x="25" y="60" width="30" height="50" rx="4" />
-                <rect class="plant-region" x="60" y="60" width="30" height="50" rx="4" />
-                <rect class="plant-region" x="95" y="60" width="30" height="50" rx="4" />
-                <rect class="plant-region" x="155" y="60" width="30" height="50" rx="4" />
-                <rect class="plant-region" x="190" y="60" width="30" height="50" rx="4" />
-                <rect class="plant-region" x="225" y="60" width="30" height="50" rx="4" />
-              </g>
-              <!-- Vascular Bundle -->
-              <circle class="plant-region" cx="140" cy="95" r="24" fill="${steleCol}" stroke="#b45309" stroke-width="2" />
-              <text x="140" y="98" font-size="8.5" font-weight="bold" fill="#78350f" text-anchor="middle">Vascular Bundle</text>
-              <!-- Spongy Mesophyll -->
-              <g fill="${leafCol}" stroke="#065f46" stroke-width="1">
-                <circle class="plant-region" cx="45" cy="135" r="14" />
-                <circle class="plant-region" cx="80" cy="140" r="13" />
-                <circle class="plant-region" cx="200" cy="140" r="13" />
-                <circle class="plant-region" cx="235" cy="135" r="14" />
-              </g>
-              <!-- Abaxial Epidermis & Stomata -->
-              <rect class="plant-region" x="20" y="170" width="100" height="25" rx="4" fill="#93c5fd" stroke="#1d4ed8" stroke-width="1.5" />
-              <circle class="plant-region" cx="140" cy="182" r="9" fill="${capCol}" stroke="#6b21a8" stroke-width="1.5" />
-              <rect class="plant-region" x="160" y="170" width="100" height="25" rx="4" fill="#93c5fd" stroke="#1d4ed8" stroke-width="1.5" />
-              <text x="140" y="215" font-size="9" font-weight="bold" fill="var(--fg, #0f172a)" text-anchor="middle">Stomata Guard Cells (Active)</text>
-            </svg>
-          `;
-        } else if (currentMap === 'root') {
-          svg = `
-            <svg viewBox="0 0 280 250" width="100%" height="220">
-              <!-- Outer Epidermis -->
-              <path class="plant-region" d="M 60 20 L 60 170 Q 60 210 140 235 Q 220 210 220 170 L 220 20 Z" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5" />
-              <!-- Cortex -->
-              <path class="plant-region" d="M 80 20 L 80 160 Q 80 195 140 215 Q 200 195 200 160 L 200 20 Z" fill="#fef3c7" stroke="#d97706" stroke-width="1" />
-              <!-- Endodermis -->
-              <path class="plant-region" d="M 105 20 L 105 150 Q 105 180 140 195 Q 175 180 175 150 L 175 20 Z" fill="#fde68a" stroke="#b45309" stroke-width="1" />
-              <!-- Central Vascular Stele -->
-              <path class="plant-region" d="M 125 20 L 125 140 Q 125 165 140 175 Q 155 165 155 140 L 155 20 Z" fill="${steleCol}" stroke="#991b1b" stroke-width="2" />
-              <!-- Quiescent Center / Columella Root Cap -->
-              <path class="plant-region" d="M 110 210 Q 140 245 170 210 Q 140 220 110 210 Z" fill="${capCol}" stroke="#581c87" stroke-width="2" />
-              <!-- Labels -->
-              <text x="140" y="80" font-size="8.5" font-weight="bold" fill="#78350f" text-anchor="middle">Vascular Stele</text>
-              <text x="140" y="245" font-size="8.5" font-weight="bold" fill="#581c87" text-anchor="middle">Columella Root Cap</text>
-            </svg>
-          `;
-        }
+        const svg = `
+          <svg viewBox="0 0 280 260" width="100%" height="220" style="background: transparent;">
+            <!-- Stem -->
+            <path d="M 140 100 L 140 180" stroke="${stemColor}" stroke-width="6" stroke-linecap="round" />
+            
+            <!-- Rosette Leaves -->
+            <path class="plant-region" d="M 140 170 C 90 160 70 190 60 180 C 80 150 120 165 140 170 Z" fill="${leafColor}" stroke="#065f46" stroke-width="1.5" />
+            <path class="plant-region" d="M 140 170 C 190 160 210 190 220 180 C 200 150 160 165 140 170 Z" fill="${leafColor}" stroke="#065f46" stroke-width="1.5" />
+            <path class="plant-region" d="M 140 165 C 100 135 80 150 85 140 C 105 125 130 155 140 165 Z" fill="${leafColor}" stroke="#065f46" stroke-width="1.5" />
+            <path class="plant-region" d="M 140 165 C 180 135 200 150 195 140 C 175 125 150 155 140 165 Z" fill="${leafColor}" stroke="#065f46" stroke-width="1.5" />
+
+            <!-- Inflorescence / Flowers -->
+            <circle cx="140" cy="85" r="7" fill="${flowerColor}" stroke="#b45309" stroke-width="1.5" />
+            <circle cx="128" cy="95" r="5" fill="${flowerColor}" stroke="#b45309" stroke-width="1.5" />
+            <circle cx="152" cy="95" r="5" fill="${flowerColor}" stroke="#b45309" stroke-width="1.5" />
+
+            <!-- Primary & Lateral Roots -->
+            <path class="plant-region" d="M 140 180 Q 138 220 140 250" stroke="${rootColor}" stroke-width="4" stroke-linecap="round" fill="none" />
+            <path class="plant-region" d="M 140 195 Q 110 215 95 235" stroke="${rootColor}" stroke-width="2.5" stroke-linecap="round" fill="none" />
+            <path class="plant-region" d="M 140 205 Q 170 225 185 240" stroke="${rootColor}" stroke-width="2.5" stroke-linecap="round" fill="none" />
+            <path class="plant-region" d="M 140 220 Q 120 235 110 248" stroke="${rootColor}" stroke-width="2" stroke-linecap="round" fill="none" />
+
+            <!-- Labels -->
+            <text x="30" y="175" font-size="10" font-weight="600" fill="var(--fg, #0f172a)">Leaves (Mesophyll)</text>
+            <text x="200" y="235" font-size="10" font-weight="600" fill="var(--fg, #0f172a)">Root (Stele & Cap)</text>
+          </svg>
+        `;
 
         document.getElementById('ggplantmap-svg-container').innerHTML = svg;
         document.getElementById('spatial-summary').innerHTML = `
-          <strong>Predicted Hotspots:</strong> Root Vascular Stele (${(s.stele*100).toFixed(0)}%) & Leaf Lamina Mesophyll (${(s.leaf*100).toFixed(0)}%).
-        `;
-      }
-
-      function selectCaseStudy(index, event) {
-        if (event) {
-          document.querySelectorAll('#spaceflight-tab .tab-btn').forEach(b => b.classList.remove('active'));
-          event.currentTarget.classList.add('active');
-        }
-
-        const data = window.ROS_DECODER_DATA;
-        const cs = data.osdrCaseStudies[index];
-
-        document.getElementById('case-study-details-card').innerHTML = `
-          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 0.75rem;">
-            <h3 style="margin: 0; color: #2563eb;">${cs.title}</h3>
-            <span class="badge-tag" style="font-size: 0.85rem;">Recon Error: ${cs.reconErr}</span>
-          </div>
-          <p><strong>Tissue / Target:</strong> ${cs.tissue}</p>
-          <p><strong>Key Decoded Genes:</strong> <code>${cs.genes}</code></p>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-top: 1rem;">
-            <div style="background: var(--card, #ffffff); padding: 0.75rem; border-radius: 6px; border: 1px solid var(--line, #e2e8f0);">
-              <strong>Predicted ROS Type:</strong><br>
-              ${Object.keys(cs.what).map(k => `<span>• ${k.toUpperCase()}: ${cs.what[k]}%</span><br>`).join('')}
-            </div>
-            <div style="background: var(--card, #ffffff); padding: 0.75rem; border-radius: 6px; border: 1px solid var(--line, #e2e8f0);">
-              <strong>Estimated Timing:</strong><br>
-              <span style="font-size: 1.1rem; font-weight: bold; color: #f59e0b;">${cs.when.label}</span><br>
-              <span style="font-size: 0.85rem; color: var(--muted, #64748b);">${cs.when.desc}</span>
-            </div>
-            <div style="background: var(--card, #ffffff); padding: 0.75rem; border-radius: 6px; border: 1px solid var(--line, #e2e8f0);">
-              <strong>Spatial Localization:</strong><br>
-              ${Object.keys(cs.where).map(k => `<span>• ${k}: ${(cs.where[k]*100).toFixed(0)}%</span><br>`).join('')}
-            </div>
-          </div>
+          <strong>Predicted Hotspots:</strong> Root Vascular Stele & Leaf Lamina Mesophyll.
         `;
       }
 
@@ -844,16 +686,102 @@ streamlit run web_app.py
           <strong>${model.name}</strong> (${model.condDim}-dimensional conditioning)<br>
           <div style="margin-top: 0.5rem; display: flex; gap: 1.5rem; flex-wrap: wrap;">
             <span><strong>Validation Loss:</strong> ${model.valLoss}</span>
-            <span><strong>LOSO MSE:</strong> ${model.losoMse}</span>
-            <span><strong>LOSO Accuracy:</strong> ${model.losoAcc}</span>
             <span><strong>Active Dims:</strong> ${model.activeDims}/32</span>
             <span><strong>Spaceflight Silhouette:</strong> ${model.sfSilhouette}</span>
+            <span><strong>Train Time:</strong> ${model.trainTimeMin} min</span>
           </div>
           <p style="margin-top: 0.5rem; font-size: 0.88rem; color: var(--muted, #64748b);">${model.description}</p>
         `;
       }
 
+      function updateSpaceflightView() {
+        const data = window.ROS_DECODER_DATA;
+        const studies = data.osdrStudies;
+
+        const osdNames = studies.map(s => s.id);
+        const sfErrs = studies.map(s => s.meanReconErr);
+        const shiftMags = studies.map(s => s.shiftMagnitude);
+
+        const trace1 = {
+          x: osdNames,
+          y: sfErrs,
+          name: 'Mean Reconstruction Error',
+          type: 'bar',
+          marker: { color: '#8b5cf6' }
+        };
+
+        const trace2 = {
+          x: osdNames,
+          y: shiftMags,
+          name: 'Latent Shift Magnitude',
+          type: 'scatter',
+          mode: 'lines+markers',
+          marker: { color: '#ef4444', size: 8 },
+          line: { width: 3 }
+        };
+
+        const layout = {
+          title: 'Spaceflight ROS Reconstruction Error & Latent Shift by Study',
+          paper_bgcolor: 'transparent',
+          plot_bgcolor: 'transparent',
+          xaxis: { title: 'OSDR Study ID', tickangle: -45 },
+          yaxis: { title: 'Error / Distance Metric' },
+          margin: { b: 80 },
+          legend: { orientation: 'h', y: 1.15 }
+        };
+
+        Plotly.newPlot('spaceflight-plot', [trace1, trace2], layout, {responsive: true});
+
+        document.getElementById('sf-details-box').innerHTML = `
+          <strong>Overall Meta-Analysis Summary across 38 Spaceflight Studies:</strong><br>
+          <div style="margin-top: 0.5rem; display: flex; gap: 1.5rem; flex-wrap: wrap;">
+            <span><strong>Flight Mean Recon Error:</strong> ${data.spaceflightSummary.sfMeanReconError}</span>
+            <span><strong>Ground Mean Recon Error:</strong> ${data.spaceflightSummary.groundMeanReconError}</span>
+            <span><strong>p-value:</strong> ${data.spaceflightSummary.ttestPValue.toExponential(2)}</span>
+            <span><strong>Top Axis:</strong> ${data.spaceflightSummary.topDiscriminatingDim}</span>
+          </div>
+        `;
+      }
+
+      function renderDeconvPlot() {
+        const data = window.ROS_DECODER_DATA;
+        const prop = data.deconvolutionProportions;
+
+        const stages = prop.map(p => p.stage);
+        const cellTypes = ['epidermis', 'mesophyll', 'stele', 'guardCells', 'meristematic', 'rootCap', 'other'];
+        const colors = ['#3b82f6', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444', '#06b6d4', '#64748b'];
+
+        const traces = cellTypes.map((ct, idx) => ({
+          x: stages,
+          y: prop.map(p => p[ct]),
+          name: ct.charAt(0).toUpperCase() + ct.slice(1),
+          type: 'bar',
+          marker: { color: colors[idx] }
+        }));
+
+        const layout = {
+          barmode: 'stack',
+          title: 'Single-Cell Cell-Type Proportion Distributions (Salk ADA Atlas)',
+          paper_bgcolor: 'transparent',
+          plot_bgcolor: 'transparent',
+          xaxis: { title: 'Sample Group / Developmental Stage' },
+          yaxis: { title: 'Proportion' },
+          legend: { orientation: 'h', y: 1.15 }
+        };
+
+        Plotly.newPlot('deconv-plot', traces, layout, {responsive: true});
+      }
+
+      // Initialize on load
       document.addEventListener('DOMContentLoaded', () => {
+        const osdSelect = document.getElementById('osd-select');
+        window.ROS_DECODER_DATA.osdrStudies.forEach(s => {
+          const opt = document.createElement('option');
+          opt.value = s.id;
+          opt.textContent = `${s.id} (${s.tissue} - ${s.stage})`;
+          osdSelect.appendChild(opt);
+        });
+
         runGenePrediction();
       });
     </script>

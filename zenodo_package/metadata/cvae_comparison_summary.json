@@ -1,0 +1,19 @@
+{
+  "original": {
+    "cond_dim": 33,
+    "best_val_loss": 3860.8628946940103,
+    "best_epoch": 95,
+    "n_active_dims": 14,
+    "sf_silhouette": 0.06479008495807648,
+    "stimulus_silhouette": -0.3443605899810791
+  },
+  "time_aware": {
+    "cond_dim": 37,
+    "best_val_loss": 4095.369384765625,
+    "best_epoch": 98,
+    "n_active_dims": 14,
+    "sf_silhouette": 0.08693041652441025,
+    "stimulus_silhouette": -0.3890460431575775
+  },
+  "delta_val_loss_pct": 6.07393985406468
+}

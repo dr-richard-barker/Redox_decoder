@@ -1,0 +1,57 @@
+{
+  "gene_universe_size": 38690,
+  "working_genes": 20869,
+  "total_samples": 4332,
+  "total_studies": 232,
+  "platforms": {},
+  "batch_correction": {
+    "method": "limma.removeBatchEffect",
+    "n_batches": 232,
+    "runtime_minutes": 0.2,
+    "value_range": [
+      -18.1776,
+      30.8615
+    ],
+    "mean": 5.279,
+    "sd": 2.37
+  },
+  "ada_reference": {
+    "n_genes": 18530,
+    "n_cells": 29993,
+    "n_cell_types": 17,
+    "n_stages": 4,
+    "multi_stage_types": [
+      "Unknown",
+      "Epidermis",
+      "Guard_cells",
+      "Stele",
+      "Meristematic",
+      "Vascular"
+    ]
+  },
+  "normalization": {
+    "n_studies": 232,
+    "n_samples": 4378,
+    "n_genes": 20869,
+    "platform_distribution": {
+      "microarray_full": 2422,
+      "rnaseq": 1275,
+      "microarray_targeted": 681
+    },
+    "studies_per_platform": {
+      "microarray_full": 148,
+      "microarray_targeted": 30,
+      "rnaseq": 54
+    },
+    "excluded_studies": [
+      "GSE251921",
+      "GSE92369"
+    ],
+    "scale_distribution": {
+      "log": 84,
+      "raw": 146,
+      "percent": 2,
+      "other": 2
+    }
+  }
+}

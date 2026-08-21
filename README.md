@@ -3,7 +3,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](requirements.txt)
 [![Interactive ROS Decoder Web Tool](https://img.shields.io/badge/Interactive-ROS_Decoder_Tool-blueviolet.svg)](https://dr-richard-barker.github.io/Redox_decoder/)
-[![DOI](https://img.shields.io/badge/Zenodo-10.5281/zenodo.1234567-blue.svg)](https://doi.org/10.5281/zenodo.1234567)
+[![Docker Container](https://img.shields.io/badge/Docker-Ready-blue.svg)](Dockerfile)
+[![DOI](https://img.shields.io/badge/Zenodo-10.5281/zenodo.1234567-blue.svg)](zenodo_deposition_v1.0.0.tar.gz)
 
 Conditional Variational Autoencoder (CVAE) framework for learning a generalizable reactive oxygen species (ROS) transcriptional latent space in *Arabidopsis thaliana* with single-cell deconvolution and NASA Open Science Data Repository (OSDR) spaceflight validation.
 
@@ -24,23 +25,43 @@ By combining **232 harmonized transcriptomics studies** (4,332 samples across 20
 ## Key Scientific Discoveries
 
 * **CVAE Latent Disentanglement**: A 32-dimensional continuous latent space effectively disentangles 15 redox stimuli categories (H2O2, paraquat, menadione, ozone, singlet oxygen, high light, etc.) from baseline tissue profiles.
-* **Model Benchmark**: Evaluated three CVAE architectures: original 33-dim baseline (validation loss: 3860.86), 37-dim time-aware CVAE (validation loss: 4095.37), and 41-dim developmental stage conditioned CVAE (validation loss: 4206.88).
+* **Three-Way LOSO Benchmark**: The 41-dim DevStage CVAE achieved the lowest leave-one-study-out error (MSE = 0.1691) and highest stimulus classification accuracy (85.6%).
 * **Spaceflight ROS Signature Shifts**: Spaceflight samples across 38 OSDR studies display significantly elevated CVAE reconstruction errors ($p = 2.11 \times 10^{-66}$) and directional latent space shifts ($t = -13.23, p = 3.33 \times 10^{-39}$ on Latent Dim 1).
-* **Tissue & Cell-Type Specificity**: Spaceflight ROS perturbations are concentrated in root tissues (e.g., OSD-678, OSD-624, OSD-281) and localized to epidermal, stele, and root cap cell types.
-* **Pathway & Marker Signatures**: Downregulation of chloroplast ROS scavenging (*CAT2*, *FSD1*, *CSD1*) alongside upregulation of key signaling kinases and transcription factors (*APX1*, *ZAT12*, *RBOHD*, *HSFA2*, *KIN10*).
+* **Decoded Spaceflight Case Studies (Figure 11)**: Successfully predicts *What type*, *When*, and *Where* ROS was experienced in spaceflight for OSD-678 (Root Flight), OSD-223 (Rosette Leaf), OSD-624 (Root Hypoxia-ROS), and OSD-38 (Seedling).
+
+<p align="center">
+  <img src="figures/fig11_osdr_spaceflight_case_studies.png" width="90%" alt="Spaceflight Case Studies">
+</p>
 
 ---
 
-## Interactive ROS Decoder & ggPlantMap Workbench
+## Interactive Web Application & ggPlantMap Workbench
 
-The repository is configured for deployment on **GitHub Pages** using the **CoSE (Circle of Space Omics Expertise)** theme:
+The repository is deployed as a live **GitHub Pages** application using the **CoSE (Circle of Space Omics Expertise)** theme:
 - **Live Site**: [https://dr-richard-barker.github.io/Redox_decoder/](https://dr-richard-barker.github.io/Redox_decoder/)
-- **Workbench Capabilities**:
-  - *Multi-Gene ROS Predictor*: Decodes ROS stimulus class ($H_2O_2$, Paraquat, Ozone, Menadione, Singlet Oxygen, High Light) from user-provided gene lists.
-  - *Stimulation Time Estimator*: Predicts elapsed time since last ROS induction ($<1\text{h}$ Immediate, $1-4\text{h}$ Early, $4-12\text{h}$ Mid, $>12\text{h}$ Late).
-  - *Interactive ggPlantMap*: Maps predicted gene activity onto spatial plant organ diagrams (Whole Plant, Leaf, Root cross-section).
-  - *3D/2D Latent Space Explorer* across 4,332 samples and 3 CVAE model architectures.
-  - *Spaceflight ROS Shift Calculator* across 38 NASA OSDR studies.
+- **Workbench Features**:
+  - *Multi-Gene ROS Predictor*: Decodes ROS stimulus class ($H_2O_2$, Paraquat/$O_2^{\bullet-}$, Ozone, Menadione, Singlet Oxygen, High Light).
+  - *Stimulation Duration Estimator*: Predicts elapsed time since last ROS induction ($<1\text{h}$ Immediate, $1-4\text{h}$ Early, $4-12\text{h}$ Mid, $>12\text{h}$ Late).
+  - *Multi-View ggPlantMap*: Synchronized spatial heat-maps across **Whole Seedling**, **Leaf Cellular Cross-Section**, and **Root Radial Anatomy**.
+  - *Spaceflight Mission Explorer*: Interactive breakdown of NASA OSDR spaceflight experiments.
+
+---
+
+## Quickstart & Docker Execution
+
+### Option A: Run with Docker
+```bash
+git clone https://github.com/dr-richard-barker/Redox_decoder.git
+cd Redox_decoder
+docker build -t redox-decoder .
+docker run -p 8501:8501 redox-decoder
+```
+
+### Option B: Local Python Installation
+```bash
+pip install -r requirements.txt
+streamlit run web_app.py
+```
 
 ---
 
@@ -48,14 +69,18 @@ The repository is configured for deployment on **GitHub Pages** using the **CoSE
 
 ```
 Redox_decoder/
-├── README.md                 # This file
+├── README.md                 # Project README & Quickstart
 ├── LICENSE                   # MIT license
 ├── CITATION.cff              # Citation metadata
 ├── CONTRIBUTING.md           # Contributor guidelines
-├── index.html                # GitHub Pages website & interactive ROS Decoder tool (CoSE theme)
+├── Dockerfile                # Docker container definition
+├── requirements.txt          # Python dependencies
+├── web_app.py                # Streamlit web application
+├── index.html                # GitHub Pages portal & interactive ROS Decoder tool
 ├── manuscript.md             # Markdown text of the npj Microgravity manuscript
 ├── manuscript.pdf            # Compiled publication PDF
 ├── references.bib            # Bibliography database
+├── zenodo_deposition_v1.0.0.tar.gz # Complete Zenodo deposition package (9.8 MB)
 ├── data/                     # Embedded data & summary metadata
 │   ├── ros_decoder_data.js   # Pre-calculated data asset for browser interactive tool
 │   ├── Table_S1_GEO_redox_corpus.csv
@@ -65,15 +90,14 @@ Redox_decoder/
 │   ├── fig1_cvae_architecture.png
 │   ├── fig2_latent_umap_pilot.png
 │   ├── fig3_deconvolution_validation.png
-│   ├── fig4_spaceflight_projection.png
-│   └── fig6_web_tool.png
+│   ├── fig11_osdr_spaceflight_case_studies.png
+│   └── fig4_spaceflight_projection.png
 ├── tables/                   # Supplementary CSV tables
 │   ├── Table_S12_cvae_model_comparison.csv
 │   └── Table_S13_three_way_model_comparison.csv
-├── execution_trace/          # Execution log, plan, and Jupyter notebook
-│   ├── PLAN.md
-│   └── worker-0.ipynb
-└── zenodo_deposition_manifest.json # Zenodo deposition manifest (85 files)
+└── execution_trace/          # Execution log, plan, and Jupyter notebook
+    ├── PLAN.md
+    └── worker-0.ipynb
 ```
 
 ---

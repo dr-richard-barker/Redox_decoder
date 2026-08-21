@@ -1,0 +1,21 @@
+{
+  "n_samples": 4197,
+  "n_spaceflight": 879,
+  "n_ground": 3318,
+  "n_tissues_analyzed": 22,
+  "n_significant_shifts": 5,
+  "chi2_stage": 80.08825008833739,
+  "chi2_p": 4.064971084637347e-18,
+  "sf_stage_dist": {
+    "flower": 0,
+    "rosette_21d": 0,
+    "seed_0d": 879,
+    "seedling_3d": 0
+  },
+  "gd_stage_dist": {
+    "flower": 74,
+    "rosette_21d": 0,
+    "seed_0d": 3036,
+    "seedling_3d": 208
+  }
+}

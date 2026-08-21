@@ -1,0 +1,8 @@
+Metric,Original (33-dim),Time-aware (37-dim)
+Conditioning dim,33.0,37.0
+Best val loss,3860.9,4095.4
+Best epoch,95.0,98.0
+Val loss change (%),0.0,6.1
+Active latent dims,14.0,14.0
+SF silhouette,0.0648,0.0869
+Stimulus silhouette,-0.3444,-0.389

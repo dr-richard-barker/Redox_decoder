@@ -1,0 +1,11 @@
+{
+  "n_spaceflight_samples": 879,
+  "n_ground_samples": 3453,
+  "n_spaceflight_studies": 38,
+  "silhouette_spaceflight": 0.07067432999610901,
+  "mean_recon_err_spaceflight": 0.2736196219921112,
+  "mean_recon_err_ground": 0.13130401074886322,
+  "recon_err_ttest_p": 2.1059454328842282e-66,
+  "top_discriminating_dim": 1,
+  "mean_cross_study_distance": 1.0524649620056152
+}
