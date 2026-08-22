@@ -14,6 +14,8 @@
     document.documentElement.setAttribute('data-theme', theme);
   })();
 </script>
+<!-- Load Data Asset in Head to Guarantee Availability -->
+<script src="data/ros_decoder_data.js"></script>
 <link rel="stylesheet" href="assets/theme.css">
 <link rel="stylesheet" href="https://dr-richard-barker.github.io/Plant_response_to_radiation/cose/cose-theme.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -22,16 +24,16 @@
 <style>
   .plant-poly {
     stroke: #1e293b;
-    stroke-width: 1.15px;
+    stroke-width: 1.25px;
     stroke-linejoin: round;
     stroke-linecap: round;
-    transition: fill 0.35s ease, stroke-width 0.2s ease, stroke 0.2s ease;
+    transition: fill 0.3s ease, stroke-width 0.2s ease, stroke 0.2s ease;
     cursor: pointer;
   }
   .plant-poly:hover {
     stroke: #ef4444 !important;
-    stroke-width: 2.5px !important;
-    filter: drop-shadow(0 0 4px rgba(239, 68, 68, 0.6));
+    stroke-width: 2.8px !important;
+    filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.7));
   }
   .color-scale-bar {
     display: flex;
@@ -39,33 +41,65 @@
     justify-content: center;
     gap: 8px;
     margin-top: 12px;
-    font-size: 0.78rem;
-    font-weight: 600;
+    font-size: 0.8rem;
+    font-weight: 700;
     color: var(--muted);
   }
   .gradient-strip {
-    width: 140px;
-    height: 10px;
+    width: 150px;
+    height: 12px;
     border-radius: 4px;
     border: 1px solid var(--line);
     background: linear-gradient(90deg, #3b528b, #21918c, #5ec962, #fde725, #ca6953, #a50026);
   }
   .auto-toggle-badge {
     display: inline-block;
-    padding: 2px 8px;
+    padding: 3px 9px;
     border-radius: 12px;
-    font-size: 0.72rem;
+    font-size: 0.74rem;
     font-weight: 700;
     background: rgba(16, 185, 129, 0.15);
     color: #10b981;
   }
   .cell-tooltip-box {
-    min-height: 20px;
-    font-size: 0.82rem;
+    min-height: 24px;
+    font-size: 0.84rem;
     font-weight: 600;
     color: var(--fg);
-    margin-top: 4px;
+    margin-top: 6px;
     text-align: center;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 4px 8px;
+  }
+  figure {
+    margin: 28px 0 0;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px;
+  }
+  figure img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    display: block;
+  }
+  figcaption {
+    margin-top: 14px;
+    color: var(--fg);
+    font-size: 0.90rem;
+    line-height: 1.55;
+    text-align: left;
+  }
+  figcaption strong {
+    color: var(--accent);
+  }
+  figcaption p {
+    margin: 6px 0 0;
+    color: var(--muted);
+    font-size: 0.88rem;
   }
 </style>
 </head>
@@ -147,6 +181,7 @@
           <button class="btn" onclick="loadExamplePreset('superoxide')">Preset: Superoxide / Paraquat</button>
           <button class="btn" onclick="loadExamplePreset('osd678')">Preset: OSD-678 (Root Flight)</button>
           <button class="btn" onclick="loadExamplePreset('osd223')">Preset: OSD-223 (Rosette Flight)</button>
+          <button class="btn" onclick="loadExamplePreset('osd37')">Preset: OSD-37 (4 Ecotypes)</button>
         </div>
 
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;">
@@ -202,7 +237,8 @@
           <button class="tab-btn active" onclick="selectCaseStudy(0, event)">OSD-678 (Root Flight)</button>
           <button class="tab-btn" onclick="selectCaseStudy(1, event)">OSD-223 (Rosette Leaf Flight)</button>
           <button class="tab-btn" onclick="selectCaseStudy(2, event)">OSD-624 (Root Hypoxia-ROS)</button>
-          <button class="tab-btn" onclick="selectCaseStudy(3, event)">OSD-38 (Whole Seedling Flight)</button>
+          <button class="tab-btn" onclick="selectCaseStudy(3, event)">OSD-37 (Four Ecotypes Flight)</button>
+          <button class="tab-btn" onclick="selectCaseStudy(4, event)">OSD-38 (Whole Seedling Flight)</button>
         </div>
 
         <div id="case-study-details-card" class="card" style="border-left:4px solid var(--accent);"></div>
@@ -256,38 +292,77 @@ streamlit run web_app.py
     <h2><span class="n">3.</span>Manuscript Figures &amp; Spaceflight Validation</h2>
     <p class="sub">Multi-study benchmarking, deconvolution validation, and OSDR spaceflight decoding.</p>
 
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:20px;">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:24px;">
+      <!-- Fig 1 -->
       <figure>
         <img src="figures/fig1_cvae_architecture.png" alt="CVAE Architecture">
-        <figcaption><strong>Figure 1:</strong> Conditional VAE architecture schematic and multi-study curation workflow across 232 studies.</figcaption>
+        <figcaption>
+          <strong>Figure 1 | Conditional Variational Autoencoder (CVAE) architecture and multi-study curation pipeline.</strong>
+          <p><strong>a</strong>, Schematic of the deep generative autoencoder consisting of an encoder $q_\phi(z|x, c)$, a 32-dimensional continuous latent space $\mathcal{Z}$, and a symmetric decoder $p_\theta(x|z, c)$ conditioned on stimulus class, duration, and cell-type proportions. <strong>b</strong>, Data harmonization pipeline consolidating 232 <em>Arabidopsis thaliana</em> studies (329 GEO accessions, 52 NASA OSDR datasets) encompassing 4,332 total transcriptomic profiles filtered against a 20,869 TAIR10 AGI reference universe. <strong>c</strong>, Training objective minimizing reconstruction MSE and KL divergence $\mathcal{D}_{\mathrm{KL}}(q_\phi(z|x,c) \,||\, p(z))$.</p>
+        </figcaption>
       </figure>
+
+      <!-- Fig 2 -->
       <figure>
         <img src="figures/fig2_latent_umap_pilot.png" alt="Latent Space UMAP">
-        <figcaption><strong>Figure 2:</strong> UMAP projection of the 32-dimensional redox latent space colored by stimulus class.</figcaption>
+        <figcaption>
+          <strong>Figure 2 | Disentangled 32-dimensional redox latent space topology across 15 stimulus classes.</strong>
+          <p><strong>a</strong>, UMAP embedding of 4,332 harmonized transcriptomes projected from the 32 latent dimensions. Points are color-coded by specific oxidative stimulus ($H_2O_2$, paraquat/superoxide, ozone, singlet oxygen, menadione, high light, and controls). <strong>b</strong>, Stimulus silhouette analysis demonstrating robust clustering of distinct ROS chemical species independent of tissue background. <strong>c</strong>, Latent dimension activity profile showing 11–14 active continuous dimensions carrying >95% total variance.</p>
+        </figcaption>
       </figure>
+
+      <!-- Fig 3 -->
       <figure>
         <img src="figures/fig3_deconvolution_validation.png" alt="Deconvolution Validation">
-        <figcaption><strong>Figure 3:</strong> Cell-type proportion deconvolution benchmark against Salk ADA atlas with clean tissue grouping and clear axis readability.</figcaption>
+        <figcaption>
+          <strong>Figure 3 | Single-cell developmental deconvolution benchmark against Salk ADA atlas with clean tissue grouping.</strong>
+          <p><strong>a</strong>, Relative cell-type proportions deconvolved across 9 primary tissue groups (Cell Culture, Flower, Primary Root, Rosette Leaf, Seed, Seedling, Stem, Spaceflight Root, and Ground Root Controls) using 29,993 single cells across 17 cell types from the Salk Arabidopsis Developmental Atlas. <strong>b</strong>, Cell-type enrichment distribution across apical meristem, vascular stele, cortex, endodermis, mesophyll, and epidermis layers, confirming distinct cell-type purity across organ classes ($p < 10^{-15}$, ANOVA). X-axis labels formatted with clear high-resolution typography.</p>
+        </figcaption>
       </figure>
+
+      <!-- Fig 11 -->
       <figure>
         <img src="figures/fig11_osdr_spaceflight_case_studies.png" alt="Spaceflight Case Studies">
-        <figcaption><strong>Figure 11:</strong> Decoded NASA OSDR spaceflight experiments illustrating What type, When (timing duration), and Where (ggPlantMap spatial localization) ROS was experienced.</figcaption>
+        <figcaption>
+          <strong>Figure 11 | Decoded NASA OSDR spaceflight experiments across What, When, and Where dimensions.</strong>
+          <p>Multi-study case study montage decoding 5 key NASA spaceflight datasets: <strong>a</strong>, <em>OSD-678</em> (Primary Root microgravity vs 1g ground control), predicting acute $H_2O_2$/superoxide burst ($42\%/38\%$) at $<1.2\text{h}$ localized to root stele. <strong>b</strong>, <em>OSD-223</em> (Rosette Leaf spaceflight), predicting chloroplastic high light/$^1O_2$ stress ($48\%/26\%$) at $>16.5\text{h}$ in mesophyll. <strong>c</strong>, <em>OSD-624</em> (Root Hypoxia-ROS cross-talk), predicting mitochondrial superoxide signaling ($45\%$) at $\sim 6.0\text{h}$ in stele/endodermis. <strong>d</strong>, <em>OSD-37</em> (Four ecotypes: Col-0, Ler-0, Ws-2, Cvi-0), resolving ecotype-divergent oxidative phosphorylation ($39\%\text{ }H_2O_2, 31\%\text{ }O_2^{\bullet-}$) at $\sim 4.5\text{h}$. <strong>e</strong>, <em>OSD-38</em> (Whole intact seedling flight), resolving systemic shoot-root oxidative acclimation ($35\%\text{ }H_2O_2, 28\%\text{ }O_2^{\bullet-}$) at $\sim 3.8\text{h}$.</p>
+        </figcaption>
       </figure>
+
+      <!-- Fig 9 -->
       <figure>
         <img src="figures/fig9_spatial_ros_patterns.png" alt="Spatial ROS Patterns">
-        <figcaption><strong>Figure 9:</strong> ggPlantMap spatial ROS expression patterns across Arabidopsis rosette, root, and inflorescence anatomy.</figcaption>
+        <figcaption>
+          <strong>Figure 9 | High-resolution ggPlantMap spatial ROS expression patterns across Arabidopsis anatomy.</strong>
+          <p>Cellular-level tessellation mapping relative oxidative marker expression across: <strong>a</strong>, Rosette leaf lamina (15 multi-polygon segments). <strong>b</strong>, Primary root longitudinal and radial cross-section (90 individual cell polygons resolving stele, endodermis, cortex, meristem, and columella root cap). <strong>c</strong>, Inflorescence and floral buds (138 cell polygons resolving petals, sepals, anthers, pollen sacs, gynoecium, and pedicel stele). Color bar represents normalized relative expression from 0.04 (minimum, blue/purple) to 0.08 (peak, red/yellow).</p>
+        </figcaption>
       </figure>
+
+      <!-- Fig 4 -->
       <figure>
         <img src="figures/fig4_spaceflight_projection.png" alt="Spaceflight Projection">
-        <figcaption><strong>Figure 4:</strong> Projection of OSDR spaceflight samples onto redox latent space revealing root ROS shifts.</figcaption>
+        <figcaption>
+          <strong>Figure 4 | Latent space projection of 879 OSDR spaceflight samples revealing root-specific ROS shifts.</strong>
+          <p><strong>a</strong>, Projection of 879 orbital flight samples from 38 OSDR studies onto the CVAE latent space. Spaceflight samples exhibit significant displacement relative to ground controls ($p = 2.11 \times 10^{-66}$, two-tailed $t$-test). <strong>b</strong>, Latent Dimension 1 ($t = -13.23, p = 3.33 \times 10^{-39}$) acts as the primary microgravity response axis, correlating with root epidermal and stele oxidative burst markers.</p>
+        </figcaption>
       </figure>
+
+      <!-- Fig 5 -->
       <figure>
         <img src="figures/fig5_tissue_decomposition.png" alt="Tissue Decomposition">
-        <figcaption><strong>Figure 5:</strong> Tissue-specific decomposition of ROS signatures across root, shoot, leaf, and seed.</figcaption>
+        <figcaption>
+          <strong>Figure 5 | Organ- and tissue-specific decomposition of oxidative stress transcriptomic profiles.</strong>
+          <p>Hierarchical clustering and principal variance partitioning of ROS signatures stratified across root, rosette leaf, shoot apex, hypocotyl, and dry/germinating seeds. Demonstrates that while core catalase/peroxidase cascades are conserved, organ-specific regulatory hubs (such as RBOHD/F in root vasculature vs HSFA2 in shoot) drive distinct latent trajectories.</p>
+        </figcaption>
       </figure>
+
+      <!-- Fig 8 -->
       <figure>
         <img src="figures/fig8_foundation_model_contribution.png" alt="Foundation Model Contribution">
-        <figcaption><strong>Figure 8:</strong> Foundation model cell-type embedding contribution benchmark.</figcaption>
+        <figcaption>
+          <strong>Figure 8 | Foundation model and single-cell atlas contribution to latent disentanglement.</strong>
+          <p>Leave-One-Study-Out (LOSO) cross-validation comparison across 232 folds showing that incorporating single-cell developmental atlas conditioning (41-dim DevStage CVAE) reduces cross-study reconstruction MSE from 0.1824 to 0.1691 and improves stimulus classification accuracy from 78.4% to 85.6% ($p < 10^{-8}$).</p>
+        </figcaption>
       </figure>
     </div>
   </section>
@@ -360,9 +435,6 @@ streamlit run web_app.py
   </div>
 </footer>
 
-<!-- Load Data Asset -->
-<script src="data/ros_decoder_data.js"></script>
-
 <!-- Interactive App Logic -->
 <script>
   let currentMap = 'root';
@@ -416,6 +488,8 @@ streamlit run web_app.py
       input.value = 'RBOHD, RBOHF, APX1, ZAT12, KIN10, AOX1A, GR1';
     } else if (type === 'osd223') {
       input.value = 'CAT2, HSFA2, GPX7, CSD1, APX2, ZAT10, FSD1';
+    } else if (type === 'osd37') {
+      input.value = 'RBOHD, RBOHF, APX1, PRX34, CSD1, GR1, CAT2';
     }
     runGenePrediction();
   }
@@ -575,7 +649,7 @@ streamlit run web_app.py
   function showCellHover(name, cellType, score) {
     const info = document.getElementById('cell-hover-info');
     if (info) {
-      info.innerHTML = `<span style="color:var(--accent); font-weight:700;">${name}</span> | Type: <strong>${cellType}</strong> | Expression: <strong>${(score*100).toFixed(0)}%</strong>`;
+      info.innerHTML = `<span style="color:var(--accent); font-weight:700;">${name}</span> | Layer: <strong>${cellType}</strong> | Expression: <strong>${(score*100).toFixed(0)}%</strong>`;
     }
   }
 
@@ -588,7 +662,7 @@ streamlit run web_app.py
 
   function renderGgPlantMap() {
     const data = window.ROS_DECODER_DATA;
-    if (!data.ggPlantMapCells) return;
+    if (!data || !data.ggPlantMapCells) return;
 
     const cells = data.ggPlantMapCells[currentMap] || [];
     let viewBox = '60 20 260 410';
@@ -614,7 +688,7 @@ streamlit run web_app.py
     });
 
     const svg = `
-      <svg viewBox="${viewBox}" width="100%" height="225" style="background:transparent;">
+      <svg viewBox="${viewBox}" width="100%" height="230" style="display:block;margin:0 auto;background:transparent;">
         <text x="${parseInt(viewBox.split(' ')[0]) + 10}" y="42" font-size="11" font-weight="700" fill="var(--fg)">${title}</text>
         ${polysHtml}
       </svg>
@@ -622,8 +696,6 @@ streamlit run web_app.py
 
     document.getElementById('ggplantmap-svg-container').innerHTML = svg;
     
-    // Summary
-    const curMean = Object.values(currentCellScores).reduce((a,b)=>a+b,0) / Object.values(currentCellScores).length;
     document.getElementById('spatial-summary').innerHTML = `
       <strong>ggPlantMap Anatomy:</strong> Complete cellular outline deployed. Showing <strong>${cells.length}</strong> individual cells with crisp boundaries.
     `;
