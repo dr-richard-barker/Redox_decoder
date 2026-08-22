@@ -700,32 +700,33 @@ streamlit run web_app.py
 
     const cells = data.ggPlantMapCells[currentMap] || [];
     let viewBox = '60 25 260 395';
-    let title = '1. Rosette Lamina (15 Segments)';
+    let title = '1. Rosette (Lamina & Petioles)';
     let textX = 70;
     let textY = 38;
     let titleSize = '10';
 
     if (currentMap === 'root_radial') {
       viewBox = '360 25 260 395';
-      title = '2. Root Radial Cross-Section (90 Cells)';
+      title = '2. Root Radial Cross-Section (Differentiated Zone)';
       textX = 370;
       textY = 38;
       titleSize = '10';
     } else if (currentMap === 'root_tip') {
-      viewBox = '130 25 140 335';
-      title = '3. Root Tip & Columella (93 Cells)';
-      textX = 135;
+      // Centered at X=200, width=260 (from 70 to 330) for perfect proportional framing with other maps
+      viewBox = '70 25 260 335';
+      title = '3. Root Tip & Columella (Apical Apex)';
+      textX = 80;
       textY = 38;
-      titleSize = '8.5';
+      titleSize = '10';
     } else if (currentMap === 'leaf_cross_section') {
       viewBox = '660 25 260 395';
-      title = '4. Leaf Transverse Section (138 Cells)';
+      title = '4. Leaf Transverse Cellular Section';
       textX = 670;
       textY = 38;
       titleSize = '10';
     } else if (currentMap === 'flower') {
       viewBox = '70 45 260 360';
-      title = '5. Floral Organ Diagram (97 Cells)';
+      title = '5. Floral Organ Diagram';
       textX = 80;
       textY = 58;
       titleSize = '10';
