@@ -209,8 +209,8 @@
             <div style="display:flex;justify-content:center;gap:6px;margin:12px 0 10px;flex-wrap:wrap;">
               <button id="btn-map-rosette" class="tab-btn" style="padding:4px 9px;font-size:0.78rem;" onclick="switchMap('rosette', true)">1. Rosette (Whole Plant)</button>
               <button id="btn-map-root" class="tab-btn active" style="padding:4px 9px;font-size:0.78rem;" onclick="switchMap('root', true)">2. Root Cross-Section (90 Cells)</button>
-              <button id="btn-map-leaf" class="tab-btn" style="padding:4px 9px;font-size:0.78rem;" onclick="switchMap('leaf_cross_section', true)">3. Leaf Transverse (138 Cells)</button>
-              <button id="btn-map-flower" class="tab-btn" style="padding:4px 9px;font-size:0.78rem;" onclick="switchMap('flower', true)">4. Floral Diagram (87 Cells)</button>
+              <button id="btn-map-leaf_cross_section" class="tab-btn" style="padding:4px 9px;font-size:0.78rem;" onclick="switchMap('leaf_cross_section', true)">3. Leaf Transverse (138 Cells)</button>
+              <button id="btn-map-flower" class="tab-btn" style="padding:4px 9px;font-size:0.78rem;" onclick="switchMap('flower', true)">4. Floral Diagram (94 Cells)</button>
             </div>
 
             <!-- SVG Container for Cellular Outlines -->
@@ -481,11 +481,7 @@ streamlit run web_app.py
       if (b.id && b.id.startsWith('btn-map-')) b.classList.remove('active');
     });
     
-    let btnId = `btn-map-${mapType}`;
-    if (mapType === 'leaf_cross_section') btnId = 'btn-map-leaf';
-    if (mapType === 'flower') btnId = 'btn-map-flower';
-    
-    const btn = document.getElementById(btnId);
+    const btn = document.getElementById(`btn-map-${mapType}`);
     if (btn) btn.classList.add('active');
 
     if (manualClick) {
@@ -682,7 +678,8 @@ streamlit run web_app.py
   function showCellHover(name, cellType, score) {
     const info = document.getElementById('cell-hover-info');
     if (info) {
-      info.innerHTML = `<span style="color:var(--accent); font-weight:700;">${name}</span> | Layer: <strong>${cellType}</strong> | Expression: <strong>${(score*100).toFixed(0)}%</strong>`;
+      const cleanType = cellType.replace(/_/g, ' ');
+      info.innerHTML = `<span style="color:var(--accent); font-weight:700;">${name}</span> | Layer: <strong>${cleanType}</strong> | Expression: <strong>${(score*100).toFixed(0)}%</strong>`;
     }
   }
 
@@ -698,18 +695,26 @@ streamlit run web_app.py
     if (!data || !data.ggPlantMapCells) return;
 
     const cells = data.ggPlantMapCells[currentMap] || [];
-    let viewBox = '60 20 260 410';
+    let viewBox = '60 25 260 395';
     let title = '1. Rosette Whole Plant Lamina (15 Segments)';
+    let textX = 70;
+    let textY = 38;
 
     if (currentMap === 'root') {
-      viewBox = '360 20 260 410';
+      viewBox = '360 25 260 395';
       title = '2. Primary Root Radial & Longitudinal Apex (90 Cells)';
+      textX = 370;
+      textY = 38;
     } else if (currentMap === 'leaf_cross_section') {
-      viewBox = '660 20 260 410';
+      viewBox = '660 25 260 395';
       title = '3. Leaf Transverse Cellular Cross-Section (138 Cells)';
+      textX = 670;
+      textY = 38;
     } else if (currentMap === 'flower') {
-      viewBox = '50 40 300 320';
-      title = '4. Floral & Inflorescence Organ Diagram (87 Cells)';
+      viewBox = '70 45 260 360';
+      title = '4. Floral & Inflorescence Organ Diagram (94 Cells)';
+      textX = 80;
+      textY = 58;
     }
 
     let polysHtml = '';
@@ -724,8 +729,8 @@ streamlit run web_app.py
     });
 
     const svg = `
-      <svg viewBox="${viewBox}" width="100%" height="235" style="display:block;margin:0 auto;background:transparent;">
-        <text x="${parseInt(viewBox.split(' ')[0]) + 10}" y="42" font-size="11" font-weight="700" fill="var(--fg)">${title}</text>
+      <svg viewBox="${viewBox}" width="100%" height="240" style="display:block;margin:0 auto;background:transparent;">
+        <text x="${textX}" y="${textY}" font-size="11" font-weight="700" fill="var(--fg)">${title}</text>
         ${polysHtml}
       </svg>
     `;

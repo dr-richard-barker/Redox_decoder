@@ -1742,612 +1742,682 @@
   "flower": [
     {
       "id": "fl_ped_0",
-      "points": "185,310 215,310 215,330 185,330",
+      "points": "188,310 212,310 212,325 188,325",
       "cellType": "Pedicel_Vascular",
       "layer": "Flower",
       "name": "Pedicel Vascular Cylinder 1"
     },
     {
       "id": "fl_ped_1",
-      "points": "185,330 215,330 215,350 185,350",
+      "points": "188,325 212,325 212,340 188,340",
       "cellType": "Pedicel_Vascular",
       "layer": "Flower",
       "name": "Pedicel Vascular Cylinder 2"
     },
     {
       "id": "fl_ped_2",
-      "points": "185,350 215,350 215,370 185,370",
+      "points": "188,340 212,340 212,355 188,355",
       "cellType": "Pedicel_Vascular",
       "layer": "Flower",
       "name": "Pedicel Vascular Cylinder 3"
     },
     {
       "id": "fl_ped_3",
-      "points": "185,370 215,370 215,390 185,390",
+      "points": "188,355 212,355 212,370 188,370",
       "cellType": "Pedicel_Vascular",
       "layer": "Flower",
       "name": "Pedicel Vascular Cylinder 4"
     },
     {
+      "id": "fl_ped_4",
+      "points": "188,370 212,370 212,385 188,385",
+      "cellType": "Pedicel_Vascular",
+      "layer": "Flower",
+      "name": "Pedicel Vascular Cylinder 5"
+    },
+    {
       "id": "fl_rec_0",
-      "points": "150,290 170,290 168,310 152,310",
+      "points": "140,292 160,292 157,310 143,310",
       "cellType": "Pedicel_Vascular",
       "layer": "Flower",
       "name": "Floral Receptacle Cortex 1"
     },
     {
       "id": "fl_rec_1",
-      "points": "170,290 190,290 188,310 172,310",
+      "points": "160,292 180,292 177,310 163,310",
       "cellType": "Pedicel_Vascular",
       "layer": "Flower",
       "name": "Floral Receptacle Cortex 2"
     },
     {
       "id": "fl_rec_2",
-      "points": "190,290 210,290 208,310 192,310",
+      "points": "180,292 200,292 197,310 183,310",
       "cellType": "Pedicel_Vascular",
       "layer": "Flower",
       "name": "Floral Receptacle Cortex 3"
     },
     {
       "id": "fl_rec_3",
-      "points": "210,290 230,290 228,310 212,310",
+      "points": "200,292 220,292 217,310 203,310",
       "cellType": "Pedicel_Vascular",
       "layer": "Flower",
       "name": "Floral Receptacle Cortex 4"
     },
     {
       "id": "fl_rec_4",
-      "points": "230,290 250,290 248,310 232,310",
+      "points": "220,292 240,292 237,310 223,310",
       "cellType": "Pedicel_Vascular",
       "layer": "Flower",
       "name": "Floral Receptacle Cortex 5"
     },
     {
+      "id": "fl_rec_5",
+      "points": "240,292 260,292 257,310 243,310",
+      "cellType": "Pedicel_Vascular",
+      "layer": "Flower",
+      "name": "Floral Receptacle Cortex 6"
+    },
+    {
       "id": "fl_sep_l_0",
-      "points": "119.8,300.9 97.5,312.2 90.6,295.5 114.4,287.8",
+      "points": "95,200 125,195 120,210 90,210",
       "cellType": "Sepal",
       "layer": "Flower",
-      "name": "Abaxial Sepal Layer L1"
-    },
-    {
-      "id": "fl_sep_l_1",
-      "points": "114.4,287.8 90.6,295.5 86.4,278.0 111.1,274.1",
-      "cellType": "Sepal",
-      "layer": "Flower",
-      "name": "Abaxial Sepal Layer L2"
-    },
-    {
-      "id": "fl_sep_l_2",
-      "points": "111.1,274.1 86.4,278.0 85.0,260.0 110.0,260.0",
-      "cellType": "Sepal",
-      "layer": "Flower",
-      "name": "Abaxial Sepal Layer L3"
-    },
-    {
-      "id": "fl_sep_l_3",
-      "points": "110.0,260.0 85.0,260.0 86.4,242.0 111.1,245.9",
-      "cellType": "Sepal",
-      "layer": "Flower",
-      "name": "Abaxial Sepal Layer L4"
-    },
-    {
-      "id": "fl_sep_l_4",
-      "points": "111.1,245.9 86.4,242.0 90.6,224.5 114.4,232.2",
-      "cellType": "Sepal",
-      "layer": "Flower",
-      "name": "Abaxial Sepal Layer L5"
-    },
-    {
-      "id": "fl_sep_l_5",
-      "points": "114.4,232.2 90.6,224.5 97.5,207.8 119.8,219.1",
-      "cellType": "Sepal",
-      "layer": "Flower",
-      "name": "Abaxial Sepal Layer L6"
+      "name": "Protective Calyx Sepal Left 1"
     },
     {
       "id": "fl_sep_r_0",
-      "points": "280.2,300.9 302.5,312.2 309.4,295.5 285.6,287.8",
+      "points": "275,195 305,200 310,210 280,210",
       "cellType": "Sepal",
       "layer": "Flower",
-      "name": "Abaxial Sepal Layer R1"
+      "name": "Protective Calyx Sepal Right 1"
+    },
+    {
+      "id": "fl_sep_l_1",
+      "points": "95,212 125,207 120,222 90,222",
+      "cellType": "Sepal",
+      "layer": "Flower",
+      "name": "Protective Calyx Sepal Left 2"
     },
     {
       "id": "fl_sep_r_1",
-      "points": "285.6,287.8 309.4,295.5 313.6,278.0 288.9,274.1",
+      "points": "275,207 305,212 310,222 280,222",
       "cellType": "Sepal",
       "layer": "Flower",
-      "name": "Abaxial Sepal Layer R2"
+      "name": "Protective Calyx Sepal Right 2"
+    },
+    {
+      "id": "fl_sep_l_2",
+      "points": "95,224 125,219 120,234 90,234",
+      "cellType": "Sepal",
+      "layer": "Flower",
+      "name": "Protective Calyx Sepal Left 3"
     },
     {
       "id": "fl_sep_r_2",
-      "points": "288.9,274.1 313.6,278.0 315.0,260.0 290.0,260.0",
+      "points": "275,219 305,224 310,234 280,234",
       "cellType": "Sepal",
       "layer": "Flower",
-      "name": "Abaxial Sepal Layer R3"
+      "name": "Protective Calyx Sepal Right 3"
+    },
+    {
+      "id": "fl_sep_l_3",
+      "points": "95,236 125,231 120,246 90,246",
+      "cellType": "Sepal",
+      "layer": "Flower",
+      "name": "Protective Calyx Sepal Left 4"
     },
     {
       "id": "fl_sep_r_3",
-      "points": "290.0,260.0 315.0,260.0 313.6,242.0 288.9,245.9",
+      "points": "275,231 305,236 310,246 280,246",
       "cellType": "Sepal",
       "layer": "Flower",
-      "name": "Abaxial Sepal Layer R4"
+      "name": "Protective Calyx Sepal Right 4"
+    },
+    {
+      "id": "fl_sep_l_4",
+      "points": "95,248 125,243 120,258 90,258",
+      "cellType": "Sepal",
+      "layer": "Flower",
+      "name": "Protective Calyx Sepal Left 5"
     },
     {
       "id": "fl_sep_r_4",
-      "points": "288.9,245.9 313.6,242.0 309.4,224.5 285.6,232.2",
+      "points": "275,243 305,248 310,258 280,258",
       "cellType": "Sepal",
       "layer": "Flower",
-      "name": "Abaxial Sepal Layer R5"
+      "name": "Protective Calyx Sepal Right 5"
+    },
+    {
+      "id": "fl_sep_l_5",
+      "points": "95,260 125,255 120,270 90,270",
+      "cellType": "Sepal",
+      "layer": "Flower",
+      "name": "Protective Calyx Sepal Left 6"
     },
     {
       "id": "fl_sep_r_5",
-      "points": "285.6,232.2 309.4,224.5 302.5,207.8 280.2,219.1",
+      "points": "275,255 305,260 310,270 280,270",
       "cellType": "Sepal",
       "layer": "Flower",
-      "name": "Abaxial Sepal Layer R6"
+      "name": "Protective Calyx Sepal Right 6"
+    },
+    {
+      "id": "fl_sep_l_6",
+      "points": "95,272 125,267 120,282 90,282",
+      "cellType": "Sepal",
+      "layer": "Flower",
+      "name": "Protective Calyx Sepal Left 7"
+    },
+    {
+      "id": "fl_sep_r_6",
+      "points": "275,267 305,272 310,282 280,282",
+      "cellType": "Sepal",
+      "layer": "Flower",
+      "name": "Protective Calyx Sepal Right 7"
+    },
+    {
+      "id": "fl_sep_l_7",
+      "points": "95,284 125,279 120,294 90,294",
+      "cellType": "Sepal",
+      "layer": "Flower",
+      "name": "Protective Calyx Sepal Left 8"
+    },
+    {
+      "id": "fl_sep_r_7",
+      "points": "275,279 305,284 310,294 280,294",
+      "cellType": "Sepal",
+      "layer": "Flower",
+      "name": "Protective Calyx Sepal Right 8"
     },
     {
       "id": "fl_pet_l_0",
-      "points": "95,100 135,95 140,115 90,118",
+      "points": "105,95 145,89 150,109 100,109",
       "cellType": "Petal",
       "layer": "Flower",
-      "name": "Floral Petal Lamina Left 1"
-    },
-    {
-      "id": "fl_pet_l_1",
-      "points": "95,120 135,115 140,135 90,138",
-      "cellType": "Petal",
-      "layer": "Flower",
-      "name": "Floral Petal Lamina Left 2"
-    },
-    {
-      "id": "fl_pet_l_2",
-      "points": "95,140 135,135 140,155 90,158",
-      "cellType": "Petal",
-      "layer": "Flower",
-      "name": "Floral Petal Lamina Left 3"
-    },
-    {
-      "id": "fl_pet_l_3",
-      "points": "95,160 135,155 140,175 90,178",
-      "cellType": "Petal",
-      "layer": "Flower",
-      "name": "Floral Petal Lamina Left 4"
-    },
-    {
-      "id": "fl_pet_l_4",
-      "points": "95,180 135,175 140,195 90,198",
-      "cellType": "Petal",
-      "layer": "Flower",
-      "name": "Floral Petal Lamina Left 5"
-    },
-    {
-      "id": "fl_pet_l_5",
-      "points": "95,200 135,195 140,215 90,218",
-      "cellType": "Petal",
-      "layer": "Flower",
-      "name": "Floral Petal Lamina Left 6"
-    },
-    {
-      "id": "fl_pet_l_6",
-      "points": "95,220 135,215 140,235 90,238",
-      "cellType": "Petal",
-      "layer": "Flower",
-      "name": "Floral Petal Lamina Left 7"
-    },
-    {
-      "id": "fl_pet_l_7",
-      "points": "95,240 135,235 140,255 90,258",
-      "cellType": "Petal",
-      "layer": "Flower",
-      "name": "Floral Petal Lamina Left 8"
+      "name": "Corolla Petal Blade Left 1"
     },
     {
       "id": "fl_pet_r_0",
-      "points": "265,95 305,100 310,118 260,115",
+      "points": "255,89 295,95 300,109 250,109",
       "cellType": "Petal",
       "layer": "Flower",
-      "name": "Floral Petal Lamina Right 1"
+      "name": "Corolla Petal Blade Right 1"
+    },
+    {
+      "id": "fl_pet_l_1",
+      "points": "105,113 145,107 150,127 100,127",
+      "cellType": "Petal",
+      "layer": "Flower",
+      "name": "Corolla Petal Blade Left 2"
     },
     {
       "id": "fl_pet_r_1",
-      "points": "265,115 305,120 310,138 260,135",
+      "points": "255,107 295,113 300,127 250,127",
       "cellType": "Petal",
       "layer": "Flower",
-      "name": "Floral Petal Lamina Right 2"
+      "name": "Corolla Petal Blade Right 2"
+    },
+    {
+      "id": "fl_pet_l_2",
+      "points": "105,131 145,125 150,145 100,145",
+      "cellType": "Petal",
+      "layer": "Flower",
+      "name": "Corolla Petal Blade Left 3"
     },
     {
       "id": "fl_pet_r_2",
-      "points": "265,135 305,140 310,158 260,155",
+      "points": "255,125 295,131 300,145 250,145",
       "cellType": "Petal",
       "layer": "Flower",
-      "name": "Floral Petal Lamina Right 3"
+      "name": "Corolla Petal Blade Right 3"
+    },
+    {
+      "id": "fl_pet_l_3",
+      "points": "105,149 145,143 150,163 100,163",
+      "cellType": "Petal",
+      "layer": "Flower",
+      "name": "Corolla Petal Blade Left 4"
     },
     {
       "id": "fl_pet_r_3",
-      "points": "265,155 305,160 310,178 260,175",
+      "points": "255,143 295,149 300,163 250,163",
       "cellType": "Petal",
       "layer": "Flower",
-      "name": "Floral Petal Lamina Right 4"
+      "name": "Corolla Petal Blade Right 4"
+    },
+    {
+      "id": "fl_pet_l_4",
+      "points": "105,167 145,161 150,181 100,181",
+      "cellType": "Petal",
+      "layer": "Flower",
+      "name": "Corolla Petal Blade Left 5"
     },
     {
       "id": "fl_pet_r_4",
-      "points": "265,175 305,180 310,198 260,195",
+      "points": "255,161 295,167 300,181 250,181",
       "cellType": "Petal",
       "layer": "Flower",
-      "name": "Floral Petal Lamina Right 5"
+      "name": "Corolla Petal Blade Right 5"
+    },
+    {
+      "id": "fl_pet_l_5",
+      "points": "105,185 145,179 150,199 100,199",
+      "cellType": "Petal",
+      "layer": "Flower",
+      "name": "Corolla Petal Blade Left 6"
     },
     {
       "id": "fl_pet_r_5",
-      "points": "265,195 305,200 310,218 260,215",
+      "points": "255,179 295,185 300,199 250,199",
       "cellType": "Petal",
       "layer": "Flower",
-      "name": "Floral Petal Lamina Right 6"
+      "name": "Corolla Petal Blade Right 6"
+    },
+    {
+      "id": "fl_pet_l_6",
+      "points": "105,203 145,197 150,217 100,217",
+      "cellType": "Petal",
+      "layer": "Flower",
+      "name": "Corolla Petal Blade Left 7"
     },
     {
       "id": "fl_pet_r_6",
-      "points": "265,215 305,220 310,238 260,235",
+      "points": "255,197 295,203 300,217 250,217",
       "cellType": "Petal",
       "layer": "Flower",
-      "name": "Floral Petal Lamina Right 7"
+      "name": "Corolla Petal Blade Right 7"
+    },
+    {
+      "id": "fl_pet_l_7",
+      "points": "105,221 145,215 150,235 100,235",
+      "cellType": "Petal",
+      "layer": "Flower",
+      "name": "Corolla Petal Blade Left 8"
     },
     {
       "id": "fl_pet_r_7",
-      "points": "265,235 305,240 310,258 260,255",
+      "points": "255,215 295,221 300,235 250,235",
       "cellType": "Petal",
       "layer": "Flower",
-      "name": "Floral Petal Lamina Right 8"
+      "name": "Corolla Petal Blade Right 8"
+    },
+    {
+      "id": "fl_pet_l_8",
+      "points": "105,239 145,233 150,253 100,253",
+      "cellType": "Petal",
+      "layer": "Flower",
+      "name": "Corolla Petal Blade Left 9"
+    },
+    {
+      "id": "fl_pet_r_8",
+      "points": "255,233 295,239 300,253 250,253",
+      "cellType": "Petal",
+      "layer": "Flower",
+      "name": "Corolla Petal Blade Right 9"
+    },
+    {
+      "id": "fl_pet_l_9",
+      "points": "105,257 145,251 150,271 100,271",
+      "cellType": "Petal",
+      "layer": "Flower",
+      "name": "Corolla Petal Blade Left 10"
+    },
+    {
+      "id": "fl_pet_r_9",
+      "points": "255,251 295,257 300,271 250,271",
+      "cellType": "Petal",
+      "layer": "Flower",
+      "name": "Corolla Petal Blade Right 10"
     },
     {
       "id": "fl_anth_1_0",
-      "points": "140,110 154,110 154,124 140,124",
+      "points": "145,115 157,115 157,127 145,127",
       "cellType": "Anther",
       "layer": "Flower",
-      "name": "Stamen Anther Locule TL-1"
+      "name": "Inner Stamen Anther Locule L1"
     },
     {
       "id": "fl_anth_1_1",
-      "points": "156,110 170,110 170,124 156,124",
+      "points": "159,115 171,115 171,127 159,127",
       "cellType": "Anther",
       "layer": "Flower",
-      "name": "Stamen Anther Locule TL-2"
+      "name": "Inner Stamen Anther Locule L2"
     },
     {
       "id": "fl_anth_1_2",
-      "points": "140,126 154,126 154,140 140,140",
+      "points": "145,129 157,129 157,141 145,141",
       "cellType": "Anther",
       "layer": "Flower",
-      "name": "Stamen Anther Locule TL-3"
+      "name": "Inner Stamen Anther Locule L3"
     },
     {
       "id": "fl_anth_1_3",
-      "points": "156,126 170,126 170,140 156,140",
+      "points": "159,129 171,129 171,141 159,141",
       "cellType": "Anther",
       "layer": "Flower",
-      "name": "Stamen Anther Locule TL-4"
-    },
-    {
-      "id": "fl_anth_2_0",
-      "points": "230,110 244,110 244,124 230,124",
-      "cellType": "Anther",
-      "layer": "Flower",
-      "name": "Stamen Anther Locule TR-1"
-    },
-    {
-      "id": "fl_anth_2_1",
-      "points": "246,110 260,110 260,124 246,124",
-      "cellType": "Anther",
-      "layer": "Flower",
-      "name": "Stamen Anther Locule TR-2"
-    },
-    {
-      "id": "fl_anth_2_2",
-      "points": "230,126 244,126 244,140 230,140",
-      "cellType": "Anther",
-      "layer": "Flower",
-      "name": "Stamen Anther Locule TR-3"
-    },
-    {
-      "id": "fl_anth_2_3",
-      "points": "246,126 260,126 260,140 246,140",
-      "cellType": "Anther",
-      "layer": "Flower",
-      "name": "Stamen Anther Locule TR-4"
-    },
-    {
-      "id": "fl_anth_3_0",
-      "points": "130,165 144,165 144,179 130,179",
-      "cellType": "Anther",
-      "layer": "Flower",
-      "name": "Lateral Anther Locule ML-1"
-    },
-    {
-      "id": "fl_anth_3_1",
-      "points": "146,165 160,165 160,179 146,179",
-      "cellType": "Anther",
-      "layer": "Flower",
-      "name": "Lateral Anther Locule ML-2"
-    },
-    {
-      "id": "fl_anth_3_2",
-      "points": "130,181 144,181 144,195 130,195",
-      "cellType": "Anther",
-      "layer": "Flower",
-      "name": "Lateral Anther Locule ML-3"
-    },
-    {
-      "id": "fl_anth_3_3",
-      "points": "146,181 160,181 160,195 146,195",
-      "cellType": "Anther",
-      "layer": "Flower",
-      "name": "Lateral Anther Locule ML-4"
-    },
-    {
-      "id": "fl_anth_4_0",
-      "points": "240,165 254,165 254,179 240,179",
-      "cellType": "Anther",
-      "layer": "Flower",
-      "name": "Lateral Anther Locule MR-1"
-    },
-    {
-      "id": "fl_anth_4_1",
-      "points": "256,165 270,165 270,179 256,179",
-      "cellType": "Anther",
-      "layer": "Flower",
-      "name": "Lateral Anther Locule MR-2"
-    },
-    {
-      "id": "fl_anth_4_2",
-      "points": "240,181 254,181 254,195 240,195",
-      "cellType": "Anther",
-      "layer": "Flower",
-      "name": "Lateral Anther Locule MR-3"
-    },
-    {
-      "id": "fl_anth_4_3",
-      "points": "256,181 270,181 270,195 256,195",
-      "cellType": "Anther",
-      "layer": "Flower",
-      "name": "Lateral Anther Locule MR-4"
+      "name": "Inner Stamen Anther Locule L4"
     },
     {
       "id": "fl_fil_1",
-      "points": "148,142 156,142 165,285 159,285",
+      "points": "150,143 156,143 166,285 160,285",
       "cellType": "Pedicel_Vascular",
       "layer": "Flower",
-      "name": "Stamen Filament 1"
+      "name": "Stamen Filament L1"
+    },
+    {
+      "id": "fl_anth_2_0",
+      "points": "230,115 242,115 242,127 230,127",
+      "cellType": "Anther",
+      "layer": "Flower",
+      "name": "Inner Stamen Anther Locule R1"
+    },
+    {
+      "id": "fl_anth_2_1",
+      "points": "244,115 256,115 256,127 244,127",
+      "cellType": "Anther",
+      "layer": "Flower",
+      "name": "Inner Stamen Anther Locule R2"
+    },
+    {
+      "id": "fl_anth_2_2",
+      "points": "230,129 242,129 242,141 230,141",
+      "cellType": "Anther",
+      "layer": "Flower",
+      "name": "Inner Stamen Anther Locule R3"
+    },
+    {
+      "id": "fl_anth_2_3",
+      "points": "244,129 256,129 256,141 244,141",
+      "cellType": "Anther",
+      "layer": "Flower",
+      "name": "Inner Stamen Anther Locule R4"
     },
     {
       "id": "fl_fil_2",
-      "points": "244,142 252,142 241,285 235,285",
+      "points": "244,143 250,143 240,285 234,285",
       "cellType": "Pedicel_Vascular",
       "layer": "Flower",
-      "name": "Stamen Filament 2"
+      "name": "Stamen Filament R1"
+    },
+    {
+      "id": "fl_anth_3_0",
+      "points": "132,165 144,165 144,177 132,177",
+      "cellType": "Anther",
+      "layer": "Flower",
+      "name": "Lateral Stamen Anther Locule L1"
+    },
+    {
+      "id": "fl_anth_3_1",
+      "points": "146,165 158,165 158,177 146,177",
+      "cellType": "Anther",
+      "layer": "Flower",
+      "name": "Lateral Stamen Anther Locule L2"
+    },
+    {
+      "id": "fl_anth_3_2",
+      "points": "132,179 144,179 144,191 132,191",
+      "cellType": "Anther",
+      "layer": "Flower",
+      "name": "Lateral Stamen Anther Locule L3"
+    },
+    {
+      "id": "fl_anth_3_3",
+      "points": "146,179 158,179 158,191 146,191",
+      "cellType": "Anther",
+      "layer": "Flower",
+      "name": "Lateral Stamen Anther Locule L4"
     },
     {
       "id": "fl_fil_3",
-      "points": "138,197 146,197 155,285 149,285",
+      "points": "136,193 142,193 154,285 148,285",
       "cellType": "Pedicel_Vascular",
       "layer": "Flower",
-      "name": "Stamen Filament 3"
+      "name": "Stamen Filament L2"
+    },
+    {
+      "id": "fl_anth_4_0",
+      "points": "242,165 254,165 254,177 242,177",
+      "cellType": "Anther",
+      "layer": "Flower",
+      "name": "Lateral Stamen Anther Locule R1"
+    },
+    {
+      "id": "fl_anth_4_1",
+      "points": "256,165 268,165 268,177 256,177",
+      "cellType": "Anther",
+      "layer": "Flower",
+      "name": "Lateral Stamen Anther Locule R2"
+    },
+    {
+      "id": "fl_anth_4_2",
+      "points": "242,179 254,179 254,191 242,191",
+      "cellType": "Anther",
+      "layer": "Flower",
+      "name": "Lateral Stamen Anther Locule R3"
+    },
+    {
+      "id": "fl_anth_4_3",
+      "points": "256,179 268,179 268,191 256,191",
+      "cellType": "Anther",
+      "layer": "Flower",
+      "name": "Lateral Stamen Anther Locule R4"
     },
     {
       "id": "fl_fil_4",
-      "points": "254,197 262,197 251,285 245,285",
+      "points": "258,193 264,193 252,285 246,285",
       "cellType": "Pedicel_Vascular",
       "layer": "Flower",
-      "name": "Stamen Filament 4"
+      "name": "Stamen Filament R2"
     },
     {
-      "id": "fl_stg_1",
-      "points": "188,72 200,60 200,82 188,82",
+      "id": "fl_stg_l",
+      "points": "186,70 199,58 199,78 186,78",
       "cellType": "Gynoecium",
       "layer": "Flower",
       "name": "Stigma Papillae Left"
     },
     {
-      "id": "fl_stg_2",
-      "points": "200,60 212,72 212,82 200,82",
+      "id": "fl_stg_r",
+      "points": "201,58 214,70 214,78 201,78",
       "cellType": "Gynoecium",
       "layer": "Flower",
       "name": "Stigma Papillae Right"
     },
     {
-      "id": "fl_stg_3",
-      "points": "194,82 206,82 206,95 194,95",
+      "id": "fl_sty",
+      "points": "193,78 207,78 207,95 193,95",
       "cellType": "Gynoecium",
       "layer": "Flower",
-      "name": "Style Neck Layer"
+      "name": "Style Transmission Neck"
     },
     {
       "id": "fl_ov_w_l_0",
-      "points": "176,95 188,95 188,127 176,127",
+      "points": "176,95 187,95 187,127 176,127",
       "cellType": "Gynoecium",
       "layer": "Flower",
-      "name": "Ovary Carpel Valve Wall L1"
+      "name": "Ovary Carpel Wall Left 1"
     },
     {
       "id": "fl_ov_w_r_0",
-      "points": "212,95 224,95 224,127 212,127",
+      "points": "213,95 224,95 224,127 213,127",
       "cellType": "Gynoecium",
       "layer": "Flower",
-      "name": "Ovary Carpel Valve Wall R1"
+      "name": "Ovary Carpel Wall Right 1"
     },
     {
       "id": "fl_ov_w_l_1",
-      "points": "176,127 188,127 188,159 176,159",
+      "points": "176,127 187,127 187,159 176,159",
       "cellType": "Gynoecium",
       "layer": "Flower",
-      "name": "Ovary Carpel Valve Wall L2"
+      "name": "Ovary Carpel Wall Left 2"
     },
     {
       "id": "fl_ov_w_r_1",
-      "points": "212,127 224,127 224,159 212,159",
+      "points": "213,127 224,127 224,159 213,159",
       "cellType": "Gynoecium",
       "layer": "Flower",
-      "name": "Ovary Carpel Valve Wall R2"
+      "name": "Ovary Carpel Wall Right 2"
     },
     {
       "id": "fl_ov_w_l_2",
-      "points": "176,159 188,159 188,191 176,191",
+      "points": "176,159 187,159 187,191 176,191",
       "cellType": "Gynoecium",
       "layer": "Flower",
-      "name": "Ovary Carpel Valve Wall L3"
+      "name": "Ovary Carpel Wall Left 3"
     },
     {
       "id": "fl_ov_w_r_2",
-      "points": "212,159 224,159 224,191 212,191",
+      "points": "213,159 224,159 224,191 213,191",
       "cellType": "Gynoecium",
       "layer": "Flower",
-      "name": "Ovary Carpel Valve Wall R3"
+      "name": "Ovary Carpel Wall Right 3"
     },
     {
       "id": "fl_ov_w_l_3",
-      "points": "176,191 188,191 188,223 176,223",
+      "points": "176,191 187,191 187,223 176,223",
       "cellType": "Gynoecium",
       "layer": "Flower",
-      "name": "Ovary Carpel Valve Wall L4"
+      "name": "Ovary Carpel Wall Left 4"
     },
     {
       "id": "fl_ov_w_r_3",
-      "points": "212,191 224,191 224,223 212,223",
+      "points": "213,191 224,191 224,223 213,223",
       "cellType": "Gynoecium",
       "layer": "Flower",
-      "name": "Ovary Carpel Valve Wall R4"
+      "name": "Ovary Carpel Wall Right 4"
     },
     {
       "id": "fl_ov_w_l_4",
-      "points": "176,223 188,223 188,255 176,255",
+      "points": "176,223 187,223 187,255 176,255",
       "cellType": "Gynoecium",
       "layer": "Flower",
-      "name": "Ovary Carpel Valve Wall L5"
+      "name": "Ovary Carpel Wall Left 5"
     },
     {
       "id": "fl_ov_w_r_4",
-      "points": "212,223 224,223 224,255 212,255",
+      "points": "213,223 224,223 224,255 213,255",
       "cellType": "Gynoecium",
       "layer": "Flower",
-      "name": "Ovary Carpel Valve Wall R5"
+      "name": "Ovary Carpel Wall Right 5"
     },
     {
       "id": "fl_ov_w_l_5",
-      "points": "176,255 188,255 188,287 176,287",
+      "points": "176,255 187,255 187,287 176,287",
       "cellType": "Gynoecium",
       "layer": "Flower",
-      "name": "Ovary Carpel Valve Wall L6"
+      "name": "Ovary Carpel Wall Left 6"
     },
     {
       "id": "fl_ov_w_r_5",
-      "points": "212,255 224,255 224,287 212,287",
+      "points": "213,255 224,255 224,287 213,287",
       "cellType": "Gynoecium",
       "layer": "Flower",
-      "name": "Ovary Carpel Valve Wall R6"
+      "name": "Ovary Carpel Wall Right 6"
+    },
+    {
+      "id": "fl_rep_0",
+      "points": "197,95 203,95 203,133 197,133",
+      "cellType": "Gynoecium",
+      "layer": "Flower",
+      "name": "Ovary Central Replum Septum 1"
+    },
+    {
+      "id": "fl_rep_1",
+      "points": "197,133 203,133 203,171 197,171",
+      "cellType": "Gynoecium",
+      "layer": "Flower",
+      "name": "Ovary Central Replum Septum 2"
+    },
+    {
+      "id": "fl_rep_2",
+      "points": "197,171 203,171 203,209 197,209",
+      "cellType": "Gynoecium",
+      "layer": "Flower",
+      "name": "Ovary Central Replum Septum 3"
+    },
+    {
+      "id": "fl_rep_3",
+      "points": "197,209 203,209 203,247 197,247",
+      "cellType": "Gynoecium",
+      "layer": "Flower",
+      "name": "Ovary Central Replum Septum 4"
+    },
+    {
+      "id": "fl_rep_4",
+      "points": "197,247 203,247 203,285 197,285",
+      "cellType": "Gynoecium",
+      "layer": "Flower",
+      "name": "Ovary Central Replum Septum 5"
     },
     {
       "id": "fl_ovule_0",
-      "points": "191,105 209,105 209,119 191,119",
+      "points": "189,102 211,102 211,116 189,116",
       "cellType": "Gynoecium",
       "layer": "Flower",
       "name": "Developing Floral Ovule 1"
     },
     {
       "id": "fl_ovule_1",
-      "points": "191,123 209,123 209,137 191,137",
+      "points": "189,120 211,120 211,134 189,134",
       "cellType": "Gynoecium",
       "layer": "Flower",
       "name": "Developing Floral Ovule 2"
     },
     {
       "id": "fl_ovule_2",
-      "points": "191,141 209,141 209,155 191,155",
+      "points": "189,138 211,138 211,152 189,152",
       "cellType": "Gynoecium",
       "layer": "Flower",
       "name": "Developing Floral Ovule 3"
     },
     {
       "id": "fl_ovule_3",
-      "points": "191,159 209,159 209,173 191,173",
+      "points": "189,156 211,156 211,170 189,170",
       "cellType": "Gynoecium",
       "layer": "Flower",
       "name": "Developing Floral Ovule 4"
     },
     {
       "id": "fl_ovule_4",
-      "points": "191,177 209,177 209,191 191,191",
+      "points": "189,174 211,174 211,188 189,188",
       "cellType": "Gynoecium",
       "layer": "Flower",
       "name": "Developing Floral Ovule 5"
     },
     {
       "id": "fl_ovule_5",
-      "points": "191,195 209,195 209,209 191,209",
+      "points": "189,192 211,192 211,206 189,206",
       "cellType": "Gynoecium",
       "layer": "Flower",
       "name": "Developing Floral Ovule 6"
     },
     {
       "id": "fl_ovule_6",
-      "points": "191,213 209,213 209,227 191,227",
+      "points": "189,210 211,210 211,224 189,224",
       "cellType": "Gynoecium",
       "layer": "Flower",
       "name": "Developing Floral Ovule 7"
     },
     {
       "id": "fl_ovule_7",
-      "points": "191,231 209,231 209,245 191,245",
+      "points": "189,228 211,228 211,242 189,242",
       "cellType": "Gynoecium",
       "layer": "Flower",
       "name": "Developing Floral Ovule 8"
     },
     {
       "id": "fl_ovule_8",
-      "points": "191,249 209,249 209,263 191,263",
+      "points": "189,246 211,246 211,260 189,260",
       "cellType": "Gynoecium",
       "layer": "Flower",
       "name": "Developing Floral Ovule 9"
     },
     {
       "id": "fl_ovule_9",
-      "points": "191,267 209,267 209,281 191,281",
+      "points": "189,264 211,264 211,278 189,278",
       "cellType": "Gynoecium",
       "layer": "Flower",
       "name": "Developing Floral Ovule 10"
-    },
-    {
-      "id": "fl_rep_0",
-      "points": "197,100 203,100 203,136 197,136",
-      "cellType": "Gynoecium",
-      "layer": "Flower",
-      "name": "Pistil Replum Vascular Core 1"
-    },
-    {
-      "id": "fl_rep_1",
-      "points": "197,136 203,136 203,172 197,172",
-      "cellType": "Gynoecium",
-      "layer": "Flower",
-      "name": "Pistil Replum Vascular Core 2"
-    },
-    {
-      "id": "fl_rep_2",
-      "points": "197,172 203,172 203,208 197,208",
-      "cellType": "Gynoecium",
-      "layer": "Flower",
-      "name": "Pistil Replum Vascular Core 3"
-    },
-    {
-      "id": "fl_rep_3",
-      "points": "197,208 203,208 203,244 197,244",
-      "cellType": "Gynoecium",
-      "layer": "Flower",
-      "name": "Pistil Replum Vascular Core 4"
-    },
-    {
-      "id": "fl_rep_4",
-      "points": "197,244 203,244 203,280 197,280",
-      "cellType": "Gynoecium",
-      "layer": "Flower",
-      "name": "Pistil Replum Vascular Core 5"
     }
   ]
 }
