@@ -23,17 +23,17 @@
 <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
 <style>
   .plant-poly {
-    stroke: #1e293b;
+    stroke: #0f172a;
     stroke-width: 1.25px;
     stroke-linejoin: round;
     stroke-linecap: round;
-    transition: fill 0.3s ease, stroke-width 0.2s ease, stroke 0.2s ease;
+    transition: fill 0.35s ease, stroke-width 0.2s ease, stroke 0.2s ease;
     cursor: pointer;
   }
   .plant-poly:hover {
-    stroke: #ef4444 !important;
-    stroke-width: 2.8px !important;
-    filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.7));
+    stroke: #f43f5e !important;
+    stroke-width: 3.0px !important;
+    filter: drop-shadow(0 0 6px rgba(244, 63, 94, 0.8));
   }
   .color-scale-bar {
     display: flex;
@@ -46,11 +46,11 @@
     color: var(--muted);
   }
   .gradient-strip {
-    width: 150px;
+    width: 160px;
     height: 12px;
     border-radius: 4px;
     border: 1px solid var(--line);
-    background: linear-gradient(90deg, #3b528b, #21918c, #5ec962, #fde725, #ca6953, #a50026);
+    background: linear-gradient(90deg, #312e81, #1e40af, #0d9488, #10b981, #facc15, #f97316, #e11d48);
   }
   .auto-toggle-badge {
     display: inline-block;
@@ -62,7 +62,7 @@
     color: #10b981;
   }
   .cell-tooltip-box {
-    min-height: 24px;
+    min-height: 26px;
     font-size: 0.84rem;
     font-weight: 600;
     color: var(--fg);
@@ -171,7 +171,7 @@
       <!-- Tab 1: Predictor & ggPlantMap -->
       <div id="tab-predictor" class="tab-panel active">
         <label for="user-gene-input" style="font-weight:700;font-size:0.95rem;display:block;margin-bottom:8px;">
-          Paste comma- or space-separated TAIR10 symbols or AGI locus codes:
+          Paste comma- or space-separated TAIR10 symbols or AGI locus codes (Live autodecoder recalculates as you type):
         </label>
         <textarea id="user-gene-input" style="width:100%;min-height:85px;padding:12px 14px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--fg);font-family:monospace;font-size:0.95rem;margin-bottom:12px;">RBOHD, RBOHF, APX1, ZAT12, KIN10, AOX1A, GR1</textarea>
 
@@ -179,6 +179,7 @@
           <button class="btn primary" onclick="runGenePrediction()"><i class="fas fa-bolt"></i> Decode ROS Signature &amp; Map</button>
           <button class="btn" onclick="loadExamplePreset('h2o2')">Preset: H2O2 Burst</button>
           <button class="btn" onclick="loadExamplePreset('superoxide')">Preset: Superoxide / Paraquat</button>
+          <button class="btn" onclick="loadExamplePreset('floral')">Preset: Floral ROS (Anther/Gynoecium)</button>
           <button class="btn" onclick="loadExamplePreset('osd678')">Preset: OSD-678 (Root Flight)</button>
           <button class="btn" onclick="loadExamplePreset('osd223')">Preset: OSD-223 (Rosette Flight)</button>
           <button class="btn" onclick="loadExamplePreset('osd37')">Preset: OSD-37 (4 Ecotypes)</button>
@@ -439,17 +440,17 @@ streamlit run web_app.py
 <script>
   let currentMap = 'root';
   let currentCellScores = {
-    Stele: 0.90,
-    Cortex: 0.40,
-    Endodermis: 0.65,
-    Meristematic: 0.75,
-    Root_Cap: 0.70,
-    Mesophyll: 0.35,
-    Epidermis: 0.30,
-    Anther: 0.25,
-    Gynoecium: 0.30,
-    Petal: 0.20,
-    Vascular: 0.70
+    Stele: 0.95,
+    Cortex: 0.35,
+    Endodermis: 0.80,
+    Meristematic: 0.85,
+    Root_Cap: 0.80,
+    Mesophyll: 0.30,
+    Epidermis: 0.45,
+    Anther: 0.20,
+    Gynoecium: 0.25,
+    Petal: 0.15,
+    Vascular: 0.80
   };
 
   function switchToolTab(tabId) {
@@ -484,6 +485,8 @@ streamlit run web_app.py
       input.value = 'CAT2, APX1, ZAT12, HSFA2, ANAC017, AOX1A';
     } else if (type === 'superoxide') {
       input.value = 'CSD1, CSD2, FSD1, MSD1, RBOHD, RBOHF, WRKY33';
+    } else if (type === 'floral') {
+      input.value = 'HSFA2, AT2G07718, AT3G47680, APX1';
     } else if (type === 'osd678') {
       input.value = 'RBOHD, RBOHF, APX1, ZAT12, KIN10, AOX1A, GR1';
     } else if (type === 'osd223') {
@@ -499,6 +502,8 @@ streamlit run web_app.py
     const tokens = rawText.toUpperCase().split(/[\s,;]+/).filter(t => t.length > 1);
     const data = window.ROS_DECODER_DATA;
 
+    if (!data || !data.geneDatabase) return;
+
     const matched = [];
     tokens.forEach(token => {
       const gene = data.geneDatabase.find(g => g.symbol.toUpperCase() === token || g.agi.toUpperCase() === token);
@@ -506,11 +511,11 @@ streamlit run web_app.py
     });
 
     if (matched.length === 0) {
-      document.getElementById('stimulus-prediction-results').innerHTML = `<p style="color:#ef4444;">No recognized Arabidopsis ROS genes found.</p>`;
+      document.getElementById('stimulus-prediction-results').innerHTML = `<p style="color:#ef4444;font-size:0.9rem;">No recognized Arabidopsis ROS genes found. Try entering symbols (e.g. RBOHD, CAT2) or AGI locus codes (AT5G47910).</p>`;
       return;
     }
 
-    // 1. ROS Stimulus Class
+    // 1. ROS Stimulus Class Probabilities
     const classes = {
       h2o2: { name: 'H2O2 (Hydrogen Peroxide)', score: 0, color: '#ef4444' },
       paraquat: { name: 'Superoxide / Paraquat (O2•-)', score: 0, color: '#f97316' },
@@ -546,7 +551,7 @@ streamlit run web_app.py
     });
     document.getElementById('stimulus-prediction-results').innerHTML = stimHtml;
 
-    // 2. Elapsed Time
+    // 2. Elapsed Time Duration
     let avgHours = 0;
     matched.forEach(g => avgHours += g.timeHours);
     avgHours = avgHours / matched.length;
@@ -574,49 +579,43 @@ streamlit run web_app.py
       </div>
     `;
 
-    // 3. Multi-Cell Type Expression Mapping
+    // 3. Multi-Cell Type Expression Deconvolution Mapping
     const cScores = {
-      Stele: 0.15,
-      Cortex: 0.15,
-      Endodermis: 0.15,
-      Meristematic: 0.15,
-      Root_Cap: 0.15,
-      Mesophyll: 0.15,
-      Epidermis: 0.15,
-      Anther: 0.15,
-      Gynoecium: 0.15,
-      Petal: 0.15,
-      Vascular: 0.15
+      Stele: 0.08,
+      Cortex: 0.08,
+      Endodermis: 0.08,
+      Meristematic: 0.08,
+      Root_Cap: 0.08,
+      Mesophyll: 0.08,
+      Epidermis: 0.08,
+      Anther: 0.08,
+      Gynoecium: 0.08,
+      Petal: 0.08,
+      Vascular: 0.08
     };
 
     matched.forEach(g => {
-      if (g.cellType && cScores[g.cellType] !== undefined) {
-        cScores[g.cellType] += 0.45;
-      }
-      if (g.organ === 'Root') {
-        cScores.Stele += 0.35;
-        cScores.Root_Cap += 0.25;
-        cScores.Endodermis += 0.25;
-      }
-      if (g.organ === 'Leaf') {
-        cScores.Mesophyll += 0.40;
-        cScores.Epidermis += 0.25;
-      }
-      if (g.organ === 'Whole Seedling') {
-        cScores.Meristematic += 0.30;
-        cScores.Stele += 0.20;
+      if (g.cellScores) {
+        for (let ct in g.cellScores) {
+          cScores[ct] = Math.max(cScores[ct], g.cellScores[ct]);
+        }
+      } else {
+        if (g.cellType && cScores[g.cellType] !== undefined) cScores[g.cellType] = Math.max(cScores[g.cellType], 0.85);
+        if (g.organ === 'Root') { cScores.Stele = Math.max(cScores.Stele, 0.90); cScores.Root_Cap = Math.max(cScores.Root_Cap, 0.75); }
+        if (g.organ === 'Leaf') { cScores.Mesophyll = Math.max(cScores.Mesophyll, 0.90); cScores.Epidermis = Math.max(cScores.Epidermis, 0.70); }
+        if (g.organ === 'Inflorescence') { cScores.Anther = Math.max(cScores.Anther, 0.95); cScores.Gynoecium = Math.max(cScores.Gynoecium, 0.90); }
       }
     });
 
     for (let ct in cScores) {
-      cScores[ct] = Math.min(1.0, cScores[ct]);
+      cScores[ct] = Math.min(1.0, Math.max(0.05, cScores[ct]));
     }
     currentCellScores = cScores;
 
-    // Calculate organ-level means for auto-toggle
-    const meanRoot = (cScores.Stele + cScores.Cortex + cScores.Endodermis + cScores.Root_Cap) / 4;
+    // Calculate organ-level means for smart auto-toggle
+    const meanRoot = (cScores.Stele + cScores.Cortex + cScores.Endodermis + cScores.Root_Cap + cScores.Meristematic) / 5;
     const meanRosette = (cScores.Mesophyll + cScores.Epidermis + cScores.Vascular) / 3;
-    const meanInflo = (cScores.Anther + cScores.Gynoecium + cScores.Petal + cScores.Meristematic) / 4;
+    const meanInflo = (cScores.Anther + cScores.Gynoecium + cScores.Petal) / 3;
 
     let peakMap = 'rosette';
     if (meanRoot >= meanRosette && meanRoot >= meanInflo) {
@@ -636,14 +635,16 @@ streamlit run web_app.py
     switchMap(peakMap, false);
   }
 
+  // Enhanced Continuous 7-Stop Colormap (Deep Blue -> Teal -> Green -> Yellow -> Orange -> Crimson)
   function getViridisColor(val) {
-    const v = Math.max(0, Math.min(1, val));
-    if (v < 0.20) return '#3b528b';
-    if (v < 0.40) return '#21918c';
-    if (v < 0.60) return '#5ec962';
-    if (v < 0.75) return '#fde725';
-    if (v < 0.90) return '#ca6953';
-    return '#a50026';
+    const v = Math.max(0.0, Math.min(1.0, val));
+    if (v < 0.18) return '#312e81'; // Deep Indigo/Navy (Min)
+    if (v < 0.35) return '#1e40af'; // Blue
+    if (v < 0.50) return '#0d9488'; // Teal
+    if (v < 0.65) return '#10b981'; // Vibrant Green
+    if (v < 0.80) return '#facc15'; // Bright Yellow
+    if (v < 0.92) return '#f97316'; // Vivid Orange
+    return '#e11d48';               // Deep Crimson Rose (Peak)
   }
 
   function showCellHover(name, cellType, score) {
@@ -678,7 +679,7 @@ streamlit run web_app.py
 
     let polysHtml = '';
     cells.forEach(c => {
-      const score = currentCellScores[c.cellType] || 0.25;
+      const score = currentCellScores[c.cellType] !== undefined ? currentCellScores[c.cellType] : 0.25;
       const fillCol = getViridisColor(score);
       polysHtml += `
         <polygon class="plant-poly" points="${c.points}" fill="${fillCol}" 
@@ -697,7 +698,7 @@ streamlit run web_app.py
     document.getElementById('ggplantmap-svg-container').innerHTML = svg;
     
     document.getElementById('spatial-summary').innerHTML = `
-      <strong>ggPlantMap Anatomy:</strong> Complete cellular outline deployed. Showing <strong>${cells.length}</strong> individual cells with crisp boundaries.
+      <strong>ggPlantMap Anatomy:</strong> Complete cellular outline deployed. Showing <strong>${cells.length}</strong> individual cells dynamically colored by autodecoder.
     `;
   }
 
@@ -793,6 +794,12 @@ streamlit run web_app.py
   }
 
   document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('user-gene-input');
+    if (input) {
+      input.addEventListener('input', runGenePrediction);
+      input.addEventListener('change', runGenePrediction);
+      input.addEventListener('paste', () => setTimeout(runGenePrediction, 50));
+    }
     runGenePrediction();
   });
 </script>
