@@ -29,22 +29,22 @@
     cursor: pointer;
   }
   .plant-poly:hover {
-    stroke: #ef4444;
-    stroke-width: 2.2px;
-    filter: drop-shadow(0 0 3px rgba(239, 68, 68, 0.4));
+    stroke: #ef4444 !important;
+    stroke-width: 2.5px !important;
+    filter: drop-shadow(0 0 4px rgba(239, 68, 68, 0.6));
   }
   .color-scale-bar {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    margin-top: 10px;
+    margin-top: 12px;
     font-size: 0.78rem;
     font-weight: 600;
     color: var(--muted);
   }
   .gradient-strip {
-    width: 130px;
+    width: 140px;
     height: 10px;
     border-radius: 4px;
     border: 1px solid var(--line);
@@ -52,13 +52,20 @@
   }
   .auto-toggle-badge {
     display: inline-block;
-    padding: 2px 7px;
+    padding: 2px 8px;
     border-radius: 12px;
     font-size: 0.72rem;
     font-weight: 700;
     background: rgba(16, 185, 129, 0.15);
     color: #10b981;
-    margin-left: 4px;
+  }
+  .cell-tooltip-box {
+    min-height: 20px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--fg);
+    margin-top: 4px;
+    text-align: center;
   }
 </style>
 </head>
@@ -117,7 +124,7 @@
   <!-- ================= SECTION 2: INTERACTIVE WORKBENCH ================= -->
   <section id="tool">
     <h2><span class="n">2.</span>ROS Autodecoder &amp; ggPlantMap Spatial Workbench</h2>
-    <p class="sub">Input your gene list to decode ROS stimulus type, duration, and authentic ggPlantMap anatomical localization.</p>
+    <p class="sub">Input your gene list to decode ROS stimulus type, duration, and complete cellular ggPlantMap anatomical outlines.</p>
 
     <div class="tool-box">
       <div class="tab-nav">
@@ -155,23 +162,26 @@
             <div id="time-prediction-results" style="margin-top:12px;"></div>
           </div>
 
-          <!-- Card 3: Authentic ggPlantMap Spatial Map -->
+          <!-- Card 3: Complete Cellular ggPlantMap Spatial Map -->
           <div class="card" style="text-align:center;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-              <h3 style="margin:0;"><i class="fas fa-leaf" style="color:#10b981;margin-right:6px;"></i> ggPlantMap Spatial Localization</h3>
-              <span id="auto-toggle-indicator" class="auto-toggle-badge"><i class="fas fa-sync-alt"></i> Auto-Focused</span>
+              <h3 style="margin:0;"><i class="fas fa-leaf" style="color:#10b981;margin-right:6px;"></i> ggPlantMap Cellular Outlines</h3>
+              <span id="auto-toggle-indicator" class="auto-toggle-badge"><i class="fas fa-sync-alt"></i> Auto-Focused: ROOT</span>
             </div>
             
             <div style="display:flex;justify-content:center;gap:6px;margin:12px 0 10px;">
-              <button id="btn-map-rosette" class="tab-btn" style="padding:4px 10px;font-size:0.8rem;" onclick="switchMap('rosette', true)">Rosette Map</button>
-              <button id="btn-map-root" class="tab-btn active" style="padding:4px 10px;font-size:0.8rem;" onclick="switchMap('root', true)">Root Anatomy</button>
-              <button id="btn-map-inflorescence" class="tab-btn" style="padding:4px 10px;font-size:0.8rem;" onclick="switchMap('inflorescence', true)">Inflorescence</button>
+              <button id="btn-map-rosette" class="tab-btn" style="padding:4px 10px;font-size:0.8rem;" onclick="switchMap('rosette', true)">Rosette (15 Cells)</button>
+              <button id="btn-map-root" class="tab-btn active" style="padding:4px 10px;font-size:0.8rem;" onclick="switchMap('root', true)">Root Stele (90 Cells)</button>
+              <button id="btn-map-inflorescence" class="tab-btn" style="padding:4px 10px;font-size:0.8rem;" onclick="switchMap('inflorescence', true)">Inflorescence (138 Cells)</button>
             </div>
 
-            <!-- SVG Container -->
-            <div id="ggplantmap-svg-container" style="min-height:220px;"></div>
+            <!-- SVG Container for Complete Cellular Outlines -->
+            <div id="ggplantmap-svg-container" style="min-height:235px;"></div>
 
-            <!-- Authentic ggPlantMap Continuous Color Scale Bar -->
+            <!-- Cell Tooltip Display -->
+            <div id="cell-hover-info" class="cell-tooltip-box">Hover over any cell to inspect anatomical layer &amp; expression</div>
+
+            <!-- Authentic Continuous Color Scale Bar -->
             <div class="color-scale-bar">
               <span>0.00 (Min)</span>
               <div class="gradient-strip"></div>
@@ -356,7 +366,19 @@ streamlit run web_app.py
 <!-- Interactive App Logic -->
 <script>
   let currentMap = 'root';
-  let currentScores = { root: 0.85, leaf: 0.35, inflorescence: 0.25, stele: 0.90, cap: 0.70 };
+  let currentCellScores = {
+    Stele: 0.90,
+    Cortex: 0.40,
+    Endodermis: 0.65,
+    Meristematic: 0.75,
+    Root_Cap: 0.70,
+    Mesophyll: 0.35,
+    Epidermis: 0.30,
+    Anther: 0.25,
+    Gynoecium: 0.30,
+    Petal: 0.20,
+    Vascular: 0.70
+  };
 
   function switchToolTab(tabId) {
     document.querySelectorAll('.tool-box .tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -478,29 +500,54 @@ streamlit run web_app.py
       </div>
     `;
 
-    // 3. Multi-View Spatial Localization & Automatic Peak Tissue Focus
-    let rootScore = 0, leafScore = 0, inflorescenceScore = 0, steleScore = 0, capScore = 0;
-    matched.forEach(g => {
-      if (g.organ === 'Root') rootScore += 1.2;
-      if (g.organ === 'Leaf') leafScore += 1.2;
-      if (g.organ === 'Stem' || g.cellType === 'Anther' || g.cellType === 'Meristematic') inflorescenceScore += 1.2;
-      if (g.cellType === 'Stele') steleScore += 1.4;
-      if (g.cellType === 'Epidermis' || g.cellType === 'Guard_cells') capScore += 1.0;
-    });
-
-    currentScores = {
-      root: Math.min(1.0, rootScore / Math.max(1, matched.length * 0.4)),
-      leaf: Math.min(1.0, leafScore / Math.max(1, matched.length * 0.4)),
-      inflorescence: Math.min(1.0, inflorescenceScore / Math.max(1, matched.length * 0.35)),
-      stele: Math.min(1.0, steleScore / Math.max(1, matched.length * 0.3)),
-      cap: Math.min(1.0, capScore / Math.max(1, matched.length * 0.3))
+    // 3. Multi-Cell Type Expression Mapping
+    const cScores = {
+      Stele: 0.15,
+      Cortex: 0.15,
+      Endodermis: 0.15,
+      Meristematic: 0.15,
+      Root_Cap: 0.15,
+      Mesophyll: 0.15,
+      Epidermis: 0.15,
+      Anther: 0.15,
+      Gynoecium: 0.15,
+      Petal: 0.15,
+      Vascular: 0.15
     };
 
-    // Auto-toggle to the peak tissue
+    matched.forEach(g => {
+      if (g.cellType && cScores[g.cellType] !== undefined) {
+        cScores[g.cellType] += 0.45;
+      }
+      if (g.organ === 'Root') {
+        cScores.Stele += 0.35;
+        cScores.Root_Cap += 0.25;
+        cScores.Endodermis += 0.25;
+      }
+      if (g.organ === 'Leaf') {
+        cScores.Mesophyll += 0.40;
+        cScores.Epidermis += 0.25;
+      }
+      if (g.organ === 'Whole Seedling') {
+        cScores.Meristematic += 0.30;
+        cScores.Stele += 0.20;
+      }
+    });
+
+    for (let ct in cScores) {
+      cScores[ct] = Math.min(1.0, cScores[ct]);
+    }
+    currentCellScores = cScores;
+
+    // Calculate organ-level means for auto-toggle
+    const meanRoot = (cScores.Stele + cScores.Cortex + cScores.Endodermis + cScores.Root_Cap) / 4;
+    const meanRosette = (cScores.Mesophyll + cScores.Epidermis + cScores.Vascular) / 3;
+    const meanInflo = (cScores.Anther + cScores.Gynoecium + cScores.Petal + cScores.Meristematic) / 4;
+
     let peakMap = 'rosette';
-    if (currentScores.root >= currentScores.leaf && currentScores.root >= currentScores.inflorescence) {
+    if (meanRoot >= meanRosette && meanRoot >= meanInflo) {
       peakMap = 'root';
-    } else if (currentScores.inflorescence > currentScores.leaf && currentScores.inflorescence > currentScores.root) {
+    } else if (meanInflo > meanRosette && meanInflo > meanRoot) {
       peakMap = 'inflorescence';
     } else {
       peakMap = 'rosette';
@@ -516,94 +563,69 @@ streamlit run web_app.py
   }
 
   function getViridisColor(val) {
-    // 6-step Magma/Viridis color interpolation
     const v = Math.max(0, Math.min(1, val));
-    if (v < 0.2) return '#3b528b';
-    if (v < 0.4) return '#21918c';
-    if (v < 0.6) return '#5ec962';
-    if (v < 0.8) return '#fde725';
-    if (v < 0.9) return '#ca6953';
+    if (v < 0.20) return '#3b528b';
+    if (v < 0.40) return '#21918c';
+    if (v < 0.60) return '#5ec962';
+    if (v < 0.75) return '#fde725';
+    if (v < 0.90) return '#ca6953';
     return '#a50026';
   }
 
+  function showCellHover(name, cellType, score) {
+    const info = document.getElementById('cell-hover-info');
+    if (info) {
+      info.innerHTML = `<span style="color:var(--accent); font-weight:700;">${name}</span> | Type: <strong>${cellType}</strong> | Expression: <strong>${(score*100).toFixed(0)}%</strong>`;
+    }
+  }
+
+  function clearCellHover() {
+    const info = document.getElementById('cell-hover-info');
+    if (info) {
+      info.innerHTML = `Hover over any cell to inspect anatomical layer &amp; expression`;
+    }
+  }
+
   function renderGgPlantMap() {
-    const s = currentScores;
-    const cHigh = getViridisColor(s.leaf);
-    const cMid = getViridisColor(0.25);
-    const cRootHigh = getViridisColor(s.root);
-    const cStele = getViridisColor(s.stele);
-    const cInflo = getViridisColor(s.inflorescence);
+    const data = window.ROS_DECODER_DATA;
+    if (!data.ggPlantMapCells) return;
 
-    let svg = '';
+    const cells = data.ggPlantMapCells[currentMap] || [];
+    let viewBox = '60 20 260 410';
+    let title = 'Rosette Lamina (15 Cells)';
 
-    if (currentMap === 'rosette') {
-      svg = `
-        <svg viewBox="60 20 260 410" width="100%" height="210" style="background:transparent;">
-          <!-- Rosette Lamina Outer Petioles with Crisp Edges -->
-          <polygon class="plant-poly" points="184.82,209.32 195.39,211.10 209.88,214.93 225.89,217.09 239.82,207.07 254.27,202.35 277.09,208.24 298.16,225.95 305.91,248.57 305.30,267.03 296.91,279.93 279.83,282.83 260.71,277.33 243.16,263.70 232.55,246.85 220.19,225.05 196.93,216.23" fill="${cMid}" />
-          <polygon class="plant-poly" points="180.76,193.73 190.71,182.74 200.55,162.97 212.87,143.45 224.42,131.09 241.65,121.81 251.80,131.17 249.09,151.94 241.00,166.42 225.56,181.97 211.45,190.19 196.65,194.57 181.53,197.30" fill="${cHigh}" />
-          <polygon class="plant-poly" points="173.80,163.34 174.76,147.96 168.98,128.26 159.75,110.14 157.04,88.04 160.45,70.01 169.27,51.87 178.57,45.26 190.91,53.76 199.14,71.85 201.35,93.43 200.79,110.86 193.57,125.84 184.74,133.92 178.42,155.48" fill="${cMid}" />
-          <polygon class="plant-poly" points="159.45,173.98 152.74,147.13 148.32,103.10 137.20,74.29 125.63,56.31 111.64,41.82 98.60,39.76 90.91,54.97 92.38,85.50 100.45,107.69 113.02,130.48 124.15,141.78 135.01,150.24 146.18,155.94 156.97,180.25" fill="${cHigh}" />
-          <polygon class="plant-poly" points="155.34,223.32 144.12,235.07 131.64,246.75 119.47,239.39 108.12,239.61 95.11,249.31 83.18,260.46 75.45,285.18 76.78,307.13 83.43,322.17 97.48,327.45 107.05,324.07 122.08,312.76 128.72,299.34 133.68,278.17 137.94,252.05" fill="${cStele}" />
-          <polygon class="plant-poly" points="169.84,240.15 169.14,260.56 173.32,284.60 178.72,311.24 177.01,329.05 175.85,353.89 171.86,379.15 164.09,399.26 155.30,405.37 146.26,402.55 141.44,393.72 138.83,378.41 138.05,361.15 139.41,333.18 142.34,314.02 148.73,293.10 156.71,278.62 163.45,254.49" fill="${cRootHigh}" />
-          <polygon class="plant-poly" points="165.64,198.36 160.80,185.35 162.79,169.68 167.63,160.11 173.13,163.72 178.52,173.33 179.64,186.45 178.88,195.34 172.18,192.49" fill="${cHigh}" style="stroke-width:1.6px;stroke:#0f172a;" />
-          <text x="70" y="45" font-size="11" font-weight="700" fill="var(--fg)">A. Rosette Lamina</text>
-        </svg>
-      `;
-    } else if (currentMap === 'root') {
-      svg = `
-        <svg viewBox="360 20 260 410" width="100%" height="210" style="background:transparent;">
-          <!-- Outer Cortex & Epidermal Cellular Layers with Crisp Borders -->
-          <polygon class="plant-poly" points="511.97,104.52 525.54,103.26 527.43,108.71 526.72,118.76 523.54,124.83 518.89,126.09 514.99,125.16 512.97,124.38" fill="${cMid}" />
-          <polygon class="plant-poly" points="527.85,109.38 534.10,109.22 538.76,109.53 542.81,117.50 542.90,126.56 540.17,130.32 534.71,137.82 532.16,140.63 523.44,125.47 527.23,119.38" fill="${cMid}" />
-          <polygon class="plant-poly" points="488.36,122.38 476.86,124.60 466.75,108.74 469.99,94.68 473.66,91.69 479.80,91.69 487.52,95.74 489.60,97.32" fill="${cMid}" />
-          <polygon class="plant-poly" points="546.15,172.90 556.75,159.19 561.40,160.07 567.15,167.62 567.94,175.71 567.64,188.19 565.17,195.92 562.99,197.15 551.60,191.53 547.93,184.67" fill="${cMid}" />
-          <polygon class="plant-poly" points="551.97,261.62 552.72,255.66 553.34,249.04 553.46,241.53 562.92,239.76 566.15,238.88 570.88,242.86 572.87,251.91 572.87,262.51 570.88,271.12 567.27,273.99 564.91,275.09" fill="${cMid}" />
-          <polygon class="plant-poly" points="515.30,343.70 514.49,328.96 514.49,318.56 523.44,311.05 533.05,320.00 535.65,329.83 534.35,337.63 530.93,342.54 525.56,346.30 521.98,346.87" fill="${cMid}" />
-          <polygon class="plant-poly" points="501.51,343.49 500.96,326.50 502.93,318.97 512.58,318.56 513.99,318.70 513.99,327.33 514.62,343.63 510.85,346.14 508.50,347.53 505.67,347.95 503.08,347.11" fill="${cMid}" />
-          <polygon class="plant-poly" points="481.42,324.41 486.45,343.21 484.25,351.29 478.83,357.28 473.34,358.39 468.71,354.08 466.98,348.37 465.41,339.31 465.10,333.04 467.22,323.71 469.65,319.39 472.55,319.39" fill="${cMid}" />
-          <polygon class="plant-poly" points="435.84,293.74 439.15,284.67 443.36,274.66 444.41,270.79 437.57,257.99 433.29,255.72 427.12,260.92 424.04,265.32 421.86,275.46 421.49,284.93 424.34,292.80 434.34,294.94" fill="${cMid}" />
-          
-          <!-- Central Vascular Stele & Endodermis Layers -->
-          <polygon class="plant-poly" points="465.74,265.22 457.74,279.93 454.55,275.90 444.89,271.52 437.53,256.69 436.47,236.12 435.64,230.73 439.05,228.84 445.05,216.93 449.02,213.93 455.53,216.42 455.03,228.16 457.69,242.41 460.81,256.42" fill="${cStele}" style="stroke-width:1.5px;" />
-          <polygon class="plant-poly" points="495.72,286.94 495.58,310.00 481.52,323.86 472.52,318.88 469.89,318.67 468.84,315.37 466.62,310.82 463.87,309.78 460.56,302.73 460.43,287.63 458.04,280.60 466.14,265.53 471.34,274.11 478.83,280.91 486.07,285.56" fill="${cRootHigh}" style="stroke-width:1.5px;" />
-          <polygon class="plant-poly" points="524.16,270.18 530.55,282.67 524.89,311.11 523.73,310.39 514.38,317.76 502.88,317.93 496.29,310.03 496.01,287.08 502.17,287.46 510.54,285.37 518.39,280.09" fill="${cRootHigh}" style="stroke-width:1.5px;" />
-          
-          <!-- Inner Columella Root Cap & Meristem Cells -->
-          <polygon class="plant-poly" points="488.72,192.68 487.32,197.42 485.28,200.76 482.09,200.33 480.17,197.22 479.60,195.99 480.32,189.89 482.42,185.44 486.69,185.60 486.71,188.78" fill="${cStele}" />
-          <polygon class="plant-poly" points="508.10,215.90 507.63,224.01 505.03,226.51 502.49,221.39 503.05,214.21 504.54,212.11" fill="${cRootHigh}" />
-          <polygon class="plant-poly" points="497.09,226.28 495.02,226.70 490.75,226.15 487.89,223.14 488.74,218.97 490.99,216.59 494.36,217.06 497.22,217.33 497.56,222.00" fill="${cRootHigh}" />
-          
-          <text x="370" y="45" font-size="11" font-weight="700" fill="var(--fg)">B. Root Stele &amp; Anatomy</text>
-        </svg>
-      `;
+    if (currentMap === 'root') {
+      viewBox = '360 20 260 410';
+      title = 'Primary Root & Vascular Stele (90 Cells)';
     } else if (currentMap === 'inflorescence') {
-      svg = `
-        <svg viewBox="660 20 260 410" width="100%" height="210" style="background:transparent;">
-          <!-- Sepals, Petals, and Floral Organs with Crisp Outlines -->
-          <polygon class="plant-poly" points="693.51,55.81 703.95,58.28 705.47,80.48 697.55,89.93 687.61,89.93 680.36,81.30 679.86,65.68 686.09,57.87" fill="${cMid}" />
-          <polygon class="plant-poly" points="704.53,58.27 710.32,50.91 718.74,50.91 730.18,58.27 733.07,77.59 726.03,90.78 718.74,98.75 711.57,97.83 706.17,80.96" fill="${cMid}" />
-          <polygon class="plant-poly" points="730.62,57.01 738.03,45.56 748.16,39.16 761.20,46.71 762.79,62.04 765.42,73.26 743.37,78.06 733.71,77.84" fill="${cInflo}" />
-          <polygon class="plant-poly" points="762.59,55.72 767.29,50.88 774.79,46.21 782.29,48.01 785.45,82.85 778.99,71.03 772.07,71.32 768.40,71.68 765.73,72.84 763.20,61.70" fill="${cInflo}" />
-          <polygon class="plant-poly" points="782.65,48.01 788.24,47.88 797.25,47.88 805.45,49.96 809.29,60.10 809.60,69.98 804.54,74.14 798.26,77.94 793.34,80.71 789.53,82.73 785.63,82.96" fill="${cMid}" />
-          <polygon class="plant-poly" points="809.60,59.58 812.75,56.33 827.72,63.48 830.38,72.97 830.86,88.30 828.62,92.98 820.37,90.51 813.55,84.41 809.23,77.91 805.08,74.66 810.06,70.50" fill="${cMid}" />
-          
-          <!-- Anthers, Gynoecium & Carpels -->
-          <polygon class="plant-poly" points="715.46,111.06 718.93,99.76 725.94,92.08 728.18,87.89 735.71,90.89 738.49,111.05 740.78,132.01 740.26,150.29 739.45,160.18 738.87,167.29 733.88,186.09 728.88,187.83 724.12,182.61 720.71,177.96 717.53,168.28 715.55,156.08 714.55,147.76 715.23,139.86" fill="${cInflo}" style="stroke-width:1.5px;" />
-          <polygon class="plant-poly" points="753.65,76.92 743.47,79.12 734.07,78.59 734.29,80.81 736.21,90.96 738.85,109.56 741.26,132.11 741.18,155.28 743.02,159.83 744.79,163.59 753.33,168.56 756.69,170.30 761.02,164.71 761.48,157.58 762.56,139.00 761.57,131.46 760.31,110.78 760.79,97.38 758.15,76.14 763.92,75.93" fill="${cHigh}" style="stroke-width:1.5px;" />
-          
-          <!-- Stem Pedicel Base -->
-          <polygon class="plant-poly" points="695.25,370.58 704.29,367.49 712.53,367.49 714.12,380.25 712.06,386.44 704.29,391.86 696.36,393.40 693.82,394.56" fill="${cStele}" />
-          <polygon class="plant-poly" points="712.66,366.47 715.02,362.17 721.24,362.17 724.94,367.70 725.70,380.63 723.85,385.55 720.57,387.60 717.54,386.17 715.27,383.50 714.34,380.42" fill="${cStele}" />
-          
-          <text x="670" y="45" font-size="11" font-weight="700" fill="var(--fg)">C. Inflorescence &amp; Floral</text>
-        </svg>
-      `;
+      viewBox = '660 20 260 410';
+      title = 'Inflorescence & Floral Buds (138 Cells)';
     }
 
+    let polysHtml = '';
+    cells.forEach(c => {
+      const score = currentCellScores[c.cellType] || 0.25;
+      const fillCol = getViridisColor(score);
+      polysHtml += `
+        <polygon class="plant-poly" points="${c.points}" fill="${fillCol}" 
+          onmouseover="showCellHover('${c.name}', '${c.cellType}', ${score})" 
+          onmouseout="clearCellHover()" />
+      `;
+    });
+
+    const svg = `
+      <svg viewBox="${viewBox}" width="100%" height="225" style="background:transparent;">
+        <text x="${parseInt(viewBox.split(' ')[0]) + 10}" y="42" font-size="11" font-weight="700" fill="var(--fg)">${title}</text>
+        ${polysHtml}
+      </svg>
+    `;
+
     document.getElementById('ggplantmap-svg-container').innerHTML = svg;
+    
+    // Summary
+    const curMean = Object.values(currentCellScores).reduce((a,b)=>a+b,0) / Object.values(currentCellScores).length;
     document.getElementById('spatial-summary').innerHTML = `
-      <strong>ggPlantMap Focus:</strong> Peak activity in <em>${currentMap.toUpperCase()}</em> (${((currentScores[currentMap] || 0.8)*100).toFixed(0)}% intensity).
+      <strong>ggPlantMap Anatomy:</strong> Complete cellular outline deployed. Showing <strong>${cells.length}</strong> individual cells with crisp boundaries.
     `;
   }
 
