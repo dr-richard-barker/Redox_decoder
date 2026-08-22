@@ -14,7 +14,7 @@
     document.documentElement.setAttribute('data-theme', theme);
   })();
 </script>
-<!-- Load Data Asset in Head to Guarantee Availability -->
+<!-- Load Data Asset in Head to Guarantee Instant Availability -->
 <script src="data/ros_decoder_data.js"></script>
 <link rel="stylesheet" href="assets/theme.css">
 <link rel="stylesheet" href="https://dr-richard-barker.github.io/Plant_response_to_radiation/cose/cose-theme.css">
@@ -171,18 +171,18 @@
       <!-- Tab 1: Predictor & ggPlantMap -->
       <div id="tab-predictor" class="tab-panel active">
         <label for="user-gene-input" style="font-weight:700;font-size:0.95rem;display:block;margin-bottom:8px;">
-          Paste comma- or space-separated TAIR10 symbols or AGI locus codes (Live autodecoder recalculates as you type):
+          Paste comma- or space-separated TAIR10 symbols or AGI locus codes (Live autodecoder recalculates and projects onto tissues as you type):
         </label>
         <textarea id="user-gene-input" style="width:100%;min-height:85px;padding:12px 14px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--fg);font-family:monospace;font-size:0.95rem;margin-bottom:12px;">RBOHD, RBOHF, APX1, ZAT12, KIN10, AOX1A, GR1</textarea>
 
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;">
           <button class="btn primary" onclick="runGenePrediction()"><i class="fas fa-bolt"></i> Decode ROS Signature &amp; Map</button>
-          <button class="btn" onclick="loadExamplePreset('h2o2')">Preset: H2O2 Burst</button>
-          <button class="btn" onclick="loadExamplePreset('superoxide')">Preset: Superoxide / Paraquat</button>
-          <button class="btn" onclick="loadExamplePreset('floral')">Preset: Floral ROS (Anther/Gynoecium)</button>
-          <button class="btn" onclick="loadExamplePreset('osd678')">Preset: OSD-678 (Root Flight)</button>
-          <button class="btn" onclick="loadExamplePreset('osd223')">Preset: OSD-223 (Rosette Flight)</button>
-          <button class="btn" onclick="loadExamplePreset('osd37')">Preset: OSD-37 (4 Ecotypes)</button>
+          <button class="btn" onclick="loadExamplePreset('h2o2')">Preset: H2O2 Burst (Root Stele/Peroxisome)</button>
+          <button class="btn" onclick="loadExamplePreset('superoxide')">Preset: Superoxide / Paraquat (Leaf Mesophyll)</button>
+          <button class="btn" onclick="loadExamplePreset('floral')">Preset: Floral ROS (Anther &amp; Gynoecium)</button>
+          <button class="btn" onclick="loadExamplePreset('osd678')">Preset: OSD-678 (Root Flight Stele)</button>
+          <button class="btn" onclick="loadExamplePreset('osd223')">Preset: OSD-223 (Rosette Flight Mesophyll)</button>
+          <button class="btn" onclick="loadExamplePreset('osd37')">Preset: OSD-37 (Four Ecotypes Flight)</button>
         </div>
 
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;">
@@ -486,7 +486,7 @@ streamlit run web_app.py
     } else if (type === 'superoxide') {
       input.value = 'CSD1, CSD2, FSD1, MSD1, RBOHD, RBOHF, WRKY33';
     } else if (type === 'floral') {
-      input.value = 'HSFA2, AT2G07718, AT3G47680, APX1';
+      input.value = 'HSFA2, AT2G07718, AT3G47680, APX1, AT4G36140';
     } else if (type === 'osd678') {
       input.value = 'RBOHD, RBOHF, APX1, ZAT12, KIN10, AOX1A, GR1';
     } else if (type === 'osd223') {
@@ -511,7 +511,7 @@ streamlit run web_app.py
     });
 
     if (matched.length === 0) {
-      document.getElementById('stimulus-prediction-results').innerHTML = `<p style="color:#ef4444;font-size:0.9rem;">No recognized Arabidopsis ROS genes found. Try entering symbols (e.g. RBOHD, CAT2) or AGI locus codes (AT5G47910).</p>`;
+      document.getElementById('stimulus-prediction-results').innerHTML = `<p style="color:#ef4444;font-size:0.9rem;">No recognized Arabidopsis ROS genes found. Try entering symbols (e.g. RBOHD, CAT2) or AGI locus codes (AT5G47910, AT2G07718).</p>`;
       return;
     }
 
@@ -579,48 +579,49 @@ streamlit run web_app.py
       </div>
     `;
 
-    // 3. Multi-Cell Type Expression Deconvolution Mapping
-    const cScores = {
-      Stele: 0.08,
-      Cortex: 0.08,
-      Endodermis: 0.08,
-      Meristematic: 0.08,
-      Root_Cap: 0.08,
-      Mesophyll: 0.08,
-      Epidermis: 0.08,
-      Anther: 0.08,
-      Gynoecium: 0.08,
-      Petal: 0.08,
-      Vascular: 0.08
-    };
+    // 3. Precision Multi-Tissue Expression Projection Engine
+    const tissueKeys = ['Stele', 'Endodermis', 'Cortex', 'Meristematic', 'Root_Cap', 'Mesophyll', 'Epidermis', 'Petal', 'Anther', 'Gynoecium', 'Vascular'];
+    const rawScores = {};
+    tissueKeys.forEach(t => rawScores[t] = 0);
 
     matched.forEach(g => {
       if (g.cellScores) {
-        for (let ct in g.cellScores) {
-          cScores[ct] = Math.max(cScores[ct], g.cellScores[ct]);
-        }
+        tissueKeys.forEach(t => {
+          rawScores[t] += (g.cellScores[t] || 0.1);
+        });
       } else {
-        if (g.cellType && cScores[g.cellType] !== undefined) cScores[g.cellType] = Math.max(cScores[g.cellType], 0.85);
-        if (g.organ === 'Root') { cScores.Stele = Math.max(cScores.Stele, 0.90); cScores.Root_Cap = Math.max(cScores.Root_Cap, 0.75); }
-        if (g.organ === 'Leaf') { cScores.Mesophyll = Math.max(cScores.Mesophyll, 0.90); cScores.Epidermis = Math.max(cScores.Epidermis, 0.70); }
-        if (g.organ === 'Inflorescence') { cScores.Anther = Math.max(cScores.Anther, 0.95); cScores.Gynoecium = Math.max(cScores.Gynoecium, 0.90); }
+        tissueKeys.forEach(t => rawScores[t] += 0.15);
       }
     });
 
-    for (let ct in cScores) {
-      cScores[ct] = Math.min(1.0, Math.max(0.05, cScores[ct]));
-    }
+    // Average per matched gene
+    tissueKeys.forEach(t => rawScores[t] = rawScores[t] / matched.length);
+
+    // Compute dynamic range normalization for maximum contrast
+    const vals = Object.values(rawScores);
+    const minVal = Math.min(...vals);
+    const maxVal = Math.max(...vals);
+
+    const cScores = {};
+    tissueKeys.forEach(t => {
+      if (maxVal > minVal) {
+        cScores[t] = 0.08 + 0.90 * ((rawScores[t] - minVal) / (maxVal - minVal));
+      } else {
+        cScores[t] = rawScores[t];
+      }
+      cScores[t] = Math.min(0.98, Math.max(0.06, cScores[t]));
+    });
     currentCellScores = cScores;
 
-    // Calculate organ-level means for smart auto-toggle
-    const meanRoot = (cScores.Stele + cScores.Cortex + cScores.Endodermis + cScores.Root_Cap + cScores.Meristematic) / 5;
-    const meanRosette = (cScores.Mesophyll + cScores.Epidermis + cScores.Vascular) / 3;
-    const meanInflo = (cScores.Anther + cScores.Gynoecium + cScores.Petal) / 3;
+    // Determine peak organ for intelligent auto-toggle
+    const rootPeak = Math.max(cScores.Stele, cScores.Endodermis, cScores.Root_Cap, cScores.Meristematic);
+    const rosettePeak = Math.max(cScores.Mesophyll, cScores.Vascular, cScores.Epidermis);
+    const infloPeak = Math.max(cScores.Anther, cScores.Gynoecium, cScores.Petal);
 
     let peakMap = 'rosette';
-    if (meanRoot >= meanRosette && meanRoot >= meanInflo) {
+    if (rootPeak >= rosettePeak && rootPeak >= infloPeak) {
       peakMap = 'root';
-    } else if (meanInflo > meanRosette && meanInflo > meanRoot) {
+    } else if (infloPeak > rosettePeak && infloPeak > rootPeak) {
       peakMap = 'inflorescence';
     } else {
       peakMap = 'rosette';
@@ -635,7 +636,7 @@ streamlit run web_app.py
     switchMap(peakMap, false);
   }
 
-  // Enhanced Continuous 7-Stop Colormap (Deep Blue -> Teal -> Green -> Yellow -> Orange -> Crimson)
+  // Authentic 7-Stop Colormap: Deep Navy -> Blue -> Teal -> Green -> Yellow -> Orange -> Deep Crimson
   function getViridisColor(val) {
     const v = Math.max(0.0, Math.min(1.0, val));
     if (v < 0.18) return '#312e81'; // Deep Indigo/Navy (Min)
