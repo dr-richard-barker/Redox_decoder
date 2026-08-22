@@ -158,11 +158,11 @@
   <!-- ================= SECTION 2: INTERACTIVE WORKBENCH ================= -->
   <section id="tool">
     <h2><span class="n">2.</span>ROS Autodecoder &amp; ggPlantMap Spatial Workbench</h2>
-    <p class="sub">Input your gene list to decode ROS stimulus type, duration, and complete cellular ggPlantMap anatomical outlines across 4 organ models.</p>
+    <p class="sub">Input your gene list to decode ROS stimulus type, duration, and complete cellular ggPlantMap anatomical outlines across 5 specialized organ diagrams.</p>
 
     <div class="tool-box">
       <div class="tab-nav">
-        <button class="tab-btn active" onclick="switchToolTab('tab-predictor')"><i class="fas fa-magic"></i> ROS Predictor &amp; ggPlantMap (4 Organs)</button>
+        <button class="tab-btn active" onclick="switchToolTab('tab-predictor')"><i class="fas fa-magic"></i> ROS Predictor &amp; ggPlantMap (5 Organs)</button>
         <button class="tab-btn" onclick="switchToolTab('tab-case-studies')"><i class="fas fa-rocket"></i> Spaceflight Case Studies (What, When, Where)</button>
         <button class="tab-btn" onclick="switchToolTab('tab-latent')"><i class="fas fa-cube"></i> Latent Space (3 Models)</button>
         <button class="tab-btn" onclick="switchToolTab('tab-docker')"><i class="fab fa-docker"></i> Docker &amp; Streamlit App</button>
@@ -171,16 +171,16 @@
       <!-- Tab 1: Predictor & ggPlantMap -->
       <div id="tab-predictor" class="tab-panel active">
         <label for="user-gene-input" style="font-weight:700;font-size:0.95rem;display:block;margin-bottom:8px;">
-          Paste comma- or space-separated TAIR10 symbols or AGI locus codes (Live autodecoder projects onto 4 organ maps as you type):
+          Paste comma- or space-separated TAIR10 symbols or AGI locus codes (Live autodecoder projects onto 5 organ maps as you type):
         </label>
         <textarea id="user-gene-input" style="width:100%;min-height:85px;padding:12px 14px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--fg);font-family:monospace;font-size:0.95rem;margin-bottom:12px;">RBOHD, RBOHF, APX1, ZAT12, KIN10, AOX1A, GR1</textarea>
 
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;">
           <button class="btn primary" onclick="runGenePrediction()"><i class="fas fa-bolt"></i> Decode ROS Signature &amp; Map</button>
-          <button class="btn" onclick="loadExamplePreset('h2o2')">Preset: H2O2 Burst (Root Stele)</button>
+          <button class="btn" onclick="loadExamplePreset('h2o2')">Preset: H2O2 Burst (Root Tip &amp; Stele)</button>
           <button class="btn" onclick="loadExamplePreset('superoxide')">Preset: Superoxide / Paraquat (Leaf Mesophyll)</button>
           <button class="btn" onclick="loadExamplePreset('floral')">Preset: Floral ROS (Anther &amp; Gynoecium)</button>
-          <button class="btn" onclick="loadExamplePreset('osd678')">Preset: OSD-678 (Root Flight Stele)</button>
+          <button class="btn" onclick="loadExamplePreset('osd678')">Preset: OSD-678 (Root Flight Columella/Stele)</button>
           <button class="btn" onclick="loadExamplePreset('osd223')">Preset: OSD-223 (Rosette Flight Mesophyll)</button>
           <button class="btn" onclick="loadExamplePreset('osd37')">Preset: OSD-37 (Four Ecotypes Flight)</button>
         </div>
@@ -198,23 +198,24 @@
             <div id="time-prediction-results" style="margin-top:12px;"></div>
           </div>
 
-          <!-- Card 3: 4-Organ ggPlantMap Spatial Map -->
+          <!-- Card 3: 5-Organ ggPlantMap Spatial Map -->
           <div class="card" style="text-align:center;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;flex-wrap:wrap;gap:6px;">
               <h3 style="margin:0;"><i class="fas fa-leaf" style="color:#10b981;margin-right:6px;"></i> ggPlantMap Cellular Outlines</h3>
-              <span id="auto-toggle-indicator" class="auto-toggle-badge"><i class="fas fa-sync-alt"></i> Auto-Focused: ROOT</span>
+              <span id="auto-toggle-indicator" class="auto-toggle-badge"><i class="fas fa-sync-alt"></i> Auto-Focused: ROOT TIP</span>
             </div>
             
-            <!-- 4 Organ Selection Buttons -->
-            <div style="display:flex;justify-content:center;gap:6px;margin:12px 0 10px;flex-wrap:wrap;">
-              <button id="btn-map-rosette" class="tab-btn" style="padding:4px 9px;font-size:0.78rem;" onclick="switchMap('rosette', true)">1. Rosette (Whole Plant)</button>
-              <button id="btn-map-root" class="tab-btn active" style="padding:4px 9px;font-size:0.78rem;" onclick="switchMap('root', true)">2. Root Cross-Section (90 Cells)</button>
-              <button id="btn-map-leaf_cross_section" class="tab-btn" style="padding:4px 9px;font-size:0.78rem;" onclick="switchMap('leaf_cross_section', true)">3. Leaf Transverse (138 Cells)</button>
-              <button id="btn-map-flower" class="tab-btn" style="padding:4px 9px;font-size:0.78rem;" onclick="switchMap('flower', true)">4. Floral Diagram (94 Cells)</button>
+            <!-- 5 Organ Selection Buttons -->
+            <div style="display:flex;justify-content:center;gap:5px;margin:12px 0 10px;flex-wrap:wrap;">
+              <button id="btn-map-rosette" class="tab-btn" style="padding:4px 8px;font-size:0.76rem;" onclick="switchMap('rosette', true)">1. Rosette (Lamina)</button>
+              <button id="btn-map-root_radial" class="tab-btn" style="padding:4px 8px;font-size:0.76rem;" onclick="switchMap('root_radial', true)">2. Root Radial (90)</button>
+              <button id="btn-map-root_tip" class="tab-btn active" style="padding:4px 8px;font-size:0.76rem;" onclick="switchMap('root_tip', true)">3. Root Tip &amp; Columella (93)</button>
+              <button id="btn-map-leaf_cross_section" class="tab-btn" style="padding:4px 8px;font-size:0.76rem;" onclick="switchMap('leaf_cross_section', true)">4. Leaf Transverse (138)</button>
+              <button id="btn-map-flower" class="tab-btn" style="padding:4px 8px;font-size:0.76rem;" onclick="switchMap('flower', true)">5. Floral Diagram (97)</button>
             </div>
 
             <!-- SVG Container for Cellular Outlines -->
-            <div id="ggplantmap-svg-container" style="min-height:240px;"></div>
+            <div id="ggplantmap-svg-container" style="min-height:245px;"></div>
 
             <!-- Cell Tooltip Display -->
             <div id="cell-hover-info" class="cell-tooltip-box">Hover over any cell to inspect anatomical layer &amp; expression</div>
@@ -328,7 +329,7 @@ streamlit run web_app.py
         <img src="figures/fig11_osdr_spaceflight_case_studies.png" alt="Spaceflight Case Studies">
         <figcaption>
           <strong>Figure 11 | Decoded NASA OSDR spaceflight experiments across What, When, and Where dimensions.</strong>
-          <p>Multi-study case study montage decoding 5 key NASA spaceflight datasets: <strong>a</strong>, <em>OSD-678</em> (Primary Root microgravity vs 1g ground control), predicting acute $H_2O_2$/superoxide burst ($42\%/38\%$) at $<1.2\text{h}$ localized to root stele. <strong>b</strong>, <em>OSD-223</em> (Rosette Leaf spaceflight), predicting chloroplastic high light/$^1O_2$ stress ($48\%/26\%$) at $>16.5\text{h}$ in mesophyll. <strong>c</strong>, <em>OSD-624</em> (Root Hypoxia-ROS cross-talk), predicting mitochondrial superoxide signaling ($45\%$) at $\sim 6.0\text{h}$ in stele/endodermis. <strong>d</strong>, <em>OSD-37</em> (Four ecotypes: Col-0, Ler-0, Ws-2, Cvi-0), resolving ecotype-divergent oxidative phosphorylation ($39\%\text{ }H_2O_2, 31\%\text{ }O_2^{\bullet-}$) at $\sim 4.5\text{h}$. <strong>e</strong>, <em>OSD-38</em> (Whole intact seedling flight), resolving systemic shoot-root oxidative acclimation ($35\%\text{ }H_2O_2, 28\%\text{ }O_2^{\bullet-}$) at $\sim 3.8\text{h}$.</p>
+          <p>Multi-study case study montage decoding 5 key NASA spaceflight datasets: <strong>a</strong>, <em>OSD-678</em> (Primary Root microgravity vs 1g ground control), predicting acute $H_2O_2$/superoxide burst ($42\%/38\%$) at $<1.2\text{h}$ localized to root stele and columella cap. <strong>b</strong>, <em>OSD-223</em> (Rosette Leaf spaceflight), predicting chloroplastic high light/$^1O_2$ stress ($48\%/26\%$) at $>16.5\text{h}$ in mesophyll. <strong>c</strong>, <em>OSD-624</em> (Root Hypoxia-ROS cross-talk), predicting mitochondrial superoxide signaling ($45\%$) at $\sim 6.0\text{h}$ in stele/endodermis. <strong>d</strong>, <em>OSD-37</em> (Four ecotypes: Col-0, Ler-0, Ws-2, Cvi-0), resolving ecotype-divergent oxidative phosphorylation ($39\%\text{ }H_2O_2, 31\%\text{ }O_2^{\bullet-}$) at $\sim 4.5\text{h}$. <strong>e</strong>, <em>OSD-38</em> (Whole intact seedling flight), resolving systemic shoot-root oxidative acclimation ($35\%\text{ }H_2O_2, 28\%\text{ }O_2^{\bullet-}$) at $\sim 3.8\text{h}$.</p>
         </figcaption>
       </figure>
 
@@ -337,7 +338,7 @@ streamlit run web_app.py
         <img src="figures/fig9_spatial_ros_patterns.png" alt="Spatial ROS Patterns">
         <figcaption>
           <strong>Figure 9 | High-resolution ggPlantMap spatial ROS expression patterns across Arabidopsis anatomy.</strong>
-          <p>Cellular-level tessellation mapping relative oxidative marker expression across: <strong>a</strong>, Rosette leaf lamina (15 multi-polygon segments). <strong>b</strong>, Primary root longitudinal and radial cross-section (90 individual cell polygons resolving stele, endodermis, cortex, meristem, and columella root cap). <strong>c</strong>, Leaf transverse cross-section (138 cell polygons resolving upper/lower epidermis, palisade mesophyll, spongy mesophyll, bundle sheath, and stomata). <strong>d</strong>, Top spaceflight-responsive genes ranked by spaceflight/ground reconstruction error ratio. Color bar represents normalized relative expression from 0.04 (minimum, blue) to 0.08 (peak, red).</p>
+          <p>Cellular-level tessellation mapping relative oxidative marker expression across: <strong>a</strong>, Rosette leaf lamina (15 multi-polygon segments). <strong>b</strong>, Primary root radial cross-section (90 individual cell polygons resolving stele, endodermis, cortex, and epidermis). <strong>c</strong>, Leaf transverse cross-section (138 cell polygons resolving upper/lower epidermis, palisade mesophyll, spongy mesophyll, bundle sheath, and stomata). <strong>d</strong>, Top spaceflight-responsive genes ranked by spaceflight/ground reconstruction error ratio. Color bar represents normalized relative expression from 0.04 (minimum, blue) to 0.08 (peak, red).</p>
         </figcaption>
       </figure>
 
@@ -346,7 +347,7 @@ streamlit run web_app.py
         <img src="figures/fig4_spaceflight_projection.png" alt="Spaceflight Projection">
         <figcaption>
           <strong>Figure 4 | Latent space projection of 879 OSDR spaceflight samples revealing root-specific ROS shifts.</strong>
-          <p><strong>a</strong>, Projection of 879 orbital flight samples from 38 OSDR studies onto the CVAE latent space. Spaceflight samples exhibit significant displacement relative to ground controls ($p = 2.11 \times 10^{-66}$, two-tailed $t$-test). <strong>b</strong>, Latent Dimension 1 ($t = -13.23, p = 3.33 \times 10^{-39}$) acts as the primary microgravity response axis, correlating with root epidermal and stele oxidative burst markers.</p>
+          <p><strong>a</strong>, Projection of 879 orbital flight samples from 38 OSDR studies onto the CVAE latent space. Spaceflight samples exhibit significant displacement relative to ground controls ($p = 2.11 \times 10^{-66}$, two-tailed $t$-test). <strong>b</strong>, Latent Dimension 1 ($t = -13.23, p = 3.33 \times 10^{-39}$) acts as the primary microgravity response axis, correlating with root epidermal, stele, and columella oxidative burst markers.</p>
         </figcaption>
       </figure>
 
@@ -440,13 +441,13 @@ streamlit run web_app.py
 
 <!-- Interactive App Logic -->
 <script>
-  let currentMap = 'root';
+  let currentMap = 'root_tip';
   let currentCellScores = {
     Stele: 0.95,
     Cortex: 0.35,
     Endodermis: 0.80,
-    Meristematic: 0.85,
-    Root_Cap: 0.80,
+    Meristematic: 0.88,
+    Root_Cap: 0.92,
     Mesophyll: 0.30,
     Epidermis: 0.45,
     Adaxial_Epidermis: 0.45,
@@ -590,7 +591,7 @@ streamlit run web_app.py
       </div>
     `;
 
-    // 3. Precision Multi-Tissue Expression Projection Engine across 4 Organs
+    // 3. Precision Multi-Tissue Expression Projection Engine across 5 Organs
     const tissueKeys = [
       'Stele', 'Endodermis', 'Cortex', 'Meristematic', 'Root_Cap', 
       'Mesophyll', 'Epidermis', 'Vascular',
@@ -629,14 +630,15 @@ streamlit run web_app.py
     });
     currentCellScores = cScores;
 
-    // Determine peak organ among the 4 options:
-    const rootPeak = Math.max(cScores.Stele, cScores.Endodermis, cScores.Root_Cap, cScores.Meristematic);
+    // Determine peak organ among the 5 options:
+    const rootTipPeak = Math.max(cScores.Root_Cap, cScores.Meristematic, cScores.Stele);
+    const rootRadialPeak = Math.max(cScores.Stele, cScores.Endodermis, cScores.Cortex, cScores.Epidermis);
     const rosettePeak = Math.max(cScores.Mesophyll, cScores.Vascular, cScores.Epidermis);
     const leafPeak = Math.max(cScores.Palisade_Mesophyll, cScores.Spongy_Mesophyll, cScores.Vascular_Bundle, cScores.Guard_Cells);
     const flowerPeak = Math.max(cScores.Anther, cScores.Gynoecium, cScores.Petal, cScores.Sepal);
 
-    let peakMap = 'root';
-    let maxOrganScore = rootPeak;
+    let peakMap = 'root_tip';
+    let maxOrganScore = rootTipPeak;
 
     if (flowerPeak > maxOrganScore) {
       maxOrganScore = flowerPeak;
@@ -654,9 +656,11 @@ streamlit run web_app.py
     const autoBadge = document.getElementById('auto-toggle-indicator');
     if (autoBadge) {
       autoBadge.style.display = 'inline-block';
-      let organLabel = peakMap.toUpperCase();
+      let organLabel = 'ROOT TIP & COLUMELLA';
       if (peakMap === 'leaf_cross_section') organLabel = 'LEAF CROSS-SECTION';
       if (peakMap === 'flower') organLabel = 'FLORAL DIAGRAM';
+      if (peakMap === 'rosette') organLabel = 'ROSETTE LAMINA';
+      if (peakMap === 'root_radial') organLabel = 'ROOT RADIAL';
       autoBadge.innerHTML = `<i class="fas fa-crosshairs"></i> Auto-Focused: ${organLabel}`;
     }
 
@@ -700,19 +704,24 @@ streamlit run web_app.py
     let textX = 70;
     let textY = 38;
 
-    if (currentMap === 'root') {
+    if (currentMap === 'root_radial') {
       viewBox = '360 25 260 395';
-      title = '2. Primary Root Radial & Longitudinal Apex (90 Cells)';
+      title = '2. Root Radial Cross-Section: Differentiated Stele & Cortex (90 Cells)';
       textX = 370;
       textY = 38;
+    } else if (currentMap === 'root_tip') {
+      viewBox = '130 35 140 320';
+      title = '3. Root Tip Longitudinal Section: Columella & Apex (93 Cells)';
+      textX = 135;
+      textY = 46;
     } else if (currentMap === 'leaf_cross_section') {
       viewBox = '660 25 260 395';
-      title = '3. Leaf Transverse Cellular Cross-Section (138 Cells)';
+      title = '4. Leaf Transverse Cellular Cross-Section (138 Cells)';
       textX = 670;
       textY = 38;
     } else if (currentMap === 'flower') {
       viewBox = '70 45 260 360';
-      title = '4. Floral & Inflorescence Organ Diagram (94 Cells)';
+      title = '5. Floral & Inflorescence Organ Diagram (97 Cells)';
       textX = 80;
       textY = 58;
     }
@@ -729,8 +738,8 @@ streamlit run web_app.py
     });
 
     const svg = `
-      <svg viewBox="${viewBox}" width="100%" height="240" style="display:block;margin:0 auto;background:transparent;">
-        <text x="${textX}" y="${textY}" font-size="11" font-weight="700" fill="var(--fg)">${title}</text>
+      <svg viewBox="${viewBox}" width="100%" height="245" style="display:block;margin:0 auto;background:transparent;">
+        <text x="${textX}" y="${textY}" font-size="10" font-weight="700" fill="var(--fg)">${title}</text>
         ${polysHtml}
       </svg>
     `;
