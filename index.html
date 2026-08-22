@@ -158,11 +158,11 @@
   <!-- ================= SECTION 2: INTERACTIVE WORKBENCH ================= -->
   <section id="tool">
     <h2><span class="n">2.</span>ROS Autodecoder &amp; ggPlantMap Spatial Workbench</h2>
-    <p class="sub">Input your gene list to decode ROS stimulus type, duration, and complete cellular ggPlantMap anatomical outlines.</p>
+    <p class="sub">Input your gene list to decode ROS stimulus type, duration, and complete cellular ggPlantMap anatomical outlines across 4 organ models.</p>
 
     <div class="tool-box">
       <div class="tab-nav">
-        <button class="tab-btn active" onclick="switchToolTab('tab-predictor')"><i class="fas fa-magic"></i> ROS Predictor &amp; ggPlantMap</button>
+        <button class="tab-btn active" onclick="switchToolTab('tab-predictor')"><i class="fas fa-magic"></i> ROS Predictor &amp; ggPlantMap (4 Organs)</button>
         <button class="tab-btn" onclick="switchToolTab('tab-case-studies')"><i class="fas fa-rocket"></i> Spaceflight Case Studies (What, When, Where)</button>
         <button class="tab-btn" onclick="switchToolTab('tab-latent')"><i class="fas fa-cube"></i> Latent Space (3 Models)</button>
         <button class="tab-btn" onclick="switchToolTab('tab-docker')"><i class="fab fa-docker"></i> Docker &amp; Streamlit App</button>
@@ -171,13 +171,13 @@
       <!-- Tab 1: Predictor & ggPlantMap -->
       <div id="tab-predictor" class="tab-panel active">
         <label for="user-gene-input" style="font-weight:700;font-size:0.95rem;display:block;margin-bottom:8px;">
-          Paste comma- or space-separated TAIR10 symbols or AGI locus codes (Live autodecoder recalculates and projects onto tissues as you type):
+          Paste comma- or space-separated TAIR10 symbols or AGI locus codes (Live autodecoder projects onto 4 organ maps as you type):
         </label>
         <textarea id="user-gene-input" style="width:100%;min-height:85px;padding:12px 14px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--fg);font-family:monospace;font-size:0.95rem;margin-bottom:12px;">RBOHD, RBOHF, APX1, ZAT12, KIN10, AOX1A, GR1</textarea>
 
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;">
           <button class="btn primary" onclick="runGenePrediction()"><i class="fas fa-bolt"></i> Decode ROS Signature &amp; Map</button>
-          <button class="btn" onclick="loadExamplePreset('h2o2')">Preset: H2O2 Burst (Root Stele/Peroxisome)</button>
+          <button class="btn" onclick="loadExamplePreset('h2o2')">Preset: H2O2 Burst (Root Stele)</button>
           <button class="btn" onclick="loadExamplePreset('superoxide')">Preset: Superoxide / Paraquat (Leaf Mesophyll)</button>
           <button class="btn" onclick="loadExamplePreset('floral')">Preset: Floral ROS (Anther &amp; Gynoecium)</button>
           <button class="btn" onclick="loadExamplePreset('osd678')">Preset: OSD-678 (Root Flight Stele)</button>
@@ -198,21 +198,23 @@
             <div id="time-prediction-results" style="margin-top:12px;"></div>
           </div>
 
-          <!-- Card 3: Complete Cellular ggPlantMap Spatial Map -->
+          <!-- Card 3: 4-Organ ggPlantMap Spatial Map -->
           <div class="card" style="text-align:center;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;flex-wrap:wrap;gap:6px;">
               <h3 style="margin:0;"><i class="fas fa-leaf" style="color:#10b981;margin-right:6px;"></i> ggPlantMap Cellular Outlines</h3>
               <span id="auto-toggle-indicator" class="auto-toggle-badge"><i class="fas fa-sync-alt"></i> Auto-Focused: ROOT</span>
             </div>
             
-            <div style="display:flex;justify-content:center;gap:6px;margin:12px 0 10px;">
-              <button id="btn-map-rosette" class="tab-btn" style="padding:4px 10px;font-size:0.8rem;" onclick="switchMap('rosette', true)">Rosette (15 Cells)</button>
-              <button id="btn-map-root" class="tab-btn active" style="padding:4px 10px;font-size:0.8rem;" onclick="switchMap('root', true)">Root Stele (90 Cells)</button>
-              <button id="btn-map-inflorescence" class="tab-btn" style="padding:4px 10px;font-size:0.8rem;" onclick="switchMap('inflorescence', true)">Inflorescence (138 Cells)</button>
+            <!-- 4 Organ Selection Buttons -->
+            <div style="display:flex;justify-content:center;gap:6px;margin:12px 0 10px;flex-wrap:wrap;">
+              <button id="btn-map-rosette" class="tab-btn" style="padding:4px 9px;font-size:0.78rem;" onclick="switchMap('rosette', true)">1. Rosette (Whole Plant)</button>
+              <button id="btn-map-root" class="tab-btn active" style="padding:4px 9px;font-size:0.78rem;" onclick="switchMap('root', true)">2. Root Cross-Section (90 Cells)</button>
+              <button id="btn-map-leaf" class="tab-btn" style="padding:4px 9px;font-size:0.78rem;" onclick="switchMap('leaf_cross_section', true)">3. Leaf Transverse (138 Cells)</button>
+              <button id="btn-map-flower" class="tab-btn" style="padding:4px 9px;font-size:0.78rem;" onclick="switchMap('flower', true)">4. Floral Diagram (87 Cells)</button>
             </div>
 
-            <!-- SVG Container for Complete Cellular Outlines -->
-            <div id="ggplantmap-svg-container" style="min-height:235px;"></div>
+            <!-- SVG Container for Cellular Outlines -->
+            <div id="ggplantmap-svg-container" style="min-height:240px;"></div>
 
             <!-- Cell Tooltip Display -->
             <div id="cell-hover-info" class="cell-tooltip-box">Hover over any cell to inspect anatomical layer &amp; expression</div>
@@ -335,7 +337,7 @@ streamlit run web_app.py
         <img src="figures/fig9_spatial_ros_patterns.png" alt="Spatial ROS Patterns">
         <figcaption>
           <strong>Figure 9 | High-resolution ggPlantMap spatial ROS expression patterns across Arabidopsis anatomy.</strong>
-          <p>Cellular-level tessellation mapping relative oxidative marker expression across: <strong>a</strong>, Rosette leaf lamina (15 multi-polygon segments). <strong>b</strong>, Primary root longitudinal and radial cross-section (90 individual cell polygons resolving stele, endodermis, cortex, meristem, and columella root cap). <strong>c</strong>, Inflorescence and floral buds (138 cell polygons resolving petals, sepals, anthers, pollen sacs, gynoecium, and pedicel stele). Color bar represents normalized relative expression from 0.04 (minimum, blue/purple) to 0.08 (peak, red/yellow).</p>
+          <p>Cellular-level tessellation mapping relative oxidative marker expression across: <strong>a</strong>, Rosette leaf lamina (15 multi-polygon segments). <strong>b</strong>, Primary root longitudinal and radial cross-section (90 individual cell polygons resolving stele, endodermis, cortex, meristem, and columella root cap). <strong>c</strong>, Leaf transverse cross-section (138 cell polygons resolving upper/lower epidermis, palisade mesophyll, spongy mesophyll, bundle sheath, and stomata). <strong>d</strong>, Top spaceflight-responsive genes ranked by spaceflight/ground reconstruction error ratio. Color bar represents normalized relative expression from 0.04 (minimum, blue) to 0.08 (peak, red).</p>
         </figcaption>
       </figure>
 
@@ -447,9 +449,17 @@ streamlit run web_app.py
     Root_Cap: 0.80,
     Mesophyll: 0.30,
     Epidermis: 0.45,
+    Adaxial_Epidermis: 0.45,
+    Palisade_Mesophyll: 0.35,
+    Spongy_Mesophyll: 0.30,
+    Vascular_Bundle: 0.80,
+    Abaxial_Epidermis: 0.45,
+    Guard_Cells: 0.50,
     Anther: 0.20,
     Gynoecium: 0.25,
     Petal: 0.15,
+    Sepal: 0.20,
+    Pedicel_Vascular: 0.80,
     Vascular: 0.80
   };
 
@@ -470,7 +480,12 @@ streamlit run web_app.py
     document.querySelectorAll('#tab-predictor .tab-btn').forEach(b => {
       if (b.id && b.id.startsWith('btn-map-')) b.classList.remove('active');
     });
-    const btn = document.getElementById(`btn-map-${mapType}`);
+    
+    let btnId = `btn-map-${mapType}`;
+    if (mapType === 'leaf_cross_section') btnId = 'btn-map-leaf';
+    if (mapType === 'flower') btnId = 'btn-map-flower';
+    
+    const btn = document.getElementById(btnId);
     if (btn) btn.classList.add('active');
 
     if (manualClick) {
@@ -486,7 +501,7 @@ streamlit run web_app.py
     } else if (type === 'superoxide') {
       input.value = 'CSD1, CSD2, FSD1, MSD1, RBOHD, RBOHF, WRKY33';
     } else if (type === 'floral') {
-      input.value = 'HSFA2, AT2G07718, AT3G47680, APX1, AT4G36140';
+      input.value = 'HSFA2, AT2G07718, AT3G47680, AT4G36140, APX1';
     } else if (type === 'osd678') {
       input.value = 'RBOHD, RBOHF, APX1, ZAT12, KIN10, AOX1A, GR1';
     } else if (type === 'osd223') {
@@ -511,7 +526,7 @@ streamlit run web_app.py
     });
 
     if (matched.length === 0) {
-      document.getElementById('stimulus-prediction-results').innerHTML = `<p style="color:#ef4444;font-size:0.9rem;">No recognized Arabidopsis ROS genes found. Try entering symbols (e.g. RBOHD, CAT2) or AGI locus codes (AT5G47910, AT2G07718).</p>`;
+      document.getElementById('stimulus-prediction-results').innerHTML = `<p style="color:#ef4444;font-size:0.9rem;">No recognized Arabidopsis ROS genes found. Try entering symbols (e.g. RBOHD, CAT2, HSFA2) or AGI locus codes (AT5G47910, AT2G07718).</p>`;
       return;
     }
 
@@ -579,8 +594,14 @@ streamlit run web_app.py
       </div>
     `;
 
-    // 3. Precision Multi-Tissue Expression Projection Engine
-    const tissueKeys = ['Stele', 'Endodermis', 'Cortex', 'Meristematic', 'Root_Cap', 'Mesophyll', 'Epidermis', 'Petal', 'Anther', 'Gynoecium', 'Vascular'];
+    // 3. Precision Multi-Tissue Expression Projection Engine across 4 Organs
+    const tissueKeys = [
+      'Stele', 'Endodermis', 'Cortex', 'Meristematic', 'Root_Cap', 
+      'Mesophyll', 'Epidermis', 'Vascular',
+      'Adaxial_Epidermis', 'Palisade_Mesophyll', 'Spongy_Mesophyll', 'Vascular_Bundle', 'Abaxial_Epidermis', 'Guard_Cells',
+      'Anther', 'Gynoecium', 'Petal', 'Sepal', 'Pedicel_Vascular'
+    ];
+    
     const rawScores = {};
     tissueKeys.forEach(t => rawScores[t] = 0);
 
@@ -594,10 +615,9 @@ streamlit run web_app.py
       }
     });
 
-    // Average per matched gene
     tissueKeys.forEach(t => rawScores[t] = rawScores[t] / matched.length);
 
-    // Compute dynamic range normalization for maximum contrast
+    // Dynamic contrast scaling
     const vals = Object.values(rawScores);
     const minVal = Math.min(...vals);
     const maxVal = Math.max(...vals);
@@ -613,24 +633,35 @@ streamlit run web_app.py
     });
     currentCellScores = cScores;
 
-    // Determine peak organ for intelligent auto-toggle
+    // Determine peak organ among the 4 options:
     const rootPeak = Math.max(cScores.Stele, cScores.Endodermis, cScores.Root_Cap, cScores.Meristematic);
     const rosettePeak = Math.max(cScores.Mesophyll, cScores.Vascular, cScores.Epidermis);
-    const infloPeak = Math.max(cScores.Anther, cScores.Gynoecium, cScores.Petal);
+    const leafPeak = Math.max(cScores.Palisade_Mesophyll, cScores.Spongy_Mesophyll, cScores.Vascular_Bundle, cScores.Guard_Cells);
+    const flowerPeak = Math.max(cScores.Anther, cScores.Gynoecium, cScores.Petal, cScores.Sepal);
 
-    let peakMap = 'rosette';
-    if (rootPeak >= rosettePeak && rootPeak >= infloPeak) {
-      peakMap = 'root';
-    } else if (infloPeak > rosettePeak && infloPeak > rootPeak) {
-      peakMap = 'inflorescence';
-    } else {
+    let peakMap = 'root';
+    let maxOrganScore = rootPeak;
+
+    if (flowerPeak > maxOrganScore) {
+      maxOrganScore = flowerPeak;
+      peakMap = 'flower';
+    }
+    if (leafPeak > maxOrganScore) {
+      maxOrganScore = leafPeak;
+      peakMap = 'leaf_cross_section';
+    }
+    if (rosettePeak > maxOrganScore) {
+      maxOrganScore = rosettePeak;
       peakMap = 'rosette';
     }
 
     const autoBadge = document.getElementById('auto-toggle-indicator');
     if (autoBadge) {
       autoBadge.style.display = 'inline-block';
-      autoBadge.innerHTML = `<i class="fas fa-crosshairs"></i> Auto-Focused: ${peakMap.toUpperCase()}`;
+      let organLabel = peakMap.toUpperCase();
+      if (peakMap === 'leaf_cross_section') organLabel = 'LEAF CROSS-SECTION';
+      if (peakMap === 'flower') organLabel = 'FLORAL DIAGRAM';
+      autoBadge.innerHTML = `<i class="fas fa-crosshairs"></i> Auto-Focused: ${organLabel}`;
     }
 
     switchMap(peakMap, false);
@@ -668,14 +699,17 @@ streamlit run web_app.py
 
     const cells = data.ggPlantMapCells[currentMap] || [];
     let viewBox = '60 20 260 410';
-    let title = 'Rosette Lamina (15 Cells)';
+    let title = '1. Rosette Whole Plant Lamina (15 Segments)';
 
     if (currentMap === 'root') {
       viewBox = '360 20 260 410';
-      title = 'Primary Root & Vascular Stele (90 Cells)';
-    } else if (currentMap === 'inflorescence') {
+      title = '2. Primary Root Radial & Longitudinal Apex (90 Cells)';
+    } else if (currentMap === 'leaf_cross_section') {
       viewBox = '660 20 260 410';
-      title = 'Inflorescence & Floral Buds (138 Cells)';
+      title = '3. Leaf Transverse Cellular Cross-Section (138 Cells)';
+    } else if (currentMap === 'flower') {
+      viewBox = '50 40 300 320';
+      title = '4. Floral & Inflorescence Organ Diagram (87 Cells)';
     }
 
     let polysHtml = '';
@@ -690,7 +724,7 @@ streamlit run web_app.py
     });
 
     const svg = `
-      <svg viewBox="${viewBox}" width="100%" height="230" style="display:block;margin:0 auto;background:transparent;">
+      <svg viewBox="${viewBox}" width="100%" height="235" style="display:block;margin:0 auto;background:transparent;">
         <text x="${parseInt(viewBox.split(' ')[0]) + 10}" y="42" font-size="11" font-weight="700" fill="var(--fg)">${title}</text>
         ${polysHtml}
       </svg>
