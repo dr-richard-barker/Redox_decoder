@@ -18,6 +18,14 @@
 <script src="data/ros_decoder_data.js"></script>
 <link rel="stylesheet" href="assets/theme.css">
 <link rel="stylesheet" href="https://dr-richard-barker.github.io/Plant_response_to_radiation/cose/cose-theme.css">
+<link rel="stylesheet" href="https://dr-richard-barker.github.io/Plant_response_to_radiation/cose/cose-chrome.css">
+<link rel="stylesheet" href="https://dr-richard-barker.github.io/Plant_response_to_radiation/cose/cose-map.css">
+<style>
+  /* Layering CoSE rails above page components */
+  .topbar.cose-dark, .topbar.cose-light { z-index: 10001 !important; }
+  .sitebar.cose-dark, .sitebar.cose-light { z-index: 10000 !important; }
+  .map-scrim { z-index: 9999 !important; }
+</style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <!-- Plotly.js -->
 <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
@@ -103,7 +111,7 @@
   }
 </style>
 </head>
-<body data-site-id="Redox_decoder">
+<body data-site-id="Redox_decoder" data-brand-logo="https://dr-richard-barker.github.io/Plant_response_to_radiation/cose/cose-logo.png">
 
 <header>
   <div class="wrap">
