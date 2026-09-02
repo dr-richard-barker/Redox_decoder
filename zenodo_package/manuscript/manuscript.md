@@ -33,11 +33,12 @@ Across 232 leave-one-study-out folds, the 41-dim DevStage conditioned CVAE achie
 Spaceflight samples exhibited marked elevation in CVAE reconstruction error (mean SF error = 0.2736 vs ground = 0.1313, $p = 2.11 \times 10^{-66}$), confirming substantial ROS transcriptional perturbation during orbital flight. Latent Dim 1 showed strong discrimination between spaceflight and ground control samples ($t = -13.23, p = 3.33 \times 10^{-39}$).
 
 ### 2.4 Decoded Spaceflight Case Studies (What, When, and Where)
-To demonstrate the translational utility of the CVAE and multi-view ggPlantMap framework, we decoded four representative NASA OSDR experiments (**Figure 11**):
-1. **OSD-678 (Root Flight)**: Predicted an acute primary root oxidative burst ($42\%\text{ }H_2O_2, 38\%\text{ }O_2^{\bullet-}$), estimated at $<1.2\text{ hours}$ post-induction, localized to the root apical meristem and central vascular stele.
+To demonstrate the translational utility of the CVAE and multi-view ggPlantMap framework, we decoded five representative NASA OSDR experiments (**Figure 11**):
+1. **OSD-678 (Root Flight)**: Predicted an acute primary root oxidative burst ($42\%\text{ }H_2O_2, 38\%\text{ }O_2^{\bullet-}$), estimated at $<1.2\text{ hours}$ post-induction, localized to the root apical meristem, columella statocytes, and central vascular stele.
 2. **OSD-223 (Rosette Leaf Flight)**: Predicted chloroplastic photo-oxidative stress ($48\%\text{ High Light}, 26\%\text{ }^1O_2$), estimated at $\sim 16.5\text{ hours}$ (chronic acclimation), localized to palisade and spongy mesophyll layers.
 3. **OSD-624 (Root Hypoxia-ROS Cross-talk)**: Predicted mitochondrial superoxide retrograde signaling ($45\%\text{ }O_2^{\bullet-}, 32\%\text{ }H_2O_2$), estimated at $\sim 6.0\text{ hours}$, localized to the central stele and endodermis.
-4. **OSD-38 (Whole Seedling Flight)**: Predicted systemic oxidative response ($35\%\text{ }H_2O_2, 28\%\text{ }O_2^{\bullet-}$), estimated at $\sim 3.8\text{ hours}$, spanning cotyledons, hypocotyl, and root tissues.
+4. **OSD-37 (Four Ecotypes Flight: Col-0, Ler-0, Ws-2, Cvi-0)**: Predicted ecotype-divergent oxidative phosphorylation ($39\%\text{ }H_2O_2, 31\%\text{ }O_2^{\bullet-}$), estimated at $\sim 4.5\text{ hours}$, resolving ecotype-specific metabolic adaptation in orbital flight.
+5. **OSD-38 (Whole Seedling Flight)**: Predicted systemic oxidative response ($35\%\text{ }H_2O_2, 28\%\text{ }O_2^{\bullet-}$), estimated at $\sim 3.8\text{ hours}$, spanning cotyledons, hypocotyl, and root tissues.
 
 ---
 

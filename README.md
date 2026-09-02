@@ -27,7 +27,7 @@ By combining **232 harmonized transcriptomics studies** (4,332 samples across 20
 * **CVAE Latent Disentanglement**: A 32-dimensional continuous latent space effectively disentangles 15 redox stimuli categories (H2O2, paraquat, menadione, ozone, singlet oxygen, high light, etc.) from baseline tissue profiles.
 * **Three-Way LOSO Benchmark**: The 41-dim DevStage CVAE achieved the lowest leave-one-study-out error (MSE = 0.1691) and highest stimulus classification accuracy (85.6%).
 * **Spaceflight ROS Signature Shifts**: Spaceflight samples across 38 OSDR studies display significantly elevated CVAE reconstruction errors ($p = 2.11 \times 10^{-66}$) and directional latent space shifts ($t = -13.23, p = 3.33 \times 10^{-39}$ on Latent Dim 1).
-* **Decoded Spaceflight Case Studies (Figure 11)**: Successfully predicts *What type*, *When*, and *Where* ROS was experienced in spaceflight for OSD-678 (Root Flight), OSD-223 (Rosette Leaf), OSD-624 (Root Hypoxia-ROS), and OSD-38 (Seedling).
+* **Decoded Spaceflight Case Studies (Figure 11)**: Successfully predicts *What type*, *When*, and *Where* ROS was experienced in spaceflight for OSD-678 (Root Flight), OSD-223 (Rosette Leaf), OSD-624 (Root Hypoxia-ROS), OSD-37 (Four Ecotypes Flight), and OSD-38 (Whole Seedling).
 
 <p align="center">
   <img src="figures/fig11_osdr_spaceflight_case_studies.png" width="90%" alt="Spaceflight Case Studies">
@@ -42,7 +42,7 @@ The repository is deployed as a live **GitHub Pages** application using the **Co
 - **Workbench Features**:
   - *Multi-Gene ROS Predictor*: Decodes ROS stimulus class ($H_2O_2$, Paraquat/$O_2^{\bullet-}$, Ozone, Menadione, Singlet Oxygen, High Light).
   - *Stimulation Duration Estimator*: Predicts elapsed time since last ROS induction ($<1\text{h}$ Immediate, $1-4\text{h}$ Early, $4-12\text{h}$ Mid, $>12\text{h}$ Late).
-  - *Multi-View ggPlantMap*: Synchronized spatial heat-maps across **Whole Seedling**, **Leaf Cellular Cross-Section**, and **Root Radial Anatomy**.
+  - *Multi-View ggPlantMap*: Synchronized spatial heat-maps across 5 distinct anatomical diagrams: **1. Rosette Lamina**, **2. Root Radial Cross-Section**, **3. Root Tip & Columella Section**, **4. Leaf Transverse Cross-Section**, and **5. Floral Organ Diagram**.
   - *Spaceflight Mission Explorer*: Interactive breakdown of NASA OSDR spaceflight experiments.
 
 ---
@@ -80,7 +80,7 @@ Redox_decoder/
 ├── manuscript.md             # Markdown text of the npj Microgravity manuscript
 ├── manuscript.pdf            # Compiled publication PDF
 ├── references.bib            # Bibliography database
-├── zenodo_deposition_v1.0.0.tar.gz # Complete Zenodo deposition package (9.8 MB)
+├── zenodo_deposition_v1.0.0.tar.gz # Complete Zenodo deposition package (10.12 MB)
 ├── data/                     # Embedded data & summary metadata
 │   ├── ros_decoder_data.js   # Pre-calculated data asset for browser interactive tool
 │   ├── Table_S1_GEO_redox_corpus.csv
