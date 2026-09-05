@@ -108,14 +108,11 @@ Redox_decoder/
 Department of Agricultural and Biological Engineering, Purdue University, West Lafayette, IN, USA
 
 ```bibtex
-@article{Barker2026RedoxDecoder,
+@unpublished{Barker2026RedoxDecoder,
   author = {Barker, Richard},
   title = {Arabidopsis Redox Transcriptional Autoencoder and Spaceflight ROS Validation},
-  journal = {npj Microgravity},
   year = {2026},
-  volume = {12},
-  pages = {104},
-  doi = {10.1038/s41526-026-00412-x}
+  note = {Manuscript in preparation; target journal: npj Microgravity. Not yet published --- no DOI, volume or page numbers have been assigned.}
 }
 ```
 
