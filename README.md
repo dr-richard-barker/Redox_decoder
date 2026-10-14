@@ -4,7 +4,7 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](requirements.txt)
 [![Interactive ROS Decoder Web Tool](https://img.shields.io/badge/Interactive-ROS_Decoder_Tool-blueviolet.svg)](https://dr-richard-barker.github.io/Redox_decoder/)
 [![Docker Container](https://img.shields.io/badge/Docker-Ready-blue.svg)](Dockerfile)
-[![DOI](https://img.shields.io/badge/Zenodo-10.5281/zenodo.1234567-blue.svg)](zenodo_deposition_v1.0.0.tar.gz)
+![Zenodo: not yet deposited](https://img.shields.io/badge/Zenodo-not_yet_deposited-lightgrey.svg)
 
 Conditional Variational Autoencoder (CVAE) framework for learning a generalizable reactive oxygen species (ROS) transcriptional latent space in *Arabidopsis thaliana* with single-cell deconvolution and NASA Open Science Data Repository (OSDR) spaceflight validation.
 

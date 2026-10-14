@@ -7,7 +7,6 @@ authors:
     affiliation: "Purdue University, Department of Agricultural and Biological Engineering"
 title: "Arabidopsis Redox Transcriptional Autoencoder and Spaceflight ROS Validation"
 version: 1.1.0
-doi: 10.5281/zenodo.1234567
 date-released: 2026-08-21
 url: "https://github.com/dr-richard-barker/Redox_decoder"
 repository-code: "https://github.com/dr-richard-barker/Redox_decoder"
