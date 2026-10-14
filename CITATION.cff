@@ -3,7 +3,7 @@ message: "If you use this software or model, please cite it as below."
 authors:
   - family-names: "Barker"
     given-names: "Richard"
-    orcid: "https://orcid.org/0000-0003-2423-7649"
+    orcid: "https://orcid.org/0000-0001-5681-9857"
     affiliation: "Purdue University, Department of Agricultural and Biological Engineering"
 title: "Arabidopsis Redox Transcriptional Autoencoder and Spaceflight ROS Validation"
 version: 1.1.0
